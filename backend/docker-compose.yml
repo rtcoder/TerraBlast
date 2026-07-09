@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nakama}
+      POSTGRES_USER: ${POSTGRES_USER:-nakama}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nakama}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  nakama:
+    image: heroiclabs/nakama:latest
+    depends_on:
+      - postgres
+    entrypoint:
+      - /bin/sh
+      - -ecx
+      - >
+        /nakama/nakama
+        --database.address ${POSTGRES_USER:-nakama}:${POSTGRES_PASSWORD:-nakama}@postgres:5432/${POSTGRES_DB:-nakama}
+        --logger.level DEBUG
+        --session.token_expiry_sec ${NAKAMA_SESSION_TOKEN_EXPIRY_SEC:-7200}
+    ports:
+      - "7349:7349"
+      - "7350:7350"
+      - "7351:7351"
+
+volumes:
+  postgres_data:
+

@@ -1,0 +1,30 @@
+# Godot
+.godot/
+.import/
+export_presets.cfg
+*.translation
+
+# Godot imports
+*.import
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Env/secrets
+.env
+
+# Builds
+builds/
+exports/
+*.zip
+*.dmg
+*.exe
+*.apk
+*.aab
+
+token
+project-id
+create-youtrack-issue.sh
+set-youtrack-status.sh
