@@ -29,7 +29,10 @@ var is_charging_shot := false
 var mouse_look_enabled := true
 var shot_charge := 0.0
 var min_shot_power := 0.25
+var max_shot_power := 4.0
 var max_charge_time := 1.4
+var min_projectile_speed := 10.0
+var max_projectile_speed := 88.0
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -95,12 +98,16 @@ func _update_shot_charge(delta: float) -> void:
 	_update_power_bar()
 
 func _get_current_shot_power() -> float:
-	return clampf(shot_charge / max_charge_time, min_shot_power, 1.0)
+	var charge_ratio := clampf(shot_charge / max_charge_time, 0.0, 1.0)
+	return lerpf(min_shot_power, max_shot_power, charge_ratio)
 
 func _update_power_bar() -> void:
 	if power_bar == null:
 		return
-	power_bar.value = _get_current_shot_power() * 100.0 if is_charging_shot else 0.0
+	if is_charging_shot:
+		power_bar.value = inverse_lerp(min_shot_power, max_shot_power, _get_current_shot_power()) * 100.0
+	else:
+		power_bar.value = 0.0
 
 func _fire_at_screen_center(shot_power: float = 1.0) -> void:
 	var viewport_size := get_viewport().get_visible_rect().size
@@ -112,8 +119,7 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 
 	var origin := camera.project_ray_origin(screen_position)
 	var direction := camera.project_ray_normal(screen_position)
-	var target_voxel: Vector3i = voxel_world.get_first_solid_on_ray(origin, direction)
-	if target_voxel.x < 0:
+	if direction.length_squared() <= 0.001:
 		return
 
 	var active_player: Variant = turn_controller.get_active_player()
@@ -121,27 +127,23 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 	command.player_id = active_player.player_id
 	command.turn_id = turn_controller.turn_id
 	command.weapon_id = 1
-	command.aim_direction = (Vector3(target_voxel) + Vector3(0.5, 0.5, 0.5) - active_player.position).normalized()
+	command.aim_direction = direction.normalized()
 	command.shot_power = shot_power
 	var validation: Dictionary = turn_controller.validate_action(command)
 	if not validation.ok:
 		return
 
-	_spawn_projectile(active_player.position + Vector3.UP * 1.3, Vector3(target_voxel) + Vector3(0.5, 0.5, 0.5), command.shot_power)
+	_spawn_projectile(active_player.position + Vector3.UP * 1.3, command.aim_direction, command.shot_power)
 
-func _spawn_projectile(from_position: Vector3, target_position: Vector3, shot_power: float = 1.0) -> void:
+func _spawn_projectile(from_position: Vector3, aim_direction: Vector3, shot_power: float = 1.0) -> void:
 	projectile_in_flight = true
 	var projectile: Node3D = DebugProjectile.new()
 	add_child(projectile)
 	projectile.global_position = from_position
 
-	var flat_direction := Vector3(target_position.x - from_position.x, 0.0, target_position.z - from_position.z)
-	var horizontal_distance := maxf(1.0, flat_direction.length())
-	var direction := flat_direction.normalized()
-	var power_scale := lerpf(0.45, 1.0, clampf(shot_power, 0.0, 1.0))
-	var speed := clampf(horizontal_distance * 0.55, 14.0, 28.0) * power_scale
-	var vertical_speed := clampf((target_position.y - from_position.y) * 0.45 + horizontal_distance * 0.18, 7.5, 16.0) * power_scale
-	var initial_velocity := direction * speed + Vector3.UP * vertical_speed
+	var charge_ratio := inverse_lerp(min_shot_power, max_shot_power, clampf(shot_power, min_shot_power, max_shot_power))
+	var speed := lerpf(min_projectile_speed, max_projectile_speed, charge_ratio)
+	var initial_velocity := aim_direction.normalized() * speed
 	projectile.launch(initial_velocity, voxel_world)
 	projectile.exploded.connect(_on_projectile_exploded)
 

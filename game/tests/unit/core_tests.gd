@@ -191,10 +191,10 @@ func _test_turn_controller_clamps_shot_power() -> void:
 	var command: RefCounted = PlayerActionCommand.new()
 	command.player_id = "p1"
 	command.turn_id = controller.turn_id
-	command.shot_power = 4.0
+	command.shot_power = 8.0
 	var result := controller.validate_action(command)
 	_expect_equal(result.ok, true, "active player action accepted")
-	_expect_equal(command.shot_power, 1.0, "shot power clamped")
+	_expect_equal(command.shot_power, 4.0, "shot power clamped")
 
 func _test_turn_controller_skips_dead_player() -> void:
 	var player_one := _player("p1")

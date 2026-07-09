@@ -4,7 +4,7 @@ extends RefCounted
 var players: Array = []
 var active_player_index := 0
 var turn_id := 0
-var max_shot_power := 1.0
+var max_shot_power := 4.0
 
 func _init(initial_players: Array = []) -> void:
 	players = initial_players
@@ -53,4 +53,3 @@ func _find_next_alive_index(from_index: int) -> int:
 			return candidate
 
 	return -1
-

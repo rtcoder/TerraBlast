@@ -114,6 +114,15 @@ func _run() -> void:
 		push_error("Power bar does not reflect charged shot power")
 		quit(1)
 		return
+	if instance._get_current_shot_power() <= 1.0:
+		push_error("Half charge should exceed the old 1.0 max shot power")
+		quit(1)
+		return
+	instance._update_shot_charge(instance.max_charge_time)
+	if not is_equal_approx(instance._get_current_shot_power(), 4.0):
+		push_error("Full charge should reach 4x shot power")
+		quit(1)
+		return
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT
 	release.pressed = false
@@ -132,6 +141,24 @@ func _run() -> void:
 		push_error("Mouse motion input did not rotate camera yaw")
 		quit(1)
 		return
+
+	instance.projectile_in_flight = false
+	instance._spawn_projectile(active_player.position + Vector3.UP * 1.3, Vector3.FORWARD, 4.0)
+	var forward_projectile: Node = instance.get_child(instance.get_child_count() - 1)
+	if absf(forward_projectile.velocity.y) > 0.01:
+		push_error("Forward aim should not receive artificial vertical projectile boost")
+		quit(1)
+		return
+	forward_projectile.queue_free()
+	instance.projectile_in_flight = false
+
+	instance._spawn_projectile(active_player.position + Vector3.UP * 1.3, (Vector3.FORWARD + Vector3.UP).normalized(), 4.0)
+	var upward_projectile: Node = instance.get_child(instance.get_child_count() - 1)
+	if upward_projectile.velocity.y <= 0.0:
+		push_error("Upward aim should produce upward projectile velocity")
+		quit(1)
+		return
+	upward_projectile.queue_free()
 
 	print("Debug scene smoke passed with %d visible mesh chunks" % mesh_chunk_count)
 	quit(0)
