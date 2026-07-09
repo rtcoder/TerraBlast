@@ -56,6 +56,10 @@ func _run() -> void:
 		push_error("Debug camera is too far from the active player for third-person view")
 		quit(1)
 		return
+	if camera.global_position.y < active_player.position.y + 5.0:
+		push_error("Debug camera should be high enough to see over the player head")
+		quit(1)
+		return
 
 	var player_one: Variant = instance.players[0]
 	var player_two: Variant = instance.players[1]

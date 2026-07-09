@@ -12,9 +12,9 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
 var orbit_yaw := -0.7
-var camera_pitch := -0.22
+var camera_pitch := -0.32
 var camera_distance := 11.0
-var camera_height := 2.3
+var camera_height := 3.4
 var camera_side_offset := 0.8
 var move_speed := 8.0
 var jump_speed := 8.5
