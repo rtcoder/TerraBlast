@@ -30,6 +30,7 @@ func _initialize() -> void:
 	_test_grass_top_has_visible_color_variation()
 	_test_toml_map_loads_into_definition()
 	_test_map_builder_applies_boxes_and_carves()
+	_test_map_elements_can_be_destroyed_by_standard_explosion()
 	_test_map_validator_accepts_twin_forts_spawns()
 	_test_turn_controller_rejects_inactive_player()
 	_test_turn_controller_clamps_shot_power()
@@ -198,6 +199,14 @@ func _test_map_builder_applies_boxes_and_carves() -> void:
 	_expect_equal(world.get_material_id(Vector3i(12, 2, 36)), 1, "map builder applies dirt floor top")
 	_expect_equal(world.get_material_id(Vector3i(48, 4, 48)), 0, "map builder carves center crater")
 	_expect_equal(world.get_material_id(Vector3i(10, 4, 30)), 2, "map builder applies fort wall")
+
+func _test_map_elements_can_be_destroyed_by_standard_explosion() -> void:
+	var definition: RefCounted = MapLoader.load_from_file("res://maps/twin_forts.toml")
+	var world := VoxelWorldData.new(definition.size)
+	MapBuilder.apply_to_world(world, _default_materials(), definition)
+	var destruction := VoxelDestruction.new(world, _default_materials())
+	destruction.apply_explosion(Vector3i(10, 4, 30), 1, 150)
+	_expect_equal(world.get_material_id(Vector3i(10, 4, 30)), 0, "map fort wall can be destroyed by standard explosion")
 
 func _test_map_validator_accepts_twin_forts_spawns() -> void:
 	var definition: RefCounted = MapLoader.load_from_file("res://maps/twin_forts.toml")

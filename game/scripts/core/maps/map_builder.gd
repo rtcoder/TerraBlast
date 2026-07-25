@@ -11,7 +11,7 @@ static func _apply_box(world: RefCounted, material_configs: Dictionary, box: Dic
 	var position := _vector3i_from_array(box.get("position", [0, 0, 0]))
 	var size := _vector3i_from_array(box.get("size", [1, 1, 1]))
 	var material_id := _material_id(material_configs, str(box.get("material", "dirt")))
-	var health := _material_health(material_configs, material_id)
+	var health := int(box.get("health", _material_health(material_configs, material_id)))
 	world.fill_box(position, position + size, material_id, health)
 
 static func _apply_carve(world: RefCounted, carve: Dictionary) -> void:
@@ -45,4 +45,3 @@ static func _vector3i_from_array(value: Variant) -> Vector3i:
 	if not value is Array or value.size() != 3:
 		return Vector3i.ZERO
 	return Vector3i(int(value[0]), int(value[1]), int(value[2]))
-

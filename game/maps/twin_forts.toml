@@ -70,18 +70,21 @@ name = "blue_outer_wall"
 position = [8, 3, 28]
 size = [8, 5, 6]
 material = "stone"
+health = 75
 
 [[boxes]]
 name = "red_outer_wall"
 position = [80, 3, 28]
 size = [8, 5, 6]
 material = "stone"
+health = 75
 
 [[boxes]]
 name = "center_bridge"
 position = [38, 3, 44]
 size = [20, 2, 8]
 material = "stone"
+health = 75
 
 [[carves]]
 shape = "sphere"
