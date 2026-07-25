@@ -7,7 +7,7 @@ const VoxelMaterialConfig := preload("res://scripts/core/voxels/voxel_material_c
 const VoxelWorldData := preload("res://scripts/core/voxels/voxel_world_data.gd")
 const VoxelChunkMeshBuilder := preload("res://scripts/client/rendering/voxel_chunk_mesh_builder.gd")
 
-@export var world_size := Vector3i(48, 24, 48)
+@export var world_size := Vector3i(96, 24, 96)
 @export var chunk_size := 16
 @export var flat_floor_height := 3
 

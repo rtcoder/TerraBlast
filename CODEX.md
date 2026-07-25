@@ -1215,9 +1215,93 @@ Nie używać sygnałów jako głównego mechanizmu core simulation, jeśli utrud
 
 ---
 
-## 23. Środowisko developerskie macOS
+## 23. YouTrack workflow
 
-### 23.1. Narzędzia
+W katalogu głównym projektu są lokalne skrypty do pracy z YouTrackiem:
+
+```txt
+create-youtrack-issue.sh
+set-youtrack-status.sh
+```
+
+Skrypty korzystają z:
+
+```txt
+token
+project-id
+```
+
+Nie wypisywać zawartości `token` w odpowiedziach, logach ani dokumentacji.
+
+### 23.1. Tworzenie taska
+
+Użycie:
+
+```bash
+./create-youtrack-issue.sh "Tytuł zgłoszenia" "Opcjonalny opis"
+```
+
+Skrypt tworzy issue w YouTracku i zwraca JSON z polami m.in.:
+
+```txt
+idReadable
+summary
+id
+```
+
+Przykład:
+
+```bash
+./create-youtrack-issue.sh "Camera: poprawić wysokość kamery" "Opis zakresu i Definition of Done."
+```
+
+### 23.2. Ustawianie statusu
+
+Użycie:
+
+```bash
+./set-youtrack-status.sh ISSUE_ID "STATUS"
+```
+
+Przykłady:
+
+```bash
+./set-youtrack-status.sh TB-123 "In Progress"
+./set-youtrack-status.sh TB-123 "Done"
+./set-youtrack-status.sh TB-123 "Open"
+```
+
+### 23.3. Zasada pracy z taskami
+
+Jeśli użytkownik zleca zmianę i nie ma jeszcze taska:
+
+```txt
+1. Utworzyć task przez create-youtrack-issue.sh.
+2. Ustawić go na In Progress przez set-youtrack-status.sh.
+3. Wykonać zmianę w projekcie.
+4. Uruchomić właściwe testy / smoke testy.
+5. Po sukcesie ustawić task na Done.
+```
+
+Jeśli task już istnieje:
+
+```txt
+1. Wziąć istniejący task.
+2. Ustawić go na In Progress, jeśli nie jest już w toku.
+3. Po implementacji i testach ustawić Done.
+```
+
+Opisy tasków powinny zawierać:
+
+- krótki zakres,
+- Definition of Done,
+- ważne ograniczenia architektoniczne, jeśli dotyczą core/server/client.
+
+---
+
+## 24. Środowisko developerskie macOS
+
+### 24.1. Narzędzia
 
 Zalecane:
 
@@ -1238,7 +1322,7 @@ brew install ripgrep
 
 Jeżeli Godot z Homebrew Cask jest nieaktualny, pobrać aktualną stabilną wersję z oficjalnej strony Godota.
 
-### 23.2. Docker / OrbStack
+### 24.2. Docker / OrbStack
 
 Do lokalnego backendu:
 
@@ -1259,7 +1343,7 @@ Użycie:
 - później headless game server,
 - lokalne testy integracyjne.
 
-### 23.3. Edytor
+### 24.3. Edytor
 
 Preferowane:
 
@@ -1275,7 +1359,7 @@ VS Code:
 
 ---
 
-## 24. Docker Compose dla backendu
+## 25. Docker Compose dla backendu
 
 Docelowo `backend/docker-compose.yml`:
 
@@ -1321,9 +1405,9 @@ Uwaga:
 
 ---
 
-## 25. Headless server
+## 26. Headless server
 
-### 25.1. Założenie
+### 26.1. Założenie
 
 Godot server export ma odpalać match server bez renderingu.
 
@@ -1339,7 +1423,7 @@ Docelowo:
 ./terrablast-server --headless
 ```
 
-### 25.2. Tryby uruchomienia
+### 26.2. Tryby uruchomienia
 
 Projekt powinien wspierać tryby:
 
@@ -1357,7 +1441,7 @@ godot --headless --path game -- --mode server
 godot --path game -- --mode local-dev
 ```
 
-### 25.3. Server entrypoint
+### 26.3. Server entrypoint
 
 W projekcie dodać scenę albo skrypt startowy:
 
@@ -1375,7 +1459,7 @@ Serwer nie powinien ładować:
 
 ---
 
-## 26. Roadmap MVP
+## 27. Roadmap MVP
 
 ### Milestone 0 — repo i Godot base
 
@@ -1479,9 +1563,9 @@ Serwer nie powinien ładować:
 
 ---
 
-## 27. Krytyczne ryzyka
+## 28. Krytyczne ryzyka
 
-### 27.1. Voxel mesh performance
+### 28.1. Voxel mesh performance
 
 Ryzyko:
 
@@ -1500,7 +1584,7 @@ threaded mesh generation later
 GDExtension only after profiling
 ```
 
-### 27.2. Network desync
+### 28.2. Network desync
 
 Ryzyko:
 
@@ -1519,7 +1603,7 @@ seed from server
 deterministic core where possible
 ```
 
-### 27.3. Scope creep
+### 28.3. Scope creep
 
 Ryzyko:
 
@@ -1540,7 +1624,7 @@ no skins in MVP
 no mobile before desktop MVP
 ```
 
-### 27.4. Mobile performance
+### 28.4. Mobile performance
 
 Ryzyko:
 
@@ -1561,7 +1645,7 @@ stylized visuals
 
 ---
 
-## 28. Decyzje zamrożone na start
+## 29. Decyzje zamrożone na start
 
 ```txt
 Game name: TerraBlast
@@ -1587,7 +1671,7 @@ docs/decisions/
 
 ---
 
-## 29. ADR format
+## 30. ADR format
 
 Każda większa decyzja:
 
@@ -1628,7 +1712,7 @@ Proponowane ADR-y:
 
 ---
 
-## 30. Definition of Done
+## 31. Definition of Done
 
 Zmiana jest gotowa, gdy:
 
@@ -1645,7 +1729,7 @@ Zmiana jest gotowa, gdy:
 
 ---
 
-## 31. Pierwsze zadania dla Codexa
+## 32. Pierwsze zadania dla Codexa
 
 ### Task 1 — repo base
 
@@ -1752,7 +1836,7 @@ Wymagania:
 
 ---
 
-## 32. Hasło projektu
+## 33. Hasło projektu
 
 ```txt
 TerraBlast — turn-based voxel warfare across destructible worlds.
@@ -1766,7 +1850,7 @@ TerraBlast to turowa gra online 3D, w której gracze walczą na zniszczalnych vo
 
 ---
 
-## 33. Zasada nadrzędna
+## 34. Zasada nadrzędna
 
 Najpierw grywalność.
 

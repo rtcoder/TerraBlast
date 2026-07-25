@@ -13,6 +13,8 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 
 var orbit_yaw := -0.7
 var camera_pitch := -0.32
+var min_camera_pitch := -1.05
+var max_camera_pitch := 0.45
 var camera_distance := 11.0
 var camera_height := 3.4
 var camera_side_offset := 0.8
@@ -33,6 +35,7 @@ var max_shot_power := 4.0
 var max_charge_time := 1.4
 var min_projectile_speed := 10.0
 var max_projectile_speed := 88.0
+var aim_fallback_distance := 80.0
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -66,7 +69,7 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseMotion and mouse_look_enabled:
 		orbit_yaw -= event.relative.x * 0.006
-		camera_pitch = clampf(camera_pitch - event.relative.y * 0.004, -0.62, 0.08)
+		camera_pitch = clampf(camera_pitch - event.relative.y * 0.004, min_camera_pitch, max_camera_pitch)
 		_update_camera_transform()
 
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -117,23 +120,36 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 	if projectile_in_flight or turn_controller.has_winner():
 		return
 
-	var origin := camera.project_ray_origin(screen_position)
-	var direction := camera.project_ray_normal(screen_position)
-	if direction.length_squared() <= 0.001:
+	var active_player: Variant = turn_controller.get_active_player()
+	var muzzle_position: Vector3 = active_player.position + Vector3.UP * 1.3
+	var aim_point := _get_crosshair_world_point(screen_position)
+	var aim_direction := aim_point - muzzle_position
+	if aim_direction.length_squared() <= 0.001:
 		return
 
-	var active_player: Variant = turn_controller.get_active_player()
 	var command: RefCounted = PlayerActionCommand.new()
 	command.player_id = active_player.player_id
 	command.turn_id = turn_controller.turn_id
 	command.weapon_id = 1
-	command.aim_direction = direction.normalized()
+	command.aim_direction = aim_direction.normalized()
 	command.shot_power = shot_power
 	var validation: Dictionary = turn_controller.validate_action(command)
 	if not validation.ok:
 		return
 
-	_spawn_projectile(active_player.position + Vector3.UP * 1.3, command.aim_direction, command.shot_power)
+	_spawn_projectile(muzzle_position, command.aim_direction, command.shot_power)
+
+func _get_crosshair_world_point(screen_position: Vector2) -> Vector3:
+	var origin := camera.project_ray_origin(screen_position)
+	var direction := camera.project_ray_normal(screen_position)
+	if direction.length_squared() <= 0.001:
+		return origin
+
+	var normalized_direction := direction.normalized()
+	var aimed_voxel: Vector3i = voxel_world.get_first_solid_on_ray(origin, normalized_direction)
+	if aimed_voxel.x >= 0:
+		return Vector3(aimed_voxel) + Vector3(0.5, 0.5, 0.5)
+	return origin + normalized_direction * aim_fallback_distance
 
 func _spawn_projectile(from_position: Vector3, aim_direction: Vector3, shot_power: float = 1.0) -> void:
 	projectile_in_flight = true
@@ -176,17 +192,26 @@ func _apply_player_damage(center: Vector3, radius: float, max_damage: int) -> vo
 
 func _setup_players() -> void:
 	players = [
-		_create_player("p1", "Blue", Vector2i(10, 10), Color(0.15, 0.36, 1.0)),
-		_create_player("p2", "Red", Vector2i(37, 37), Color(1.0, 0.18, 0.12)),
+		_create_player("blue_1", "Blue 1", 1, Vector2i(12, 36), Color(0.15, 0.36, 1.0)),
+		_create_player("red_1", "Red 1", 2, Vector2i(83, 36), Color(1.0, 0.18, 0.12)),
+		_create_player("blue_2", "Blue 2", 1, Vector2i(12, 42), Color(0.15, 0.36, 1.0)),
+		_create_player("red_2", "Red 2", 2, Vector2i(83, 42), Color(1.0, 0.18, 0.12)),
+		_create_player("blue_3", "Blue 3", 1, Vector2i(12, 48), Color(0.15, 0.36, 1.0)),
+		_create_player("red_3", "Red 3", 2, Vector2i(83, 48), Color(1.0, 0.18, 0.12)),
+		_create_player("blue_4", "Blue 4", 1, Vector2i(12, 54), Color(0.15, 0.36, 1.0)),
+		_create_player("red_4", "Red 4", 2, Vector2i(83, 54), Color(1.0, 0.18, 0.12)),
+		_create_player("blue_5", "Blue 5", 1, Vector2i(12, 60), Color(0.15, 0.36, 1.0)),
+		_create_player("red_5", "Red 5", 2, Vector2i(83, 60), Color(1.0, 0.18, 0.12)),
 	]
 	turn_controller = TurnController.new(players)
 	_face_camera_toward_enemy()
 	_update_player_nodes()
 
-func _create_player(player_id: String, display_name: String, spawn_xz: Vector2i, color: Color) -> RefCounted:
+func _create_player(player_id: String, display_name: String, team_id: int, spawn_xz: Vector2i, color: Color) -> RefCounted:
 	var player: RefCounted = PlayerState.new()
 	player.player_id = player_id
 	player.display_name = display_name
+	player.team_id = team_id
 	player.position = voxel_world.get_surface_world_position(spawn_xz.x, spawn_xz.y)
 	player.health = 100
 	player.is_alive = true
@@ -278,13 +303,33 @@ func _update_hud() -> void:
 	var active_player: Variant = turn_controller.get_active_player()
 	var status := ""
 	if turn_controller.has_winner():
-		var living: Array = turn_controller.get_living_players()
-		status = "Winner: %s" % living[0].display_name if living.size() == 1 else "Draw"
+		status = _winner_status_text()
 	elif active_player != null:
 		status = "Turn %d: %s" % [turn_controller.turn_id + 1, active_player.display_name]
-	status += "\nBlue %d   Red %d" % [players[0].health, players[1].health]
+	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
 	status += "\nHold LMB charge   Release fire   WASD/Arrows move"
 	hud_label.text = status
+
+func _team_status_text(team_id: int, label: String) -> String:
+	var living_count := 0
+	var total_health := 0
+	for player: Variant in players:
+		if player.team_id != team_id:
+			continue
+		if player.is_alive:
+			living_count += 1
+		total_health += player.health
+	return "%s %d/5 HP %d" % [label, living_count, total_health]
+
+func _winner_status_text() -> String:
+	var living_teams := {}
+	for player: Variant in players:
+		if player.is_alive:
+			living_teams[player.team_id] = true
+	if living_teams.size() != 1:
+		return "Draw"
+	var team_id: int = living_teams.keys()[0]
+	return "Winner: Blue" if team_id == 1 else "Winner: Red"
 
 func _update_active_player_movement(delta: float) -> void:
 	if turn_controller == null or projectile_in_flight or turn_controller.has_winner():
@@ -359,7 +404,7 @@ func _face_camera_toward_enemy() -> void:
 	var target := Vector3.ZERO
 	var target_count := 0
 	for player: Variant in players:
-		if player.player_id != active_player.player_id and player.is_alive:
+		if player.team_id != active_player.team_id and player.is_alive:
 			target += player.position
 			target_count += 1
 

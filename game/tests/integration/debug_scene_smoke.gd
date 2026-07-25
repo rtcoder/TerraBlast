@@ -39,6 +39,28 @@ func _run() -> void:
 			return
 
 	var voxel_world: Node = instance.get_node("VoxelWorld")
+	if voxel_world.world_size != Vector3i(96, 24, 96):
+		push_error("Debug arena should use the larger 96x24x96 map")
+		quit(1)
+		return
+
+	if instance.players.size() != 10:
+		push_error("Debug match should spawn 10 players")
+		quit(1)
+		return
+
+	var blue_count := 0
+	var red_count := 0
+	for player: Variant in instance.players:
+		if player.team_id == 1:
+			blue_count += 1
+		elif player.team_id == 2:
+			red_count += 1
+	if blue_count != 5 or red_count != 5:
+		push_error("Debug match should spawn 5 players per team")
+		quit(1)
+		return
+
 	var mesh_chunk_count := 0
 	for child: Node in voxel_world.get_children():
 		if child is MeshInstance3D and child.mesh != null and child.mesh.get_surface_count() > 0:
@@ -145,8 +167,45 @@ func _run() -> void:
 		push_error("Mouse motion input did not rotate camera yaw")
 		quit(1)
 		return
+	instance.camera_pitch = 0.0
+	var look_up_motion := InputEventMouseMotion.new()
+	look_up_motion.relative = Vector2(0.0, 1000.0)
+	instance._input(look_up_motion)
+	if instance.camera_pitch > instance.min_camera_pitch + 0.01:
+		push_error("Camera pitch should clamp to the expanded upward aiming range")
+		quit(1)
+		return
+	var look_down_motion := InputEventMouseMotion.new()
+	look_down_motion.relative = Vector2(0.0, -1000.0)
+	instance._input(look_down_motion)
+	if instance.camera_pitch < instance.max_camera_pitch - 0.01:
+		push_error("Camera pitch should clamp to the expanded downward aiming range")
+		quit(1)
+		return
 
 	instance.projectile_in_flight = false
+	instance.orbit_yaw = 0.4
+	instance.camera_pitch = -0.12
+	instance._update_camera_transform()
+	var viewport_center := root.get_visible_rect().size * 0.5
+	var ray_origin: Vector3 = camera.project_ray_origin(viewport_center)
+	var ray_direction: Vector3 = camera.project_ray_normal(viewport_center)
+	var aimed_voxel: Vector3i = voxel_world.get_first_solid_on_ray(ray_origin, ray_direction)
+	var crosshair_world_point := Vector3(aimed_voxel) + Vector3(0.5, 0.5, 0.5)
+	if aimed_voxel.x < 0:
+		crosshair_world_point = ray_origin + ray_direction * instance.aim_fallback_distance
+	var muzzle_position: Vector3 = active_player.position + Vector3.UP * 1.3
+	instance._fire_at_screen_center(4.0)
+	var aimed_projectile: Node = instance.get_child(instance.get_child_count() - 1)
+	var expected_aim_direction := (crosshair_world_point - muzzle_position).normalized()
+	var actual_aim_direction: Vector3 = aimed_projectile.velocity.normalized()
+	if actual_aim_direction.dot(expected_aim_direction) < 0.999:
+		push_error("Projectile should travel from muzzle to the crosshair world point")
+		quit(1)
+		return
+	aimed_projectile.queue_free()
+	instance.projectile_in_flight = false
+
 	instance._spawn_projectile(active_player.position + Vector3.UP * 1.3, Vector3.FORWARD, 4.0)
 	var forward_projectile: Node = instance.get_child(instance.get_child_count() - 1)
 	if absf(forward_projectile.velocity.y) > 0.01:

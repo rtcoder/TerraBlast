@@ -41,7 +41,22 @@ func get_living_players() -> Array:
 	return living
 
 func has_winner() -> bool:
+	if _is_team_match():
+		return _get_living_team_ids().size() <= 1
 	return get_living_players().size() <= 1
+
+func _is_team_match() -> bool:
+	for player: Variant in players:
+		if player.team_id != 0:
+			return true
+	return false
+
+func _get_living_team_ids() -> Dictionary:
+	var team_ids := {}
+	for player: Variant in players:
+		if player.is_alive:
+			team_ids[player.team_id] = true
+	return team_ids
 
 func _find_next_alive_index(from_index: int) -> int:
 	if players.is_empty():
