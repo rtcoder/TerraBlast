@@ -6,10 +6,14 @@ const VoxelDestruction := preload("res://scripts/core/terrain/voxel_destruction.
 const VoxelMaterialConfig := preload("res://scripts/core/voxels/voxel_material_config.gd")
 const VoxelWorldData := preload("res://scripts/core/voxels/voxel_world_data.gd")
 const VoxelChunkMeshBuilder := preload("res://scripts/client/rendering/voxel_chunk_mesh_builder.gd")
+const MapBuilder := preload("res://scripts/core/maps/map_builder.gd")
+const MapLoader := preload("res://scripts/core/maps/map_loader.gd")
+const MapValidator := preload("res://scripts/core/maps/map_validator.gd")
 
 @export var world_size := Vector3i(96, 24, 96)
 @export var chunk_size := 16
 @export var flat_floor_height := 3
+@export_file("*.toml") var map_path := "res://maps/twin_forts.toml"
 
 var world: RefCounted
 var material_configs: Dictionary = {}
@@ -67,6 +71,14 @@ func _setup_material() -> void:
 	terrain_material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 
 func _setup_world() -> void:
+	var map_definition: RefCounted = null
+	if not map_path.is_empty():
+		map_definition = MapLoader.load_from_file(map_path)
+		if map_definition.id.is_empty():
+			map_definition = null
+		else:
+			world_size = map_definition.size
+
 	world = VoxelWorldData.new(world_size, chunk_size)
 	material_configs = {
 		0: _material(0, "air", "Air", 0, 1.0, false, false),
@@ -74,7 +86,12 @@ func _setup_world() -> void:
 		2: _material(2, "stone", "Stone", 180, 2.0, true, true),
 		3: _material(3, "metal", "Metal", 255, 4.0, true, false),
 	}
-	_generate_debug_arena()
+	if map_definition == null:
+		_generate_debug_arena()
+	else:
+		MapBuilder.apply_to_world(world, material_configs, map_definition)
+		for error: String in MapValidator.validate(map_definition, world):
+			push_error("Map validation failed: %s" % error)
 	_mark_all_chunks_dirty()
 
 func _generate_debug_arena() -> void:

@@ -1,0 +1,89 @@
+id = "twin_forts"
+name = "Twin Forts"
+size = [96, 24, 96]
+theme = "grassland"
+
+[[spawns]]
+team = 1
+position = [12, 3, 36]
+yaw = 90
+
+[[spawns]]
+team = 2
+position = [83, 3, 36]
+yaw = -90
+
+[[spawns]]
+team = 1
+position = [12, 3, 42]
+yaw = 90
+
+[[spawns]]
+team = 2
+position = [83, 3, 42]
+yaw = -90
+
+[[spawns]]
+team = 1
+position = [12, 3, 48]
+yaw = 90
+
+[[spawns]]
+team = 2
+position = [83, 3, 48]
+yaw = -90
+
+[[spawns]]
+team = 1
+position = [12, 3, 54]
+yaw = 90
+
+[[spawns]]
+team = 2
+position = [83, 3, 54]
+yaw = -90
+
+[[spawns]]
+team = 1
+position = [12, 3, 60]
+yaw = 90
+
+[[spawns]]
+team = 2
+position = [83, 3, 60]
+yaw = -90
+
+[[boxes]]
+name = "stone_base"
+position = [0, 0, 0]
+size = [96, 2, 96]
+material = "stone"
+
+[[boxes]]
+name = "dirt_surface"
+position = [0, 2, 0]
+size = [96, 1, 96]
+material = "dirt"
+
+[[boxes]]
+name = "blue_outer_wall"
+position = [8, 3, 28]
+size = [8, 5, 6]
+material = "stone"
+
+[[boxes]]
+name = "red_outer_wall"
+position = [80, 3, 28]
+size = [8, 5, 6]
+material = "stone"
+
+[[boxes]]
+name = "center_bridge"
+position = [38, 3, 44]
+size = [20, 2, 8]
+material = "stone"
+
+[[carves]]
+shape = "sphere"
+position = [48, 4, 48]
+radius = 7

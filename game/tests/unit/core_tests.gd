@@ -6,6 +6,9 @@ const VoxelMaterialConfig := preload("res://scripts/core/voxels/voxel_material_c
 const VoxelPosition := preload("res://scripts/core/voxels/voxel_position.gd")
 const VoxelWorldData := preload("res://scripts/core/voxels/voxel_world_data.gd")
 const VoxelChunkMeshBuilder := preload("res://scripts/client/rendering/voxel_chunk_mesh_builder.gd")
+const MapBuilder := preload("res://scripts/core/maps/map_builder.gd")
+const MapLoader := preload("res://scripts/core/maps/map_loader.gd")
+const MapValidator := preload("res://scripts/core/maps/map_validator.gd")
 const PlayerActionCommand := preload("res://scripts/core/turns/player_action_command.gd")
 const PlayerState := preload("res://scripts/core/rules/player_state.gd")
 const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
@@ -25,6 +28,9 @@ func _initialize() -> void:
 	_test_adjacent_voxels_do_not_mesh_internal_face()
 	_test_dirt_top_and_side_faces_have_minecraft_colors()
 	_test_grass_top_has_visible_color_variation()
+	_test_toml_map_loads_into_definition()
+	_test_map_builder_applies_boxes_and_carves()
+	_test_map_validator_accepts_twin_forts_spawns()
 	_test_turn_controller_rejects_inactive_player()
 	_test_turn_controller_clamps_shot_power()
 	_test_turn_controller_skips_dead_player()
@@ -175,6 +181,30 @@ func _test_grass_top_has_visible_color_variation() -> void:
 			top_colors[colors[index]] = true
 
 	_expect_true(top_colors.size() >= 2, "grass top has minecraft-style color variation")
+
+func _test_toml_map_loads_into_definition() -> void:
+	var definition: RefCounted = MapLoader.load_from_file("res://maps/twin_forts.toml")
+	_expect_equal(definition.id, "twin_forts", "map loader reads id")
+	_expect_equal(definition.size, Vector3i(96, 24, 96), "map loader reads world size")
+	_expect_equal(definition.spawns.size(), 10, "map loader reads spawn list")
+	_expect_equal(definition.boxes.size() > 0, true, "map loader reads box primitives")
+	_expect_equal(definition.carves.size() > 0, true, "map loader reads carve primitives")
+
+func _test_map_builder_applies_boxes_and_carves() -> void:
+	var definition: RefCounted = MapLoader.load_from_file("res://maps/twin_forts.toml")
+	var world := VoxelWorldData.new(definition.size)
+	MapBuilder.apply_to_world(world, _default_materials(), definition)
+	_expect_equal(world.get_material_id(Vector3i(12, 0, 36)), 2, "map builder applies stone floor base")
+	_expect_equal(world.get_material_id(Vector3i(12, 2, 36)), 1, "map builder applies dirt floor top")
+	_expect_equal(world.get_material_id(Vector3i(48, 4, 48)), 0, "map builder carves center crater")
+	_expect_equal(world.get_material_id(Vector3i(10, 4, 30)), 2, "map builder applies fort wall")
+
+func _test_map_validator_accepts_twin_forts_spawns() -> void:
+	var definition: RefCounted = MapLoader.load_from_file("res://maps/twin_forts.toml")
+	var world := VoxelWorldData.new(definition.size)
+	MapBuilder.apply_to_world(world, _default_materials(), definition)
+	var errors: Array[String] = MapValidator.validate(definition, world)
+	_expect_equal(errors.size(), 0, "map validator accepts twin forts")
 
 func _test_turn_controller_rejects_inactive_player() -> void:
 	var controller := TurnController.new([_player("p1"), _player("p2")])
