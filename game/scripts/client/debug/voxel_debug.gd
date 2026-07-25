@@ -18,6 +18,13 @@ var max_camera_pitch := 0.45
 var camera_distance := 11.0
 var camera_height := 3.4
 var camera_side_offset := 0.8
+var camera_ground_clearance := 0.35
+var camera_ground_probe_steps := 32
+var camera_focus_position := Vector3.ZERO
+var camera_visual_yaw := orbit_yaw
+var camera_transition_initialized := false
+var camera_focus_transition_speed := 2.8
+var camera_yaw_transition_speed := 3.5
 var move_speed := 8.0
 var jump_speed := 8.5
 var player_gravity := 22.0
@@ -48,6 +55,7 @@ func _physics_process(delta: float) -> void:
 	_update_shot_charge(delta)
 	_update_active_player_movement(delta)
 	_update_player_nodes()
+	_update_camera_transition(delta)
 	_update_camera_transform()
 
 func _input(event: InputEvent) -> void:
@@ -69,6 +77,7 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseMotion and mouse_look_enabled:
 		orbit_yaw -= event.relative.x * 0.006
+		camera_visual_yaw = orbit_yaw
 		camera_pitch = clampf(camera_pitch - event.relative.y * 0.004, min_camera_pitch, max_camera_pitch)
 		_update_camera_transform()
 
@@ -421,12 +430,46 @@ func _update_camera_transform() -> void:
 		return
 
 	var target: Vector3 = active_player.position + Vector3.UP * camera_height
-	var forward := Vector3(sin(orbit_yaw), 0.0, cos(orbit_yaw)).normalized()
+	_ensure_camera_transition_initialized(target)
+	target = camera_focus_position
+	var forward := Vector3(sin(camera_visual_yaw), 0.0, cos(camera_visual_yaw)).normalized()
 	var right := forward.cross(Vector3.UP).normalized()
 	var camera_position: Vector3 = target - forward * camera_distance + right * camera_side_offset
 	camera_position.y += sin(-camera_pitch) * camera_distance
+	camera_position = _get_ground_limited_camera_position(target, camera_position)
 
 	camera_pivot.position = target
 	camera_pivot.rotation = Vector3.ZERO
 	camera.global_position = camera_position
 	camera.look_at(target + forward * 8.0 + Vector3.UP * camera_pitch * 8.0, Vector3.UP)
+
+func _get_ground_limited_camera_position(target: Vector3, ideal_position: Vector3) -> Vector3:
+	for step in range(camera_ground_probe_steps + 1):
+		var t := 1.0 - (float(step) / float(camera_ground_probe_steps))
+		var candidate := target.lerp(ideal_position, t)
+		if _is_camera_above_ground(candidate):
+			return candidate
+	return target
+
+func _is_camera_above_ground(position: Vector3) -> bool:
+	var ground_y: float = voxel_world.get_surface_y(floori(position.x), floori(position.z))
+	return position.y >= ground_y + camera_ground_clearance
+
+func _update_camera_transition(delta: float) -> void:
+	var active_player: Variant = turn_controller.get_active_player()
+	if active_player == null:
+		return
+
+	var target: Vector3 = active_player.position + Vector3.UP * camera_height
+	_ensure_camera_transition_initialized(target)
+	var focus_weight := clampf(1.0 - exp(-camera_focus_transition_speed * delta), 0.0, 1.0)
+	var yaw_weight := clampf(1.0 - exp(-camera_yaw_transition_speed * delta), 0.0, 1.0)
+	camera_focus_position = camera_focus_position.lerp(target, focus_weight)
+	camera_visual_yaw = lerp_angle(camera_visual_yaw, orbit_yaw, yaw_weight)
+
+func _ensure_camera_transition_initialized(target: Vector3) -> void:
+	if camera_transition_initialized:
+		return
+	camera_focus_position = target
+	camera_visual_yaw = orbit_yaw
+	camera_transition_initialized = true

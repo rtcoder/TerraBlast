@@ -182,6 +182,44 @@ func _run() -> void:
 		push_error("Camera pitch should clamp to the expanded downward aiming range")
 		quit(1)
 		return
+	var ground_y: float = voxel_world.get_surface_y(floori(active_player.position.x), floori(active_player.position.z))
+	instance.camera_pitch = instance.max_camera_pitch
+	instance.camera_distance = 11.0
+	instance._update_camera_transform()
+	if camera.global_position.y < ground_y + instance.camera_ground_clearance - 0.01:
+		push_error("Camera should not sink below ground when aiming upward")
+		quit(1)
+		return
+	var horizontal_camera_offset := Vector2(
+		camera.global_position.x - active_player.position.x,
+		camera.global_position.z - active_player.position.z
+	).length()
+	if horizontal_camera_offset >= instance.camera_distance:
+		push_error("Ground-limited camera should move closer to the player's feet")
+		quit(1)
+		return
+	instance.camera_pitch = -0.32
+	instance.camera_distance = 11.0
+	instance._update_camera_transform()
+	instance.turn_controller.complete_turn()
+	instance._face_camera_toward_enemy()
+	var next_player: Variant = instance.turn_controller.get_active_player()
+	var camera_before_transition: Vector3 = camera.global_position
+	instance._update_camera_transition(0.016)
+	instance._update_camera_transform()
+	var distance_from_previous_camera := camera.global_position.distance_to(camera_before_transition)
+	var distance_to_next_player := camera.global_position.distance_to(next_player.position)
+	if distance_to_next_player < 12.0:
+		push_error("Camera should fly toward the next player instead of snapping immediately")
+		quit(1)
+		return
+	if distance_from_previous_camera > 4.0:
+		push_error("Camera transition should start smoothly without a large first-frame jump")
+		quit(1)
+		return
+	active_player = instance.turn_controller.get_active_player()
+	instance.camera_transition_initialized = false
+	instance._update_camera_transform()
 
 	instance.projectile_in_flight = false
 	instance.orbit_yaw = 0.4
