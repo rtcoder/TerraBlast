@@ -1217,31 +1217,39 @@ Nie używać sygnałów jako głównego mechanizmu core simulation, jeśli utrud
 
 ## 23. YouTrack workflow
 
-W katalogu głównym projektu są lokalne skrypty do pracy z YouTrackiem:
+Do pracy z YouTrackiem używać narzędzia `ytrack`.
 
-```txt
-create-youtrack-issue.sh
-set-youtrack-status.sh
+Konfiguracja:
+
+```bash
+ytrack global show
+ytrack show
 ```
 
-Skrypty korzystają z:
+`ytrack` korzysta z:
 
 ```txt
-token
-project-id
+global OS user config: url, token
+local ./.ytrack/config.json: project_id
 ```
 
-Nie wypisywać zawartości `token` w odpowiedziach, logach ani dokumentacji.
+Nie wypisywać zawartości tokena w odpowiedziach, logach ani dokumentacji. `ytrack show` i `ytrack global show` maskują token.
 
 ### 23.1. Tworzenie taska
 
 Użycie:
 
 ```bash
-./create-youtrack-issue.sh "Tytuł zgłoszenia" "Opcjonalny opis"
+ytrack issue create "Tytuł zgłoszenia" "Opcjonalny opis"
 ```
 
-Skrypt tworzy issue w YouTracku i zwraca JSON z polami m.in.:
+Jeśli potrzebny jest surowy JSON z API, użyć:
+
+```bash
+ytrack --json issue create "Tytuł zgłoszenia" "Opcjonalny opis"
+```
+
+Polecenie tworzy issue w YouTracku i w trybie JSON zwraca pola m.in.:
 
 ```txt
 idReadable
@@ -1252,7 +1260,7 @@ id
 Przykład:
 
 ```bash
-./create-youtrack-issue.sh "Camera: poprawić wysokość kamery" "Opis zakresu i Definition of Done."
+ytrack issue create "Camera: poprawić wysokość kamery" "Opis zakresu i Definition of Done."
 ```
 
 ### 23.2. Ustawianie statusu
@@ -1260,15 +1268,15 @@ Przykład:
 Użycie:
 
 ```bash
-./set-youtrack-status.sh ISSUE_ID "STATUS"
+ytrack issue status ISSUE_ID "STATUS"
 ```
 
 Przykłady:
 
 ```bash
-./set-youtrack-status.sh TB-123 "In Progress"
-./set-youtrack-status.sh TB-123 "Done"
-./set-youtrack-status.sh TB-123 "Open"
+ytrack issue status TB-123 "In Progress"
+ytrack issue status TB-123 "Done"
+ytrack issue status TB-123 "Open"
 ```
 
 ### 23.3. Zasada pracy z taskami
@@ -1276,11 +1284,11 @@ Przykłady:
 Jeśli użytkownik zleca zmianę i nie ma jeszcze taska:
 
 ```txt
-1. Utworzyć task przez create-youtrack-issue.sh.
-2. Ustawić go na In Progress przez set-youtrack-status.sh.
+1. Utworzyć task przez ytrack issue create.
+2. Ustawić go na In Progress przez ytrack issue status.
 3. Wykonać zmianę w projekcie.
 4. Uruchomić właściwe testy / smoke testy.
-5. Po sukcesie ustawić task na Done.
+5. Po sukcesie ustawić task na Done przez ytrack issue status.
 ```
 
 Jeśli task już istnieje:
