@@ -1,88 +1,38 @@
 class_name DebugProjectile
 extends Node3D
 
-signal exploded(voxel_position: Vector3i)
-
-const GRAVITY := 18.0
-const DEFAULT_LIFETIME := 6.0
-
-@export var radius := 5
-@export var damage := 150
-@export var max_lifetime := DEFAULT_LIFETIME
-
-var voxel_world: Node3D
-var velocity := Vector3.ZERO
-var lifetime := 0.0
-var previous_position := Vector3.ZERO
+signal finished
+var points := PackedVector3Array()
+var elapsed := 0.0
+var step := 1.0 / 30.0
 var is_finished := false
 
 func _ready() -> void:
-	previous_position = global_position
-	_add_visual()
+	var visual := MeshInstance3D.new()
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.25
+	sphere.height = 0.5
+	visual.mesh = sphere
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color.ORANGE
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	visual.material_override = material
+	add_child(visual)
 
-func launch(initial_velocity: Vector3, target_world: Node3D) -> void:
-	velocity = initial_velocity
-	voxel_world = target_world
+func play_path(path: PackedVector3Array, tick_step: float) -> void:
+	points = path
+	step = tick_step
+	if not points.is_empty():
+		global_position = points[0]
 
 func _physics_process(delta: float) -> void:
-	if is_finished:
+	if is_finished or points.is_empty():
 		return
-
-	lifetime += delta
-	previous_position = global_position
-	velocity += Vector3.DOWN * GRAVITY * delta
-	global_position += velocity * delta
-
-	var hit_voxel := sweep_for_hit(voxel_world, previous_position, global_position)
-	if hit_voxel.x >= 0:
-		_finish(hit_voxel)
-	elif lifetime >= max_lifetime or global_position.y < -8.0:
-		_finish(Vector3i(floori(global_position.x), maxi(0, floori(global_position.y)), floori(global_position.z)))
-
-static func sweep_for_hit(voxel_world: Node3D, from_position: Vector3, to_position: Vector3) -> Vector3i:
-	if voxel_world == null:
-		return Vector3i(-1, -1, -1)
-
-	var distance := from_position.distance_to(to_position)
-	var steps: int = maxi(1, ceili(distance / 0.2))
-	for step in range(steps + 1):
-		var point := from_position.lerp(to_position, float(step) / float(steps))
-		var voxel := Vector3i(floori(point.x), floori(point.y), floori(point.z))
-		if voxel_world.world.is_in_bounds(voxel) and voxel_world.world.get_material_id(voxel) != 0:
-			return voxel
-	return Vector3i(-1, -1, -1)
-
-func _finish(voxel_position: Vector3i) -> void:
-	is_finished = true
-	exploded.emit(voxel_position)
-	queue_free()
-
-func _add_visual() -> void:
-	var mesh_instance := MeshInstance3D.new()
-	var sphere := SphereMesh.new()
-	sphere.radius = 0.35
-	sphere.height = 0.7
-	mesh_instance.mesh = sphere
-
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(1.0, 0.38, 0.16)
-	material.emission_enabled = true
-	material.emission = Color(1.0, 0.22, 0.06)
-	material.emission_energy_multiplier = 0.8
-	mesh_instance.material_override = material
-	add_child(mesh_instance)
-
-
-static func predict_trajectory(origin: Vector3, initial_velocity: Vector3, world: Node3D, delta: float) -> PackedVector3Array:
-	var points := PackedVector3Array([origin])
-	var position := origin
-	var speed := initial_velocity
-	for tick in range(ceili(DEFAULT_LIFETIME / delta)):
-		speed += Vector3.DOWN * GRAVITY * delta
-		var next := position + speed * delta
-		var hit := sweep_for_hit(world, position, next)
-		points.append(next)
-		if hit.x >= 0 or next.y < -8.0:
-			break
-		position = next
-	return points
+	elapsed += delta
+	var sample := elapsed / step
+	var index := mini(int(sample), points.size() - 1)
+	global_position = points[index].lerp(points[mini(index + 1, points.size() - 1)], fmod(sample, 1.0))
+	if index >= points.size() - 1:
+		is_finished = true
+		finished.emit()
+		queue_free()

@@ -137,3 +137,12 @@ func _material(id: int, code: String, display_name: String, max_health: int, bla
 	material.is_solid = is_solid
 	material.is_destructible = is_destructible
 	return material
+
+func refresh_deltas(deltas: Array) -> void:
+	for delta in deltas:
+		var pos := Vector3i(delta.position[0], delta.position[1], delta.position[2])
+		mark_chunk_dirty(world.get_chunk_position(pos))
+		for direction in [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.UP, Vector3i.DOWN, Vector3i.FORWARD, Vector3i.BACK]:
+			if world.is_in_bounds(pos + direction):
+				mark_chunk_dirty(world.get_chunk_position(pos + direction))
+	rebuild_dirty_chunks()

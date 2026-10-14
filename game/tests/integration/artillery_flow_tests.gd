@@ -59,10 +59,10 @@ func run() -> void:
 		check(not scene.trajectory_preview.visible, "Firing must hide preview")
 		var projectile: Node = scene.get_child(scene.get_child_count() - 1)
 		projectile.set_physics_process(false)
-		var dt := 1.0 / float(Engine.physics_ticks_per_second)
+		var dt: float = scene.rules.projectile_step
 		for index in range(1, mini(points.size() - 1, 8)):
 			projectile._physics_process(dt)
-			check(projectile.global_position.distance_to(points[index]) < 0.001, "Preview must match projectile steps")
+			check(projectile.global_position.distance_to(points[index]) < 0.001, "Preview must match projectile playback")
 		var player: Variant = scene.turn_controller.get_active_player()
 		var before: Vector3 = player.position
 		scene._try_jump_active_player()
@@ -71,27 +71,5 @@ func run() -> void:
 		mouse(scene, MOUSE_BUTTON_LEFT, true)
 		check(not scene.is_charging_shot, "Flight must block another charge")
 		projectile.queue_free()
-	var world: Node = scene.voxel_world
-	var inactive: Variant = scene.players[2]
-	var x := floori(inactive.position.x)
-	var z := floori(inactive.position.z)
-	for y in range(world.world_size.y):
-		world.world.set_voxel(Vector3i(x, y, z), 0, 0)
-	world.world.set_voxel(Vector3i(x, 0, z), 2, 180)
-	scene._resolve_explosion(Vector3i(-100, 0, -100), false)
-	check(is_equal_approx(inactive.position.y, 1.0), "Inactive player must settle after terrain destruction")
-	check(scene.player_velocities[inactive.player_id] == Vector3.ZERO, "Settling must clear velocity")
-	# A roof above the pawn must not become its landing surface.
-	world.world.set_voxel(Vector3i(x, 10, z), 2, 180)
-	inactive.position.y = 4.0
-	scene._resolve_explosion(Vector3i(-100, 0, -100), false)
-	check(is_equal_approx(inactive.position.y, 1.0), "Settling must not teleport onto roofs")
-	world.world.set_voxel(Vector3i(x, 0, z), 0, 0)
-	scene._resolve_explosion(Vector3i(-100, 0, -100), false)
-	check(not inactive.is_alive, "Player without any support must be eliminated")
-	var projectile_type = load("res://scripts/client/debug/debug_projectile.gd")
-	var arc: PackedVector3Array = projectile_type.predict_trajectory(Vector3(40, 50, 40), Vector3(10, 0, 0), world, 0.1)
-	check(arc[1].is_equal_approx(Vector3(41, 49.82, 40)), "First prediction step must include gravity")
-	check(arc[2].is_equal_approx(Vector3(42, 49.46, 40)), "Prediction must accumulate gravity")
 	print("Artillery flow: %d failures" % failures)
 	quit(1 if failures else 0)

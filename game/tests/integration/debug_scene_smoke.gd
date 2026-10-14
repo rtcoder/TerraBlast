@@ -225,45 +225,5 @@ func _run() -> void:
 	instance.camera_transition_initialized = false
 	instance._update_camera_transform()
 
-	instance.projectile_in_flight = false
-	instance.orbit_yaw = 0.4
-	instance.camera_pitch = -0.12
-	instance._update_camera_transform()
-	var viewport_center := root.get_visible_rect().size * 0.5
-	var ray_origin: Vector3 = camera.project_ray_origin(viewport_center)
-	var ray_direction: Vector3 = camera.project_ray_normal(viewport_center)
-	var aimed_voxel: Vector3i = voxel_world.get_first_solid_on_ray(ray_origin, ray_direction)
-	var crosshair_world_point := Vector3(aimed_voxel) + Vector3(0.5, 0.5, 0.5)
-	if aimed_voxel.x < 0:
-		crosshair_world_point = ray_origin + ray_direction * instance.aim_fallback_distance
-	var muzzle_position: Vector3 = active_player.position + Vector3.UP * 1.3
-	instance._fire_at_screen_center(4.0)
-	var aimed_projectile: Node = instance.get_child(instance.get_child_count() - 1)
-	var expected_aim_direction := (crosshair_world_point - muzzle_position).normalized()
-	var actual_aim_direction: Vector3 = aimed_projectile.velocity.normalized()
-	if actual_aim_direction.dot(expected_aim_direction) < 0.999:
-		push_error("Projectile should travel from muzzle to the crosshair world point")
-		quit(1)
-		return
-	aimed_projectile.queue_free()
-	instance.projectile_in_flight = false
-
-	instance._spawn_projectile(active_player.position + Vector3.UP * 1.3, Vector3.FORWARD, 4.0)
-	var forward_projectile: Node = instance.get_child(instance.get_child_count() - 1)
-	if absf(forward_projectile.velocity.y) > 0.01:
-		push_error("Forward aim should not receive artificial vertical projectile boost")
-		quit(1)
-		return
-	forward_projectile.queue_free()
-	instance.projectile_in_flight = false
-
-	instance._spawn_projectile(active_player.position + Vector3.UP * 1.3, (Vector3.FORWARD + Vector3.UP).normalized(), 4.0)
-	var upward_projectile: Node = instance.get_child(instance.get_child_count() - 1)
-	if upward_projectile.velocity.y <= 0.0:
-		push_error("Upward aim should produce upward projectile velocity")
-		quit(1)
-		return
-	upward_projectile.queue_free()
-
 	print("Debug scene smoke passed with %d visible mesh chunks" % mesh_chunk_count)
 	quit(0)

@@ -3,6 +3,8 @@ extends Node3D
 const DebugProjectile := preload("res://scripts/client/debug/debug_projectile.gd")
 const PlayerActionCommand := preload("res://scripts/core/turns/player_action_command.gd")
 const PlayerState := preload("res://scripts/core/rules/player_state.gd")
+const MatchFactory := preload("res://scripts/core/rules/match_factory.gd")
+const Simulation := preload("res://scripts/core/projectiles/projectile_simulation.gd")
 const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 
 @onready var voxel_world: Node3D = $VoxelWorld
@@ -10,6 +12,12 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
+
+var runner: RefCounted
+var rules: Resource
+var selected_weapon_id := 1
+var active_projectile: Node3D
+var pending_result: Dictionary = {}
 
 var orbit_yaw := -0.7
 var camera_pitch := -0.32
@@ -55,11 +63,18 @@ func _ready() -> void:
 	_update_hud()
 
 func _physics_process(delta: float) -> void:
+	if not projectile_in_flight:
+		var events: Array = runner.tick(delta)
+		if not events.is_empty():
+			_cancel_aim()
+			_face_camera_toward_enemy()
+	_update_hud()
 	_update_shot_charge(delta)
 	_update_active_player_movement(delta)
-	_update_player_nodes()
-	_update_camera_transition(delta)
-	_update_camera_transform()
+	if not projectile_in_flight:
+		_update_player_nodes()
+		_update_camera_transition(delta)
+		_update_camera_transform()
 	_update_trajectory_preview()
 
 func _input(event: InputEvent) -> void:
@@ -96,7 +111,12 @@ func _input(event: InputEvent) -> void:
 		_update_camera_transform()
 
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_SPACE:
+		if event.keycode in [KEY_1, KEY_2, KEY_3] and not projectile_in_flight:
+			selected_weapon_id = event.keycode - KEY_1 + 1
+			_cancel_aim()
+		elif event.keycode == KEY_R:
+			restart_match()
+		elif event.keycode == KEY_SPACE:
 			_try_jump_active_player()
 		elif event.keycode == KEY_ESCAPE:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -154,14 +174,13 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 	var command: RefCounted = PlayerActionCommand.new()
 	command.player_id = active_player.player_id
 	command.turn_id = turn_controller.turn_id
-	command.weapon_id = 1
+	command.weapon_id = selected_weapon_id
 	command.aim_direction = aim_direction.normalized()
 	command.shot_power = shot_power
-	var validation: Dictionary = turn_controller.validate_action(command)
-	if not validation.ok:
+	var result: Dictionary = runner.submit(command)
+	if not result.ok:
 		return
-
-	_spawn_projectile(muzzle_position, command.aim_direction, command.shot_power)
+	_play_result(result)
 
 func _get_crosshair_world_point(screen_position: Vector2) -> Vector3:
 	var origin := camera.project_ray_origin(screen_position)
@@ -175,77 +194,69 @@ func _get_crosshair_world_point(screen_position: Vector2) -> Vector3:
 		return Vector3(aimed_voxel) + Vector3(0.5, 0.5, 0.5)
 	return origin + normalized_direction * aim_fallback_distance
 
-func _spawn_projectile(from_position: Vector3, aim_direction: Vector3, shot_power: float = 1.0) -> void:
+func _play_result(result: Dictionary) -> void:
 	projectile_in_flight = true
+	pending_result = result
 	_cancel_aim()
-	var projectile: Node3D = DebugProjectile.new()
-	add_child(projectile)
-	projectile.global_position = from_position
+	active_projectile = DebugProjectile.new()
+	add_child(active_projectile)
+	active_projectile.play_path(result.path, rules.projectile_step)
+	active_projectile.finished.connect(_finish_playback)
 
-	var initial_velocity := aim_direction.normalized() * _get_projectile_speed(shot_power)
-	projectile.launch(initial_velocity, voxel_world)
-	projectile.exploded.connect(_on_projectile_exploded)
-
-func _on_projectile_exploded(voxel_position: Vector3i) -> void:
-	_resolve_explosion(voxel_position, true)
-
-func _resolve_explosion(voxel_position: Vector3i, should_advance_turn: bool) -> void:
-	voxel_world.apply_debug_explosion(voxel_position, 5, 150)
-	_apply_player_damage(Vector3(voxel_position) + Vector3(0.5, 0.5, 0.5), 5.5, 42)
-	_settle_players()
-	_update_player_nodes()
+func _finish_playback() -> void:
+	voxel_world.refresh_deltas(pending_result.get("deltas", []))
+	pending_result = {}
+	active_projectile = null
 	projectile_in_flight = false
-	if should_advance_turn and not turn_controller.has_winner():
-		turn_controller.complete_turn()
-		_face_camera_toward_enemy()
-	shot_charge = 0.0
-	is_charging_shot = false
-	_update_power_bar()
+	for id in player_velocities:
+		player_velocities[id] = Vector3.ZERO
+	_update_player_nodes()
+	_face_camera_toward_enemy()
 	_update_hud()
-	_update_camera_transform()
-
-func _apply_player_damage(center: Vector3, radius: float, max_damage: int) -> void:
-	for player: Variant in players:
-		if not player.is_alive:
-			continue
-		var distance: float = player.position.distance_to(center)
-		if distance > radius:
-			continue
-		var factor: float = 1.0 - (distance / radius)
-		player.apply_damage(int(round(float(max_damage) * factor)))
 
 func _setup_players() -> void:
-	players = [
-		_create_player("blue_1", "Blue 1", 1, Vector2i(12, 36), Color(0.15, 0.36, 1.0)),
-		_create_player("red_1", "Red 1", 2, Vector2i(83, 36), Color(1.0, 0.18, 0.12)),
-		_create_player("blue_2", "Blue 2", 1, Vector2i(12, 42), Color(0.15, 0.36, 1.0)),
-		_create_player("red_2", "Red 2", 2, Vector2i(83, 42), Color(1.0, 0.18, 0.12)),
-		_create_player("blue_3", "Blue 3", 1, Vector2i(12, 48), Color(0.15, 0.36, 1.0)),
-		_create_player("red_3", "Red 3", 2, Vector2i(83, 48), Color(1.0, 0.18, 0.12)),
-		_create_player("blue_4", "Blue 4", 1, Vector2i(12, 54), Color(0.15, 0.36, 1.0)),
-		_create_player("red_4", "Red 4", 2, Vector2i(83, 54), Color(1.0, 0.18, 0.12)),
-		_create_player("blue_5", "Blue 5", 1, Vector2i(12, 60), Color(0.15, 0.36, 1.0)),
-		_create_player("red_5", "Red 5", 2, Vector2i(83, 60), Color(1.0, 0.18, 0.12)),
-	]
-	turn_controller = TurnController.new(players)
+	runner = MatchFactory.create_match()
+	rules = runner.rules
+	move_speed = rules.move_speed
+	jump_speed = rules.jump_speed
+	player_gravity = rules.player_gravity
+	min_shot_power = rules.min_shot_power
+	max_shot_power = rules.max_shot_power
+	max_charge_time = rules.max_charge_time
+	voxel_world.world = runner.world
+	voxel_world.material_configs = runner.materials
+	_bind_players()
+
+func _bind_players() -> void:
+	players = runner.state.players
+	turn_controller = runner.state
+	for node in player_nodes.values():
+		node.queue_free()
+	player_nodes.clear()
+	player_velocities.clear()
+	player_walk_phases.clear()
+	for player in players:
+		player_velocities[player.player_id] = Vector3.ZERO
+		player_walk_phases[player.player_id] = 0.0
+		var color := Color(0.15, 0.36, 1.0) if player.team_id == 1 else Color(1.0, 0.18, 0.12)
+		var marker := _create_player_marker(color)
+		add_child(marker)
+		player_nodes[player.player_id] = marker
 	_face_camera_toward_enemy()
 	_update_player_nodes()
 
-func _create_player(player_id: String, display_name: String, team_id: int, spawn_xz: Vector2i, color: Color) -> RefCounted:
-	var player: RefCounted = PlayerState.new()
-	player.player_id = player_id
-	player.display_name = display_name
-	player.team_id = team_id
-	player.position = voxel_world.get_surface_world_position(spawn_xz.x, spawn_xz.y)
-	player.health = 100
-	player.is_alive = true
-	player_velocities[player_id] = Vector3.ZERO
-	player_walk_phases[player_id] = 0.0
-
-	var marker := _create_player_marker(color)
-	add_child(marker)
-	player_nodes[player_id] = marker
-	return player
+func restart_match() -> void:
+	if is_instance_valid(active_projectile):
+		active_projectile.queue_free()
+	active_projectile = null
+	projectile_in_flight = false
+	pending_result = {}
+	runner.reset()
+	selected_weapon_id = 1
+	_bind_players()
+	_cancel_aim()
+	voxel_world._mark_all_chunks_dirty()
+	voxel_world.rebuild_dirty_chunks()
 
 func _create_player_marker(color: Color) -> Node3D:
 	var root := Node3D.new()
@@ -331,6 +342,9 @@ func _update_hud() -> void:
 	elif active_player != null:
 		status = "Turn %d: %s" % [turn_controller.turn_id + 1, active_player.display_name]
 	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
+	var weapon: Resource = runner.weapons[selected_weapon_id]
+	var ammo: int = runner.state.inventory[active_player.player_id][selected_weapon_id] if active_player != null else 0
+	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	hud_label.text = status
@@ -499,18 +513,14 @@ func _cancel_aim() -> void:
 		trajectory_preview.hide()
 	_update_hud()
 
-func _get_projectile_speed(power: float) -> float:
-	var ratio := inverse_lerp(min_shot_power, max_shot_power, clampf(power, min_shot_power, max_shot_power))
-	return lerpf(min_projectile_speed, max_projectile_speed, ratio)
-
 func _get_trajectory_points() -> PackedVector3Array:
 	var player: Variant = turn_controller.get_active_player()
 	if player == null:
 		return PackedVector3Array()
 	var origin: Vector3 = player.position + Vector3.UP * 1.3
 	var target := _get_crosshair_world_point(get_viewport().get_visible_rect().size * 0.5)
-	var velocity := (target - origin).normalized() * _get_projectile_speed(_get_current_shot_power())
-	return DebugProjectile.predict_trajectory(origin, velocity, voxel_world, 1.0 / float(Engine.physics_ticks_per_second))
+	var result := Simulation.simulate(runner.world, origin, target - origin, _get_current_shot_power(), runner.weapons[selected_weapon_id], rules, runner.materials)
+	return result.path
 
 func _setup_trajectory_preview() -> void:
 	trajectory_preview = MeshInstance3D.new()
@@ -538,21 +548,3 @@ func _update_trajectory_preview() -> void:
 	mesh.surface_end()
 	trajectory_preview.mesh = mesh
 
-func _settle_players() -> void:
-	# Resolve the support below each pawn before handing over the turn.
-	# Searching downwards avoids teleporting a pawn onto an overhead roof.
-	for player: Variant in players:
-		if not player.is_alive:
-			continue
-		var x := floori(player.position.x)
-		var z := floori(player.position.z)
-		var supported := false
-		for y in range(mini(floori(player.position.y), voxel_world.world_size.y - 1), -1, -1):
-			var voxel := Vector3i(x, y, z)
-			if voxel_world.world.is_in_bounds(voxel) and voxel_world.world.get_material_id(voxel) != 0:
-				player.position.y = float(y + 1)
-				supported = true
-				break
-		if not supported:
-			player.apply_damage(player.health)
-		player_velocities[player.player_id] = Vector3.ZERO
