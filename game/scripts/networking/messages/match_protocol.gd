@@ -14,7 +14,7 @@ static func integer(value: Variant, minimum: int, maximum: int) -> bool:
 	return number(value) and float(value) == floor(float(value)) and value >= minimum and value <= maximum
 
 static func vector(value: Variant) -> bool:
-	return value is Array and value.size() == 3 and number(value[0]) and number(value[1]) and number(value[2])
+	return value is Array and value.size() == 3 and number(value[0]) and number(value[1]) and number(value[2]) and absf(value[0]) <= 1e6 and absf(value[1]) <= 1e6 and absf(value[2]) <= 1e6
 
 static func encode_command(command: RefCounted) -> Dictionary:
 	return {"version": VERSION, "player_id": command.player_id, "turn_id": command.turn_id, "generation": command.generation, "weapon_id": command.weapon_id, "aim_direction": [command.aim_direction.x, command.aim_direction.y, command.aim_direction.z], "shot_power": command.shot_power}
@@ -158,3 +158,26 @@ static func unpack(bytes: PackedByteArray) -> Dictionary:
 		return {}
 	var data = JSON.parse_string(bytes.get_string_from_utf8())
 	return data if data is Dictionary and data.get("version") == VERSION else {}
+
+static func valid_events(events: Variant) -> bool:
+	if not events is Array or events.size() > 64:
+		return false
+	for event in events:
+		if not event is Dictionary:
+			return false
+		match event.get("type", ""):
+			"ShotResolved":
+				if not event.get("hit") is bool or not vector(event.get("position")) or not integer(event.get("weapon_id"), 1, 3) or not integer(event.get("turn_id"), 0, 2147483647) or not integer(event.get("seed"), 0, 2147483647) or not integer(event.get("radius"), 0, 64):
+					return false
+			"TurnStarted":
+				if not event.get("player_id") is String or not integer(event.get("turn_id"), 0, 2147483647):
+					return false
+			"PlayerDamaged":
+				if not event.get("player_id") is String or not integer(event.get("amount"), 0, 10000):
+					return false
+			"MatchEnded":
+				if not event.get("player_id") is String or not integer(event.get("team_id"), 0, 10):
+					return false
+			_:
+				return false
+	return true

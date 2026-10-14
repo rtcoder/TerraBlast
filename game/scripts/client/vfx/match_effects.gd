@@ -36,7 +36,7 @@ func _explosion(position: Vector3, radius: float) -> void:
 
 func _tone(frequency: float, duration: float, noise: bool = false) -> void:
 	# Procedural, original short cues; no external audio assets or core side effects.
-	if get_child_count() > 20:
+	if DisplayServer.get_name() == "headless" or get_child_count() > 20:
 		return
 	var rate := 22050
 	var bytes := PackedByteArray()

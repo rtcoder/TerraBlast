@@ -68,7 +68,7 @@ func _handle(sender: int, data: Dictionary) -> void:
 			var axis = data.get("axis")
 			if not axis is Array or axis.size() != 2 or not Protocol.number(axis[0]) or not Protocol.number(axis[1]) or absf(axis[0]) > 1 or absf(axis[1]) > 1 or not Protocol.number(data.get("yaw")) or absf(data.yaw) > 1e6 or not data.get("jump") is bool:
 				return
-			motion[active.player_id] = {"vector": Vector2(axis[0], axis[1]), "yaw": data.yaw, "jump": data.jump, "at": Time.get_ticks_msec()}
+			motion[active.player_id] = {"vector": Vector2(axis[0], axis[1]), "yaw": data.yaw, "jump": data.jump or motion.get(active.player_id, {}).get("jump", false), "at": Time.get_ticks_msec()}
 		"command":
 			var command = Protocol.decode_command(data.get("command"))
 			if command == null or command.player_id != slots[sender]:
@@ -79,6 +79,8 @@ func _handle(sender: int, data: Dictionary) -> void:
 				return
 			var result: Dictionary = runner.submit(command)
 			if result.ok:
+				motion.clear()
+				velocities.clear()
 				playback_remaining = maxf(0.05, (result.path.size() - 1) * runner.rules.projectile_step)
 				_broadcast({"type": "result", "result": Protocol.encode_result(result)})
 			else:

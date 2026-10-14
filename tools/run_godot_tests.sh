@@ -14,7 +14,7 @@ run_case() {
     return 1
   fi
 }
-for script in unit/core_tests unit/mvp_tests integration/debug_scene_smoke integration/artillery_flow_tests integration/match_ui_tests integration/mvp_smoke integration/network_smoke; do
+for script in unit/core_tests unit/mvp_tests integration/debug_scene_smoke integration/artillery_flow_tests integration/match_ui_tests integration/mvp_smoke integration/review_regressions integration/network_smoke; do
   run_case "${script##*/}" --headless --script "tests/$script.gd"
 done
 run_case server --headless -- --mode server --port 19174 --smoke
@@ -24,4 +24,5 @@ fi
 if [[ "${RUN_RENDER_TESTS:-0}" == 1 ]]; then
   run_case render --script tests/integration/mvp_smoke.gd
 fi
+python3 tools/run_network_process_test.py
 rm -r "$test_dir"

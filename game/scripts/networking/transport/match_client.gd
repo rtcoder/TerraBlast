@@ -73,7 +73,7 @@ func _handle(data: Dictionary) -> void:
 				synchronized.emit()
 		"result":
 			var result = data.get("result")
-			if not ready_for_match or not result is Dictionary or result.get("version") != Protocol.VERSION:
+			if not ready_for_match or not result is Dictionary or result.get("version") != Protocol.VERSION or result.get("ok") != true or not result.get("reason") is String or not Protocol.valid_events(result.get("events")):
 				return
 			var state = Protocol.decode_state(result.get("state"))
 			var path := Protocol.decode_path(result.get("path"))

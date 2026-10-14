@@ -135,6 +135,11 @@ func tick(delta: float) -> Array:
 	if check_end(events):
 		state.revision += 1
 		return events
+	var active = state.get_active_player()
+	if active == null or not active.is_alive:
+		advance(events)
+		state.revision += 1
+		return events
 	state.time_remaining = maxf(0.0, state.time_remaining - delta)
 	if state.time_remaining <= 0:
 		advance(events)

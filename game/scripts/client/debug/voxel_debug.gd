@@ -4,6 +4,7 @@ const DebugProjectile := preload("res://scripts/client/debug/debug_projectile.gd
 const PlayerActionCommand := preload("res://scripts/core/turns/player_action_command.gd")
 const PlayerState := preload("res://scripts/core/rules/player_state.gd")
 const MatchFactory := preload("res://scripts/core/rules/match_factory.gd")
+const PlayerMotion := preload("res://scripts/core/rules/player_motion.gd")
 const Simulation := preload("res://scripts/core/projectiles/projectile_simulation.gd")
 const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 
@@ -429,29 +430,7 @@ func _update_active_player_movement(delta: float) -> void:
 	if active_player == null or not active_player.is_alive:
 		return
 
-	active_player.rotation = Basis(Vector3.UP, orbit_yaw)
-
-	var input_vector := _get_move_input()
-	var forward := Vector3(sin(orbit_yaw), 0.0, cos(orbit_yaw)).normalized()
-	var right := forward.cross(Vector3.UP).normalized()
-	var move_direction := (forward * input_vector.y + right * input_vector.x)
-	if move_direction.length_squared() > 0.001:
-		move_direction = move_direction.normalized()
-
-	var velocity: Vector3 = player_velocities.get(active_player.player_id, Vector3.ZERO)
-	velocity.x = move_direction.x * move_speed
-	velocity.z = move_direction.z * move_speed
-	velocity.y -= player_gravity * delta
-
-	active_player.position += velocity * delta
-	active_player.position.x = clampf(active_player.position.x, 1.0, float(voxel_world.world_size.x - 2))
-	active_player.position.z = clampf(active_player.position.z, 1.0, float(voxel_world.world_size.z - 2))
-
-	var ground_y: float = voxel_world.get_surface_y(floori(active_player.position.x), floori(active_player.position.z))
-	if active_player.position.y <= ground_y:
-		active_player.position.y = ground_y
-		velocity.y = 0.0
-
+	var velocity: Vector3 = PlayerMotion.move(runner.world, active_player, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta, rules)
 	player_velocities[active_player.player_id] = velocity
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	if horizontal_speed > 0.05:
@@ -470,7 +449,7 @@ func _try_jump_active_player() -> void:
 	if active_player == null:
 		return
 
-	var ground_y: float = voxel_world.get_surface_y(floori(active_player.position.x), floori(active_player.position.z))
+	var ground_y: float = PlayerMotion.surface(runner.world, floori(active_player.position.x), floori(active_player.position.z))
 	if active_player.position.y > ground_y + 0.05:
 		return
 

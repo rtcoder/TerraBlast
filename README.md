@@ -36,7 +36,7 @@ bash tools/run_godot_tests.sh
 RUN_NAKAMA_TESTS=1 RUN_RENDER_TESTS=1 bash tools/run_godot_tests.sh
 ```
 
-The runner fails on Godot script errors as well as nonzero exits. Network tests use UDP 19173; bootstrap smoke uses 19174. Set `GODOT_BIN` for another installation. Nakama smoke requires the local Compose stack. Render smoke saves `/tmp/terrablast-mvp.png`.
+The runner fails on Godot script errors as well as nonzero exits. Network tests use UDP 19173; bootstrap smoke uses 19174, and the separate-process gameplay smoke uses 19175. Set `GODOT_BIN` for another installation. Nakama smoke requires the local Compose stack. Render smoke saves `/tmp/terrablast-mvp.png`.
 
 ## Boundaries
 
