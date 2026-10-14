@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponConfig" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/core/weapons/weapon_config.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = 2
+code = "grenade"
+display_name = "Grenade"
+projectile_speed = 40.0
+gravity_scale = 1
+explosion_radius = 6
+terrain_damage = 170
+player_damage = 50
+max_uses_per_match = 5
+behavior = "grenade"
