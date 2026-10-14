@@ -13,6 +13,7 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var effects: Node3D
 var backend_menu: CanvasLayer
 var menu_open := false
 var network: Node
@@ -55,8 +56,6 @@ var shot_charge := 0.0
 var min_shot_power := 0.25
 var max_shot_power := 4.0
 var max_charge_time := 1.4
-var min_projectile_speed := 10.0
-var max_projectile_speed := 88.0
 var aim_fallback_distance := 80.0
 
 func _ready() -> void:
@@ -66,6 +65,9 @@ func _ready() -> void:
 	if remote_mode:
 		_connect_network(GameConfig.argument("--host", "127.0.0.1"))
 	_setup_trajectory_preview()
+	effects = load("res://scripts/client/vfx/match_effects.gd").new()
+	effects.name = "MatchEffects"
+	add_child(effects)
 	_update_camera_transform()
 	_update_power_bar()
 	_update_hud()
@@ -89,6 +91,7 @@ func _physics_process(delta: float) -> void:
 	if not remote_mode and not projectile_in_flight:
 		var events: Array = runner.tick(delta)
 		if not events.is_empty():
+			effects.play_events(events)
 			_cancel_aim()
 			_face_camera_toward_enemy()
 	_update_hud()
@@ -240,6 +243,7 @@ func _play_result(result: Dictionary) -> void:
 	active_projectile.finished.connect(_finish_playback)
 
 func _finish_playback() -> void:
+	effects.play_events(pending_result.get("events", []))
 	voxel_world.refresh_deltas(pending_result.get("deltas", []))
 	pending_result = {}
 	active_projectile = null

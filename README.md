@@ -1,43 +1,48 @@
 # TerraBlast
 
-TerraBlast is a desktop-first Godot 4 project for turn-based voxel artillery battles on destructible arenas.
-
-Project pillars:
-
-- Godot 4.x and GDScript.
-- Server-authoritative gameplay.
-- Pure core simulation separated from client UI and runtime Nodes.
-- Chunked voxel terrain with blocky destruction for MVP.
-- Nakama and PostgreSQL for auth, matchmaking, lobby, and meta-game later.
-
-## Current State
-
-This repository contains the initial Godot project structure, core voxel data models, explosion logic, and a lightweight Godot test runner for coordinate and destruction behavior.
+Desktop-first Godot 4.6 voxel artillery with a shared pure GDScript simulation, local play and a dedicated ENet server. Nakama handles development guest accounts, lobbies and 1v1 matchmaking.
 
 ## Run
 
-Open `game/project.godot` in Godot 4.
-
-From macOS, if Godot is installed as an app:
-
-```bash
+```sh
+# Local 5v5 hot-seat match (default)
 /Applications/Godot.app/Contents/MacOS/Godot --path game
+# Dedicated server, two players, UDP 19170
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path game -- --mode server
+# Run twice for two network players
+/Applications/Godot.app/Contents/MacOS/Godot --path game -- --mode client --host 127.0.0.1
 ```
 
-The default scene is now the voxel debug arena:
+`--port 19170` overrides the gameplay port for server and client. `--mode local-dev` selects local play. See [Nakama setup](docs/backend.md) for guest login, lobbies and matchmaking; gameplay server allocation is manual in this development prototype.
 
-- mouse movement rotates the third-person camera,
-- WASD or arrow keys move the active player,
-- space jumps,
-- hold right mouse button to aim and see the trajectory,
-- while aiming, hold left mouse button to charge shot power,
-- release left mouse button to fire from the crosshair,
-- mouse wheel zooms,
-- release right mouse button or press Esc to cancel aiming and charging,
-- Esc releases the mouse cursor; clicking to recapture it does not fire.
+## Controls
 
-Run unit tests:
+- Mouse: orbit/aim; wheel: zoom.
+- WASD/arrows: move active player; Space: jump.
+- Hold RMB: aim and display trajectory.
+- While aiming, hold LMB to charge; release LMB to fire.
+- Release RMB or press Esc to cancel charging. Esc releases cursor; recapturing it cannot fire.
+- 1/2/3: bazooka / grenade / drill missile. Grenade bounces until its fuse; drill penetrates a bounded number of destructible voxels. Metal stops the drill.
+- R: restart (network match: blue player only).
+- F2: multiplayer panel, guest login, lobby create/join, 1v1 matchmaking and gameplay server connection.
 
-```bash
-/Applications/Godot.app/Contents/MacOS/Godot --headless --path game --script tests/unit/core_tests.gd
+HUD shows turn, team HP, weapon, ammo, timer and flight state. Dead players are skipped; eliminating the last opposing team ends the match. Unsupported players are eliminated. Restart restores terrain, players, ammo and turn state.
+
+## Tests
+
+```sh
+bash tools/run_godot_tests.sh
+# Also test running Nakama and actual macOS rendering:
+RUN_NAKAMA_TESTS=1 RUN_RENDER_TESTS=1 bash tools/run_godot_tests.sh
 ```
+
+The runner fails on Godot script errors as well as nonzero exits. Network tests use UDP 19173; bootstrap smoke uses 19174. Set `GODOT_BIN` for another installation. Nakama smoke requires the local Compose stack. Render smoke saves `/tmp/terrablast-mvp.png`.
+
+## Boundaries
+
+- `scripts/core`: rules/resources, weapons, 30 Hz simulation, match state and resolution.
+- `scripts/client`: input, HUD, preview/playback, temporary VFX and procedural audio; never authoritative network damage.
+- `scripts/networking`: validated commands/results, terrain deltas, chunk snapshots and ENet adapters.
+- `scripts/server`: headless entrypoint; no rendering or UI scenes.
+
+Initial/recovery transfers use chunk snapshots. Normal shots send final voxel deltas and authoritative match results. ENet identities are assigned local development slots; production authentication, server allocation and internet deployment are outside this prototype.
