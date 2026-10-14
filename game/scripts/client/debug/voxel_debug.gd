@@ -13,6 +13,9 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var network: Node
+var network_status := ""
+var remote_mode := false
 var runner: RefCounted
 var rules: Resource
 var selected_weapon_id := 1
@@ -56,14 +59,17 @@ var aim_fallback_distance := 80.0
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	remote_mode = GameConfig.mode == "client"
 	_setup_players()
+	if remote_mode:
+		_connect_network(GameConfig.argument("--host", "127.0.0.1"))
 	_setup_trajectory_preview()
 	_update_camera_transform()
 	_update_power_bar()
 	_update_hud()
 
 func _physics_process(delta: float) -> void:
-	if not projectile_in_flight:
+	if not remote_mode and not projectile_in_flight:
 		var events: Array = runner.tick(delta)
 		if not events.is_empty():
 			_cancel_aim()
@@ -124,7 +130,7 @@ func _input(event: InputEvent) -> void:
 			_cancel_aim()
 
 func _start_charging_shot() -> void:
-	if not is_aiming or projectile_in_flight or turn_controller.has_winner():
+	if not _can_control() or not is_aiming or projectile_in_flight or turn_controller.has_winner():
 		return
 	is_charging_shot = true
 	shot_charge = 0.0
@@ -161,6 +167,8 @@ func _fire_at_screen_center(shot_power: float = 1.0) -> void:
 	_fire_at_mouse(viewport_size * 0.5, shot_power)
 
 func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
+	if not _can_control():
+		return
 	if projectile_in_flight or turn_controller.has_winner():
 		return
 
@@ -178,6 +186,10 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 	command.weapon_id = selected_weapon_id
 	command.aim_direction = aim_direction.normalized()
 	command.shot_power = shot_power
+	if remote_mode:
+		network.send_command(command)
+		_cancel_aim()
+		return
 	var result: Dictionary = runner.submit(command)
 	if not result.ok:
 		return
@@ -216,7 +228,7 @@ func _finish_playback() -> void:
 	_update_hud()
 
 func _setup_players() -> void:
-	runner = MatchFactory.create_match()
+	runner = MatchFactory.create_match(2 if remote_mode else 10)
 	rules = runner.rules
 	move_speed = rules.move_speed
 	jump_speed = rules.jump_speed
@@ -247,6 +259,9 @@ func _bind_players() -> void:
 	_update_player_nodes()
 
 func restart_match() -> void:
+	if remote_mode:
+		network.restart_match()
+		return
 	if is_instance_valid(active_projectile):
 		active_projectile.queue_free()
 	active_projectile = null
@@ -348,6 +363,8 @@ func _update_hud() -> void:
 	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
+	if remote_mode:
+		status += "\n" + network_status
 	hud_label.text = status
 
 func _team_status_text(team_id: int, label: String) -> String:
@@ -372,6 +389,10 @@ func _winner_status_text() -> String:
 	return "Winner: Blue" if team_id == 1 else "Winner: Red"
 
 func _update_active_player_movement(delta: float) -> void:
+	if remote_mode:
+		if _can_control() and not projectile_in_flight:
+			network.move_player(_get_move_input(), orbit_yaw)
+		return
 	if turn_controller == null or projectile_in_flight or turn_controller.has_winner():
 		return
 
@@ -409,6 +430,10 @@ func _update_active_player_movement(delta: float) -> void:
 		player_walk_phases[active_player.player_id] = phase + delta * 9.0 * clampf(horizontal_speed / move_speed, 0.25, 1.0)
 
 func _try_jump_active_player() -> void:
+	if remote_mode:
+		if _can_control() and not projectile_in_flight:
+			network.move_player(_get_move_input(), orbit_yaw, true)
+		return
 	if turn_controller == null or projectile_in_flight or turn_controller.has_winner():
 		return
 
@@ -549,3 +574,43 @@ func _update_trajectory_preview() -> void:
 	mesh.surface_end()
 	trajectory_preview.mesh = mesh
 
+
+func _can_control() -> bool:
+	if not remote_mode:
+		return true
+	var active = turn_controller.get_active_player()
+	return network != null and network.ready_for_match and active != null and active.player_id == network.player_id
+
+func _connect_network(host: String) -> void:
+	network = load("res://scripts/networking/transport/match_client.gd").new()
+	add_child(network)
+	network.status_changed.connect(func(message: String): network_status = message)
+	network.synchronized.connect(_sync_network)
+	network.result_received.connect(func(result: Dictionary):
+		runner = network.runner
+		players = runner.state.players
+		turn_controller = runner.state
+		_play_result(result)
+	)
+	network.connect_to_server(host, int(GameConfig.argument("--port", "19170")))
+
+func _sync_network() -> void:
+	var replaced: bool = runner != network.runner
+	var previous_turn: int = turn_controller.turn_id
+	runner = network.runner
+	voxel_world.world = runner.world
+	if replaced:
+		if is_instance_valid(active_projectile):
+			active_projectile.queue_free()
+		active_projectile = null
+		pending_result = {}
+		projectile_in_flight = false
+		_bind_players()
+		voxel_world._mark_all_chunks_dirty()
+		voxel_world.rebuild_dirty_chunks()
+	else:
+		players = runner.state.players
+		turn_controller = runner.state
+	if previous_turn != turn_controller.turn_id:
+		_cancel_aim()
+		_face_camera_toward_enemy()

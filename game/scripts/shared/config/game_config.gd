@@ -18,3 +18,8 @@ func _read_mode_from_args() -> String:
 			return args[index + 1]
 	return mode
 
+
+func argument(flag: String, fallback: String) -> String:
+	var args := OS.get_cmdline_user_args()
+	var index := args.find(flag)
+	return args[index + 1] if index >= 0 and index + 1 < args.size() else fallback
