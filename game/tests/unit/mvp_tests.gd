@@ -22,6 +22,7 @@ func _initialize() -> void:
 			check(not weapon.validate(), "Reject negative weapon speed")
 	_test_projectiles()
 	_test_match()
+	_test_protocol()
 	print("MVP tests: %d failures" % failures)
 	quit(1 if failures else 0)
 
@@ -93,3 +94,31 @@ func _test_match() -> void:
 		player.apply_damage(100)
 	runner.tick(0.01)
 	check(runner.state.status == "ended" and runner.state.winner_team == 0, "No survivors is draw")
+
+func _test_protocol() -> void:
+	var path := "res://scripts/networking/messages/match_protocol.gd"
+	check(ResourceLoader.exists(path), "Transport protocol exists")
+	if not ResourceLoader.exists(path):
+		return
+	var protocol = load(path)
+	var world = load("res://scripts/core/voxels/voxel_world_data.gd").new(Vector3i(16, 16, 16))
+	world.set_voxel(Vector3i(1, 2, 3), 2, 77)
+	var snapshot: Dictionary = protocol.chunk_snapshot(world, Vector3i.ZERO)
+	var target = load("res://scripts/core/voxels/voxel_world_data.gd").new(Vector3i(16, 16, 16))
+	check(protocol.apply_chunk(target, snapshot), "Chunk snapshot accepted")
+	check(target.get_health(Vector3i(1, 2, 3)) == 77, "Snapshot final health")
+	var deltas := [{"position": [1, 2, 3], "material_id": 0, "health": 0}]
+	check(protocol.apply_deltas(target, deltas), "Valid terrain delta")
+	check(target.get_material_id(Vector3i(1, 2, 3)) == 0, "Delta final material")
+	deltas.append({"position": [-1, 0, 0], "material_id": 2, "health": 12})
+	target.set_voxel(Vector3i(1, 2, 3), 2, 77)
+	check(not protocol.apply_deltas(target, deltas) and target.get_health(Vector3i(1, 2, 3)) == 77, "Invalid batch is atomic")
+	var command = load("res://scripts/core/turns/player_action_command.gd").new()
+	command.player_id = "blue_1"
+	command.weapon_id = 1
+	command.aim_direction = Vector3.UP
+	var encoded: Dictionary = protocol.encode_command(command)
+	check(protocol.decode_command(JSON.parse_string(JSON.stringify(encoded))) != null, "Command JSON round trip")
+	encoded.aim_direction = [INF, 0, 1]
+	check(protocol.decode_command(encoded) == null, "Reject infinite direction")
+	check(protocol.decode_command({}) == null, "Reject missing command fields")

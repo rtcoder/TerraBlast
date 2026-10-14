@@ -50,6 +50,8 @@ func reset() -> void:
 			state.inventory[player.player_id][id] = weapons[id].max_uses_per_match
 
 func submit(command: RefCounted) -> Dictionary:
+	if command.generation != state.generation:
+		return {"ok": false, "reason": "stale_generation"}
 	if state.status != "playing":
 		return {"ok": false, "reason": "match_ended"}
 	if not is_finite(command.shot_power) or not command.aim_direction.is_finite() or command.aim_direction.length_squared() < 0.001:

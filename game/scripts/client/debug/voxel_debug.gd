@@ -174,6 +174,7 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 	var command: RefCounted = PlayerActionCommand.new()
 	command.player_id = active_player.player_id
 	command.turn_id = turn_controller.turn_id
+	command.generation = turn_controller.generation
 	command.weapon_id = selected_weapon_id
 	command.aim_direction = aim_direction.normalized()
 	command.shot_power = shot_power
