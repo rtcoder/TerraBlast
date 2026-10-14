@@ -130,6 +130,10 @@ func _run() -> void:
 		quit(1)
 		return
 
+	var aim := InputEventMouseButton.new()
+	aim.button_index = MOUSE_BUTTON_RIGHT
+	aim.pressed = true
+	instance._input(aim)
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT
 	press.pressed = true

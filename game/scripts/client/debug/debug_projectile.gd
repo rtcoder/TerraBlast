@@ -3,9 +3,12 @@ extends Node3D
 
 signal exploded(voxel_position: Vector3i)
 
+const GRAVITY := 18.0
+const DEFAULT_LIFETIME := 6.0
+
 @export var radius := 5
 @export var damage := 150
-@export var max_lifetime := 6.0
+@export var max_lifetime := DEFAULT_LIFETIME
 
 var voxel_world: Node3D
 var velocity := Vector3.ZERO
@@ -27,16 +30,16 @@ func _physics_process(delta: float) -> void:
 
 	lifetime += delta
 	previous_position = global_position
-	velocity += Vector3.DOWN * 18.0 * delta
+	velocity += Vector3.DOWN * GRAVITY * delta
 	global_position += velocity * delta
 
-	var hit_voxel := _sweep_for_hit(previous_position, global_position)
+	var hit_voxel := sweep_for_hit(voxel_world, previous_position, global_position)
 	if hit_voxel.x >= 0:
 		_finish(hit_voxel)
 	elif lifetime >= max_lifetime or global_position.y < -8.0:
 		_finish(Vector3i(floori(global_position.x), maxi(0, floori(global_position.y)), floori(global_position.z)))
 
-func _sweep_for_hit(from_position: Vector3, to_position: Vector3) -> Vector3i:
+static func sweep_for_hit(voxel_world: Node3D, from_position: Vector3, to_position: Vector3) -> Vector3i:
 	if voxel_world == null:
 		return Vector3i(-1, -1, -1)
 
@@ -69,3 +72,17 @@ func _add_visual() -> void:
 	mesh_instance.material_override = material
 	add_child(mesh_instance)
 
+
+static func predict_trajectory(origin: Vector3, initial_velocity: Vector3, world: Node3D, delta: float) -> PackedVector3Array:
+	var points := PackedVector3Array([origin])
+	var position := origin
+	var speed := initial_velocity
+	for tick in range(ceili(DEFAULT_LIFETIME / delta)):
+		speed += Vector3.DOWN * GRAVITY * delta
+		var next := position + speed * delta
+		var hit := sweep_for_hit(world, position, next)
+		points.append(next)
+		if hit.x >= 0 or next.y < -8.0:
+			break
+		position = next
+	return points

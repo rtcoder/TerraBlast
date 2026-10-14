@@ -34,6 +34,8 @@ var players: Array = []
 var player_nodes: Dictionary = {}
 var turn_controller: RefCounted
 var projectile_in_flight := false
+var is_aiming := false
+var trajectory_preview: MeshInstance3D
 var is_charging_shot := false
 var mouse_look_enabled := true
 var shot_charge := 0.0
@@ -47,6 +49,7 @@ var aim_fallback_distance := 80.0
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	_setup_players()
+	_setup_trajectory_preview()
 	_update_camera_transform()
 	_update_power_bar()
 	_update_hud()
@@ -57,17 +60,28 @@ func _physics_process(delta: float) -> void:
 	_update_player_nodes()
 	_update_camera_transition(delta)
 	_update_camera_transform()
+	_update_trajectory_preview()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
+				if not is_aiming and Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 					Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+					mouse_look_enabled = true
+					return
 				mouse_look_enabled = true
 				_start_charging_shot()
 			else:
 				_release_charged_shot()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			is_aiming = event.pressed and not projectile_in_flight and not turn_controller.has_winner()
+			if is_aiming:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				mouse_look_enabled = true
+			else:
+				_cancel_aim()
+			_update_hud()
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			camera_distance = maxf(6.0, camera_distance - 1.0)
 			_update_camera_transform()
@@ -87,9 +101,10 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_ESCAPE:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 			mouse_look_enabled = false
+			_cancel_aim()
 
 func _start_charging_shot() -> void:
-	if projectile_in_flight or turn_controller.has_winner():
+	if not is_aiming or projectile_in_flight or turn_controller.has_winner():
 		return
 	is_charging_shot = true
 	shot_charge = 0.0
@@ -162,13 +177,12 @@ func _get_crosshair_world_point(screen_position: Vector2) -> Vector3:
 
 func _spawn_projectile(from_position: Vector3, aim_direction: Vector3, shot_power: float = 1.0) -> void:
 	projectile_in_flight = true
+	_cancel_aim()
 	var projectile: Node3D = DebugProjectile.new()
 	add_child(projectile)
 	projectile.global_position = from_position
 
-	var charge_ratio := inverse_lerp(min_shot_power, max_shot_power, clampf(shot_power, min_shot_power, max_shot_power))
-	var speed := lerpf(min_projectile_speed, max_projectile_speed, charge_ratio)
-	var initial_velocity := aim_direction.normalized() * speed
+	var initial_velocity := aim_direction.normalized() * _get_projectile_speed(shot_power)
 	projectile.launch(initial_velocity, voxel_world)
 	projectile.exploded.connect(_on_projectile_exploded)
 
@@ -178,6 +192,7 @@ func _on_projectile_exploded(voxel_position: Vector3i) -> void:
 func _resolve_explosion(voxel_position: Vector3i, should_advance_turn: bool) -> void:
 	voxel_world.apply_debug_explosion(voxel_position, 5, 150)
 	_apply_player_damage(Vector3(voxel_position) + Vector3(0.5, 0.5, 0.5), 5.5, 42)
+	_settle_players()
 	_update_player_nodes()
 	projectile_in_flight = false
 	if should_advance_turn and not turn_controller.has_winner():
@@ -316,7 +331,8 @@ func _update_hud() -> void:
 	elif active_player != null:
 		status = "Turn %d: %s" % [turn_controller.turn_id + 1, active_player.display_name]
 	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
-	status += "\nHold LMB charge   Release fire   WASD/Arrows move"
+	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
+	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	hud_label.text = status
 
 func _team_status_text(team_id: int, label: String) -> String:
@@ -473,3 +489,70 @@ func _ensure_camera_transition_initialized(target: Vector3) -> void:
 	camera_focus_position = target
 	camera_visual_yaw = orbit_yaw
 	camera_transition_initialized = true
+
+func _cancel_aim() -> void:
+	is_aiming = false
+	is_charging_shot = false
+	shot_charge = 0.0
+	_update_power_bar()
+	if trajectory_preview != null:
+		trajectory_preview.hide()
+	_update_hud()
+
+func _get_projectile_speed(power: float) -> float:
+	var ratio := inverse_lerp(min_shot_power, max_shot_power, clampf(power, min_shot_power, max_shot_power))
+	return lerpf(min_projectile_speed, max_projectile_speed, ratio)
+
+func _get_trajectory_points() -> PackedVector3Array:
+	var player: Variant = turn_controller.get_active_player()
+	if player == null:
+		return PackedVector3Array()
+	var origin: Vector3 = player.position + Vector3.UP * 1.3
+	var target := _get_crosshair_world_point(get_viewport().get_visible_rect().size * 0.5)
+	var velocity := (target - origin).normalized() * _get_projectile_speed(_get_current_shot_power())
+	return DebugProjectile.predict_trajectory(origin, velocity, voxel_world, 1.0 / float(Engine.physics_ticks_per_second))
+
+func _setup_trajectory_preview() -> void:
+	trajectory_preview = MeshInstance3D.new()
+	trajectory_preview.name = "TrajectoryPreview"
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = Color(1.0, 0.85, 0.15)
+	trajectory_preview.material_override = material
+	trajectory_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(trajectory_preview)
+	trajectory_preview.hide()
+
+func _update_trajectory_preview() -> void:
+	trajectory_preview.visible = is_aiming and not projectile_in_flight and not turn_controller.has_winner()
+	if not trajectory_preview.visible:
+		return
+	var points := _get_trajectory_points()
+	if points.size() < 2:
+		trajectory_preview.hide()
+		return
+	var mesh := ImmediateMesh.new()
+	mesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP)
+	for point in points:
+		mesh.surface_add_vertex(point)
+	mesh.surface_end()
+	trajectory_preview.mesh = mesh
+
+func _settle_players() -> void:
+	# Resolve the support below each pawn before handing over the turn.
+	# Searching downwards avoids teleporting a pawn onto an overhead roof.
+	for player: Variant in players:
+		if not player.is_alive:
+			continue
+		var x := floori(player.position.x)
+		var z := floori(player.position.z)
+		var supported := false
+		for y in range(mini(floori(player.position.y), voxel_world.world_size.y - 1), -1, -1):
+			var voxel := Vector3i(x, y, z)
+			if voxel_world.world.is_in_bounds(voxel) and voxel_world.world.get_material_id(voxel) != 0:
+				player.position.y = float(y + 1)
+				supported = true
+				break
+		if not supported:
+			player.apply_damage(player.health)
+		player_velocities[player.player_id] = Vector3.ZERO

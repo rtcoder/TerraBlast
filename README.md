@@ -29,10 +29,12 @@ The default scene is now the voxel debug arena:
 - mouse movement rotates the third-person camera,
 - WASD or arrow keys move the active player,
 - space jumps,
-- hold left mouse button to charge shot power,
+- hold right mouse button to aim and see the trajectory,
+- while aiming, hold left mouse button to charge shot power,
 - release left mouse button to fire from the crosshair,
 - mouse wheel zooms,
-- Esc releases the mouse cursor.
+- release right mouse button or press Esc to cancel aiming and charging,
+- Esc releases the mouse cursor; clicking to recapture it does not fire.
 
 Run unit tests:
 
