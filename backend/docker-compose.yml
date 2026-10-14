@@ -1,32 +1,41 @@
+name: terrablast-dev
 services:
   postgres:
-    image: postgres:17-alpine
+    image: postgres:17.7-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-nakama}
-      POSTGRES_USER: ${POSTGRES_USER:-nakama}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nakama}
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: nakama
+      POSTGRES_USER: nakama
+      POSTGRES_PASSWORD: terrablast-local-only
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nakama -d nakama"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
   nakama:
-    image: heroiclabs/nakama:latest
+    image: registry.heroiclabs.com/heroiclabs/nakama:3.37.0
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     entrypoint:
       - /bin/sh
-      - -ecx
+      - -ec
       - >
-        /nakama/nakama
-        --database.address ${POSTGRES_USER:-nakama}:${POSTGRES_PASSWORD:-nakama}@postgres:5432/${POSTGRES_DB:-nakama}
-        --logger.level DEBUG
-        --session.token_expiry_sec ${NAKAMA_SESSION_TOKEN_EXPIRY_SEC:-7200}
+        /nakama/nakama migrate up --database.address nakama:terrablast-local-only@postgres:5432/nakama &&
+        exec /nakama/nakama --name terrablast-dev
+        --database.address nakama:terrablast-local-only@postgres:5432/nakama
+        --logger.level INFO --session.token_expiry_sec 7200
+        --socket.server_key terrablast-dev-key
+        --console.username admin --console.password terrablast-local-only
+        --matchmaker.interval_sec 1
     ports:
-      - "7349:7349"
-      - "7350:7350"
-      - "7351:7351"
-
+      - "127.0.0.1:7350:7350"
+      - "127.0.0.1:7351:7351"
+    healthcheck:
+      test: ["CMD", "/nakama/nakama", "healthcheck"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
 volumes:
   postgres_data:
-

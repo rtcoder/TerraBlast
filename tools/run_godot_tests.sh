@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
 GODOT_BIN="${GODOT_BIN:-/Applications/Godot.app/Contents/MacOS/Godot}"
-
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-tests.log --path game --script tests/unit/core_tests.gd
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-tests.log --path game --script tests/integration/debug_scene_smoke.gd
-
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-artillery-tests.log --path game --script tests/integration/artillery_flow_tests.gd
-
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-mvp-tests.log --path game --script tests/unit/mvp_tests.gd
-
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-ui-tests.log --path game --script tests/integration/match_ui_tests.gd
-
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-network-tests.log --path game --script tests/integration/network_smoke.gd
-"$GODOT_BIN" --headless --log-file /tmp/terrablast-server-tests.log --path game -- --mode server --port 19174 --smoke
+test_dir="$(mktemp -d /tmp/terrablast-tests.XXXXXX)"
+run_case() {
+  local name="$1"
+  shift
+  if ! "$GODOT_BIN" --log-file "$test_dir/$name.log" --path game "$@" >"$test_dir/$name.out" 2>&1; then
+    cat "$test_dir/$name.out"
+    return 1
+  fi
+  cat "$test_dir/$name.out"
+  if rg -q 'SCRIPT ERROR:|^ERROR:' "$test_dir/$name.out"; then
+    return 1
+  fi
+}
+for script in unit/core_tests unit/mvp_tests integration/debug_scene_smoke integration/artillery_flow_tests integration/match_ui_tests integration/network_smoke; do
+  run_case "${script##*/}" --headless --script "tests/$script.gd"
+done
+run_case server --headless -- --mode server --port 19174 --smoke
+if [[ "${RUN_NAKAMA_TESTS:-0}" == 1 ]]; then
+  run_case nakama --headless --script tests/integration/nakama_smoke.gd
+fi
+if [[ "${RUN_RENDER_TESTS:-0}" == 1 ]]; then
+  run_case render --script tests/integration/mvp_smoke.gd
+fi
+rm -r "$test_dir"

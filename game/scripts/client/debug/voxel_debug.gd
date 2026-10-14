@@ -13,6 +13,8 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var backend_menu: CanvasLayer
+var menu_open := false
 var network: Node
 var network_status := ""
 var remote_mode := false
@@ -67,6 +69,21 @@ func _ready() -> void:
 	_update_camera_transform()
 	_update_power_bar()
 	_update_hud()
+	backend_menu = load("res://scripts/client/backend/backend_menu.gd").new()
+	add_child(backend_menu)
+	backend_menu.menu_visibility_changed.connect(func(open: bool):
+		menu_open = open
+		_cancel_aim()
+		mouse_look_enabled = not open
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if open else Input.MOUSE_MODE_CAPTURED)
+	)
+	backend_menu.connect_game.connect(func(host: String):
+		remote_mode = true
+		if is_instance_valid(network):
+			network.close()
+			network.queue_free()
+		_connect_network(host)
+	)
 
 func _physics_process(delta: float) -> void:
 	if not remote_mode and not projectile_in_flight:
@@ -84,6 +101,12 @@ func _physics_process(delta: float) -> void:
 	_update_trajectory_preview()
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
+		backend_menu.toggle(not menu_open)
+		get_viewport().set_input_as_handled()
+		return
+	if menu_open:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
@@ -360,7 +383,7 @@ func _update_hud() -> void:
 	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
 	var weapon: Resource = runner.weapons[selected_weapon_id]
 	var ammo: int = runner.state.inventory[active_player.player_id][selected_weapon_id] if active_player != null else 0
-	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
+	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart / F2 multiplayer" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	if remote_mode:
@@ -389,6 +412,8 @@ func _winner_status_text() -> String:
 	return "Winner: Blue" if team_id == 1 else "Winner: Red"
 
 func _update_active_player_movement(delta: float) -> void:
+	if menu_open:
+		return
 	if remote_mode:
 		if _can_control() and not projectile_in_flight:
 			network.move_player(_get_move_input(), orbit_yaw)
@@ -576,6 +601,8 @@ func _update_trajectory_preview() -> void:
 
 
 func _can_control() -> bool:
+	if menu_open:
+		return false
 	if not remote_mode:
 		return true
 	var active = turn_controller.get_active_player()
