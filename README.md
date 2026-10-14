@@ -46,3 +46,21 @@ The runner fails on Godot script errors as well as nonzero exits. Network tests 
 - `scripts/server`: headless entrypoint; no rendering or UI scenes.
 
 Initial/recovery transfers use chunk snapshots. Normal shots send final voxel deltas and authoritative match results. ENet identities are assigned local development slots; production authentication, server allocation and internet deployment are outside this prototype.
+
+## Extended local tools
+
+- Tab (hold): individual HP and elimination scoreboard.
+- F3: volume/mute, mouse sensitivity/invert Y, window/fullscreen. Validated preferences persist in Godot `user://preferences.cfg` and never change authoritative rules.
+- F1: local diagnostics (gravity, weapon damage, turn and mesh counts); `[` / `]` adjust local gravity. Disabled for network clients.
+- F4: retry the same gameplay connection and resume its reserved player slot. Reconnect token stays in memory; reservation expires after the server's configured grace period.
+- Opening a panel, changing turn or losing application focus cancels charging. Weapon selection is remembered per pawn; restart clears it.
+- F2 also provides matchmaking cancellation.
+
+Choose an arena with `--map twin_forts` or `--map two_islands`. Local player count is `--players 2` through `--players 10`; dedicated gameplay remains 1v1. Invalid modes, maps, ports and counts exit with code 2.
+
+```sh
+# Reproducible, renderer-free JSON summary
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path game -- --mode simulate --map two_islands --players 2 --shots 20 --seed 123
+```
+
+The extended tests also use UDP 19176 and verify CLI determinism on both maps. See [terrain](docs/terrain.md) and [weapons](docs/weapons.md) for collision, damage falloff, replay and limits.

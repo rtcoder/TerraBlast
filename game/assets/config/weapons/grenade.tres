@@ -12,3 +12,5 @@ terrain_damage = 170
 player_damage = 50
 max_uses_per_match = 5
 behavior = "grenade"
+player_damage_radius = 6.5
+player_damage_falloff = 1.0

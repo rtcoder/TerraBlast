@@ -114,12 +114,12 @@ static func decode_state(data: Variant) -> RefCounted:
 	for field in ["revision", "generation", "winner_team"]:
 		if not integer(data.get(field), 0, 2147483647):
 			return null
-	if not data.get("winner_player") is String:
+	if not data.get("winner_player") is String or data.winner_player.length() > 64 or data.time_remaining < 0 or data.time_remaining > 3600 or data.inventory.size() != data.players.size():
 		return null
 	var players := []
 	var inventory := {}
 	for entry in data.players:
-		if not entry is Dictionary or not entry.get("id") is String or inventory.has(entry.id) or not entry.get("name") is String or not vector(entry.get("position")) or not integer(entry.get("health"), 0, 10000) or not integer(entry.get("team"), 0, 10) or not entry.get("alive") is bool or entry.alive != (entry.health > 0):
+		if not entry is Dictionary or not entry.get("id") is String or entry.id.is_empty() or entry.id.length() > 64 or inventory.has(entry.id) or not entry.get("name") is String or not vector(entry.get("position")) or not integer(entry.get("health"), 0, 10000) or not integer(entry.get("team"), 0, 10) or not entry.get("alive") is bool or entry.alive != (entry.health > 0):
 			return null
 		var ammo = data.inventory.get(entry.id)
 		if not ammo is Dictionary:
@@ -137,6 +137,16 @@ static func decode_state(data: Variant) -> RefCounted:
 		player.health = int(entry.health)
 		player.is_alive = entry.alive
 		player.position = Vector3(entry.position[0], entry.position[1], entry.position[2])
+		if entry.has("rotation"):
+			if not entry.rotation is Array or entry.rotation.size() != 9:
+				return null
+			for component in entry.rotation:
+				if not number(component) or absf(component) > 1.001:
+					return null
+			var basis := Basis(Vector3(entry.rotation[0], entry.rotation[1], entry.rotation[2]), Vector3(entry.rotation[3], entry.rotation[4], entry.rotation[5]), Vector3(entry.rotation[6], entry.rotation[7], entry.rotation[8]))
+			if not is_equal_approx(basis.determinant(), 1.0):
+				return null
+			player.rotation = basis
 		players.append(player)
 	var state := State.new(players)
 	state.inventory = inventory
@@ -148,6 +158,21 @@ static func decode_state(data: Variant) -> RefCounted:
 	state.generation = int(data.generation)
 	state.winner_team = int(data.winner_team)
 	state.winner_player = data.winner_player
+	if data.has("max_shot_power"):
+		if not number(data.max_shot_power) or data.max_shot_power <= 0 or data.max_shot_power > 100:
+			return null
+		state.max_shot_power = float(data.max_shot_power)
+	if state.status == "playing":
+		if state.get_active_player() == null or not state.get_active_player().is_alive or state.winner_team != 0 or not state.winner_player.is_empty():
+			return null
+	else:
+		if not state.has_winner():
+			return null
+		var living: Array = state.get_living_players()
+		var expected_team: int = living[0].team_id if not living.is_empty() else 0
+		var expected_player: String = living[0].player_id if living.size() == 1 else ""
+		if state.winner_team != expected_team or state.winner_player != expected_player:
+			return null
 	return state
 
 static func packet(data: Dictionary) -> PackedByteArray:
@@ -181,3 +206,25 @@ static func valid_events(events: Variant) -> bool:
 			_:
 				return false
 	return true
+
+static func terrain_checksum(world: RefCounted) -> String:
+	var context := HashingContext.new()
+	context.start(HashingContext.HASH_SHA256)
+	context.update(world.material_ids.to_byte_array())
+	context.update(world.health_values.to_byte_array())
+	return context.finish().hex_encode()
+
+static func valid_snapshot_metadata(data: Dictionary) -> bool:
+	if not data.get("player_id") is String or data.player_id.is_empty() or data.player_id.length() > 64 or not vector(data.get("size")) or not integer(data.get("chunk_size"), 1, 32):
+		return false
+	var count := 1
+	var volume := 1
+	for axis in data.size:
+		if not integer(axis, 1, 256):
+			return false
+		volume *= int(axis)
+		count *= ceili(float(axis) / float(data.chunk_size))
+	return volume <= 2097152 and count <= 8192 and data.get("chunk_count") == count and integer(data.get("terrain_revision"), 0, 2147483647) and integer(data.get("generation"), 0, 2147483647) and integer(data.get("revision"), 0, 2147483647) and data.get("resume_token", "") is String
+
+static func valid_result(result: Variant) -> bool:
+	return result is Dictionary and result.get("version") == VERSION and result.get("ok") == true and result.get("reason") is String and valid_events(result.get("events")) and decode_state(result.get("state")) != null and not decode_path(result.get("path")).is_empty() and result.get("deltas") is Array

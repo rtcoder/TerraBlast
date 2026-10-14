@@ -1,6 +1,8 @@
 class_name ProjectileSimulation
 extends RefCounted
 
+const MAX_SWEEP_SAMPLES := 65536
+
 static func simulate(world: RefCounted, origin: Vector3, direction: Vector3, power: float, weapon: Resource, rules: Resource, materials: Dictionary = {}) -> Dictionary:
 	var result := {"path": PackedVector3Array([origin]), "position": origin, "hit": false, "reason": "invalid", "deltas": []}
 	if not origin.is_finite() or not direction.is_finite() or direction.length_squared() < 0.001 or not is_finite(power) or not rules.validate() or not weapon.validate():
@@ -9,13 +11,19 @@ static func simulate(world: RefCounted, origin: Vector3, direction: Vector3, pow
 	var velocity := direction.normalized() * lerpf(weapon.min_projectile_speed, weapon.projectile_speed, ratio)
 	var position := origin
 	var removed := {}
+	var samples := 0
 	var dt: float = rules.projectile_step
 	var duration: float = weapon.fuse_time if weapon.behavior == "grenade" else rules.max_projectile_lifetime
 	for tick in range(ceili(duration / dt)):
-		velocity += Vector3.DOWN * rules.base_gravity * weapon.gravity_scale * dt
-		var next := position + velocity * dt
+		var step_dt := minf(dt, duration - tick * dt)
+		velocity += Vector3.DOWN * rules.base_gravity * weapon.gravity_scale * step_dt
+		var next := position + velocity * step_dt
 		var distance := position.distance_to(next)
 		var steps := maxi(1, ceili(distance / rules.sweep_step))
+		if samples + steps > MAX_SWEEP_SAMPLES:
+			result.reason = "simulation_budget"
+			return result
+		samples += steps
 		var previous := position
 		var collided := false
 		for step in range(1, steps + 1):

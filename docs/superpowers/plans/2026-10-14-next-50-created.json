@@ -1,0 +1,117 @@
+[
+  {
+    "id": "TB-61",
+    "title": "Rules: Ograniczyć zakresy konfiguracji i koszt symulacji",
+    "description": "Walidacja skończonych wartości, maksymalnych promieni, prędkości, fuse/lifetime i minimalnego sweep kroku. DoD: niepoprawny config odrzucany przed alokacją lub pętlą, testy skrajnych wartości."
+  },
+  {
+    "id": "TB-62",
+    "title": "UI: Tab scoreboard z indywidualnym HP i stanem graczy",
+    "description": "Tabela gracz/team/HP/alive/aktywny. DoD: aktualizuje się z MatchState w local i network; Tab pokazuje i ukrywa, brak wpływu na core."
+  },
+  {
+    "id": "TB-63",
+    "title": "Settings: Regulacja i wyciszenie master audio",
+    "description": "Suwak głośności i mute w panelu klienta. DoD: zmienia AudioServer master bus, zapisuje preferencję, test przywracania."
+  },
+  {
+    "id": "TB-64",
+    "title": "Settings: Czułość myszy i odwrócenie osi Y",
+    "description": "Konfigurowalne sensitivity i invert Y. DoD: input faktycznie używa ustawień, test obu osi i ograniczeń zakresu."
+  },
+  {
+    "id": "TB-65",
+    "title": "Settings: Tryb okna i fullscreen",
+    "description": "Przełącznik fullscreen/windowed z przywróceniem preferencji; bez wymuszania rozdzielczości systemu. DoD: ustawienie działa na desktopie i ma bezpieczny fallback headless."
+  },
+  {
+    "id": "TB-66",
+    "title": "Settings: Trwały i walidowany zapis preferencji klienta",
+    "description": "Osobny model preferencji z ConfigFile, bez sekretów. DoD: błędny plik lub wartości mają bezpieczne defaulty, test roundtrip i uszkodzonego pliku."
+  },
+  {
+    "id": "TB-67",
+    "title": "Input: Anulować ładowanie po utracie fokusu okna",
+    "description": "Utrata fokusu, otwarcie panelu i zmiana tury przerywają charge. DoD: odzyskanie fokusu i puszczenie LPM nie powodują strzału; regresja integracyjna."
+  },
+  {
+    "id": "TB-68",
+    "title": "Weapons: Zapamiętywać wybór broni osobno dla graczy",
+    "description": "Przy zmianie tury przywrócić wybór danego gracza, reset przywraca bazookę. DoD: wybór gracza A nie nadpisuje B; test dwóch tur i resetu."
+  },
+  {
+    "id": "TB-69",
+    "title": "Movement: Zablokować przenikanie przez pionowe ściany",
+    "description": "Wspólny core movement sprawdza kolizję poziomą i prześwit postaci zamiast teleportować na dach. DoD: test ściany, niskiego stopnia, skoku i krawędzi mapy; działa local/server."
+  },
+  {
+    "id": "TB-70",
+    "title": "Grenade: Stabilne odbicia na podłożu i narożnikach",
+    "description": "Poprawne normalne z sweepu i zakończenie na fuse bez zakleszczania oraz tunelowania. DoD: deterministyczne testy podłogi, ściany, rogu i niskiej prędkości."
+  },
+  {
+    "id": "TB-71",
+    "title": "Protocol: Walidować spójność pełnego stanu meczu",
+    "description": "Spójne active_index/alive/status/winner, unikalni gracze, inventory i ograniczenia liczb/tekstu. DoD: niepoprawne snapshoty odrzucane atomowo, regresje adversarial."
+  },
+  {
+    "id": "TB-72",
+    "title": "Networking: Wykrywać lukę revision i żądać resynchronizacji",
+    "description": "Klient nie stosuje częściowego wyniku po pominiętej turze; blokuje input i żąda snapshotu. DoD: test brakującej revision oraz powrotu do gotowego stanu."
+  },
+  {
+    "id": "TB-73",
+    "title": "Networking: Snapshoty niezależne od wymiarów areny",
+    "description": "Metadane rozmiaru, chunk_size i liczby chunków, bez stałej 72. DoD: recovery działa dla dwóch aren i chunków brzegowych; niekompletna transmisja nie podmienia świata."
+  },
+  {
+    "id": "TB-74",
+    "title": "Networking: Checksum terenu przy pełnej resynchronizacji",
+    "description": "Deterministyczna suma danych voxelowych z kontrolą na końcu transferu. DoD: przekłamany/brakujący chunk odrzucony bez częściowej podmiany, poprawny snapshot przyjęty."
+  },
+  {
+    "id": "TB-75",
+    "title": "Server: Limity częstotliwości pakietów i snapshotów",
+    "description": "Budżet per peer dla ruchu, komend i kosztownej resynchronizacji; brak monopolizacji kolejki. DoD: burst od jednego peera nie blokuje drugiego, bounded counters, testy."
+  },
+  {
+    "id": "TB-76",
+    "title": "Networking: Reconnect klienta z zachowaniem slotu",
+    "description": "Losowy token wznowienia i ograniczony czas rezerwacji slotu, przywrócenie przez snapshot. DoD: wracający peer odzyskuje własny slot; obcy token go nie przejmuje; UI retry."
+  },
+  {
+    "id": "TB-77",
+    "title": "Nakama: Anulowanie matchmakingu i sprzątanie ticketów",
+    "description": "Zapamiętać ticket, przycisk anuluj, usuwanie poprzedniego przed ponownym queue i przy rozłączeniu. DoD: brak wielu aktywnych ticketów; test real backend cancel/requeue."
+  },
+  {
+    "id": "TB-78",
+    "title": "Replay: Deterministyczny zapis i odtworzenie komend lokalnych",
+    "description": "Jawny format wersji, arena/config i komendy; replay w pure core bez rendererów. DoD: odtworzenie daje ten sam world/HP/turn hash, błędny format odrzucany."
+  },
+  {
+    "id": "TB-79",
+    "title": "Bootstrap: Walidacja CLI mode/port/map/players",
+    "description": "Odrzucać nieznane tryby, błędne porty, mapy i liczbę graczy z czytelnym błędem. DoD: test headless poprawnych i niepoprawnych argumentów."
+  },
+  {
+    "id": "TB-80",
+    "title": "Client: Czytelny stan połączenia i ponowienie po błędzie",
+    "description": "Panel pokazuje connecting/ready/recovering/disconnected i pozwala retry, bez niejawnego pozostawienia aktywnego inputu. DoD: integracyjny test disconnect/retry i timeout."
+  },
+  {
+    "id": "TB-81",
+    "title": "Devtools: Headless smoke symulacji z wynikiem JSON",
+    "description": "CLI uruchamia deterministyczny scenariusz core na wybranej arenie i zapisuje summary bez UI. DoD: exit code na błędzie, powtarzalny checksum, test obu aren."
+  },
+  {
+    "id": "TB-82",
+    "title": "Maps: Audyt wszystkich aren i punktów startowych",
+    "description": "Test/CLI ładuje wszystkie mapy TOML, waliduje rozmiary, materiały, spawny i support. DoD: obie mapy poprawne, wadliwe fixtures wykrywane bez crasha."
+  },
+  {
+    "id": "TB-83",
+    "title": "Devtools: Przenośne launchery client/server/test",
+    "description": "Skrypty ustalają root repo i GODOT_BIN, przekazują argumenty bez eval, czytelne błędy. DoD: działają z innego cwd, smoke rzeczywistego serwera."
+  }
+]

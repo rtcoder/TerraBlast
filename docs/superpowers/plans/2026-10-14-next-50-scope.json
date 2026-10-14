@@ -1,0 +1,1752 @@
+[
+  {
+    "idReadable": "TB-16",
+    "summary": "Tuning: Dodać regulację grawitacji pocisków",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- dodać globalny base_gravity\n- dodać per-weapon gravity_scale\n- umożliwić szybkie strojenie w debug mode\n- przygotować test dla wpływu gravity_scale na trajektorię\n\nDefinition of Done:\n- zmiana gravity_scale realnie zmienia lot pocisku\n- parametry są konfigurowalne bez edycji logiki pocisku",
+    "id": "3-36",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-17",
+    "summary": "Tuning: Dodać parametry eksplozji i damage falloff do configu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- explosion_radius\n- terrain_damage\n- player_damage\n- player_damage_radius\n- falloff curve/simple linear strategy\n\nDefinition of Done:\n- eksplozja i damage graczy nie są hardcode'owane w VoxelDebug\n- testy obejmują minimum radius i falloff",
+    "id": "3-37",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-18",
+    "summary": "Tuning: Dodać debug panel do podglądu parametrów gry",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- pokazać aktualną grawitację, broń, promień eksplozji, damage i turn id\n- panel tylko do local-dev/debug\n- nie mieszać panelu z core simulation\n\nDefinition of Done:\n- panel pomaga stroić gameplay bez czytania logów\n- brak wpływu na server-authoritative core",
+    "id": "3-38",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-19",
+    "summary": "Input: Rozdzielić tryb kamery i tryb celowania",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- prawy drag tylko kamera\n- lewy klik/hold dla celowania lub potwierdzenia strzału\n- brak przypadkowego fire podczas obracania kamery\n\nDefinition of Done:\n- użytkownik może orbitować kamerę bez ryzyka oddania strzału\n- kod inputu jest wydzielony z głównego debug skryptu",
+    "id": "3-39",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-20",
+    "summary": "Aiming: Dodać wizualny wskaźnik kierunku strzału",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- linia/strzałka od aktywnego gracza\n- kolor zależny od aktywnego gracza\n- ukrywanie wskaźnika podczas lotu pocisku\n\nDefinition of Done:\n- przed strzałem wiadomo, w którą stronę celuje gracz\n- wskaźnik nie jest gameplay source of truth",
+    "id": "3-40",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-21",
+    "summary": "Aiming: Dodać preview łuku trajektorii",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- próbkowanie trajektorii z obecnymi parametrami gravity/speed\n- zatrzymanie preview na pierwszej kolizji z terenem\n- ograniczenie liczby punktów dla wydajności\n\nDefinition of Done:\n- preview jest czytelne i zgodne z aktualnym configiem broni\n- test core potwierdza deterministyczne próbkowanie trajektorii",
+    "id": "3-41",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-22",
+    "summary": "Weapons: Utworzyć Resource dla Bazooka",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- assets/config/weapons/bazooka.tres\n- projectile_speed, gravity_scale, explosion_radius, damage, knockback\n- podpiąć do lokalnego debug matcha\n\nDefinition of Done:\n- Bazooka działa z configu, nie z hardcode'u",
+    "id": "3-42",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-23",
+    "summary": "Weapons: Utworzyć Resource dla Grenade",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- assets/config/weapons/grenade.tres\n- większy łuk przez gravity/speed\n- opcjonalny fuse timer później\n\nDefinition of Done:\n- Grenade ma odróżnialne parametry od Bazooki\n- wybór broni wpływa na lot pocisku",
+    "id": "3-43",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-24",
+    "summary": "Weapons: Utworzyć Resource dla Drill Missile",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- assets/config/weapons/drill_missile.tres\n- mniejsza eksplozja, większa penetracja/terrain damage\n- na MVP uprościć penetrację, ale zostawić parametr w configu\n\nDefinition of Done:\n- Drill Missile ma osobny config i działa w lokalnym matchu",
+    "id": "3-44",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-25",
+    "summary": "Weapons: Dodać lokalny wybór broni 1-3",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- klawisze 1,2,3 wybierają broń aktywnego gracza\n- HUD pokazuje aktualną broń\n- wybór blokowany podczas lotu pocisku\n\nDefinition of Done:\n- wybór broni działa bez restartu sceny\n- strzał używa wybranego WeaponConfig",
+    "id": "3-45",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-26",
+    "summary": "Weapons: Dodać testy konfiguracji broni",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- walidacja wymaganych pól WeaponConfig\n- wartości dodatnie dla speed/damage/radius\n- brak duplikatów id/code\n\nDefinition of Done:\n- błędny config broni wykrywany przez testy headless",
+    "id": "3-46",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-27",
+    "summary": "Projectile: Przenieść symulację trajektorii do core",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- ProjectileSimulator jako pure GDScript\n- input: origin, direction, speed, gravity, tick rate\n- output: próbki pozycji i collision result\n\nDefinition of Done:\n- DebugProjectile nie jest jedynym miejscem symulacji lotu\n- server może użyć tej samej logiki bez Node3D",
+    "id": "3-47",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-28",
+    "summary": "Projectile: Dodać voxel sweep z małym krokiem czasowym",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- wykrywanie kolizji między poprzednią i następną pozycją\n- parametryzowany step\n- test dla szybkiego pocisku nieprzelatującego przez cienką ścianę\n\nDefinition of Done:\n- szybkie pociski trafiają teren stabilnie",
+    "id": "3-48",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-29",
+    "summary": "Terrain: Dodać dirty chunks przy eksplozji na granicy chunka",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- oznaczać wszystkie chunki dotknięte deltami\n- test eksplozji blisko granicy chunka\n- brak rebuild all po każdej eksplozji\n\nDefinition of Done:\n- eksplozja na granicy przebudowuje więcej niż jeden chunk, jeśli trzeba\n- nie przebudowuje chunków niezwiązanych ze zmianą",
+    "id": "3-49",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-30",
+    "summary": "Terrain: Dodać debug overlay liczby dirty/rebuilt chunków",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- pokazać ile chunków przebudowano po ostatniej eksplozji\n- pokazać łączną liczbę mesh chunków\n- tylko local-dev/debug\n\nDefinition of Done:\n- łatwo widać koszt operacji destrukcji w debug scenie",
+    "id": "3-50",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-31",
+    "summary": "Terrain: Dodać prostą drugą arenę testową",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- arena z dwiema wyspami i przeszkodami\n- spawn pointy po obu stronach\n- wybór areny przez config/debug key później\n\nDefinition of Done:\n- można porównać gameplay na co najmniej dwóch układach terenu",
+    "id": "3-51",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-32",
+    "summary": "Terrain: Wyciągnąć generator areny z VoxelWorldNode",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- ArenaGenerator jako osobna klasa core/shared\n- VoxelWorldNode tylko renderuje i aplikuje zmiany\n- generator zwraca world data + spawn points\n\nDefinition of Done:\n- generowanie areny nie siedzi w Node3D\n- testy mogą generować arenę headless",
+    "id": "3-52",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-33",
+    "summary": "Players: Dodać spawn point model",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- SpawnPoint z pozycją i team/player slot\n- generator areny definiuje spawn pointy\n- gracze startują z tych punktów\n\nDefinition of Done:\n- spawn nie jest hardcode'owany w VoxelDebug\n- łatwo dodać 2v2/FFA później",
+    "id": "3-53",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-34",
+    "summary": "Players: Dodać knockback po eksplozji",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- knockback jako parametr WeaponConfig\n- prosty impuls odsuwający gracza od centrum eksplozji\n- clamp pozycji do areny / korekta na powierzchnię\n\nDefinition of Done:\n- eksplozje wpływają na pozycję graczy\n- core potrafi policzyć kierunek knockbacku deterministycznie",
+    "id": "3-54",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-35",
+    "summary": "Players: Dodać stabilizację pozycji gracza po zniszczeniu terenu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- gdy teren pod graczem znika, znaleźć najbliższą powierzchnię albo obsłużyć upadek\n- MVP może teleportować na powierzchnię pod spodem\n- test dla gracza nad dziurą po eksplozji\n\nDefinition of Done:\n- gracz nie zostaje zawieszony bez sensu w powietrzu po destrukcji",
+    "id": "3-55",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-36",
+    "summary": "Match: Dodać limit czasu tury",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- turn_time_seconds w GameRulesConfig\n- odliczanie w local-dev HUD\n- akcja po czasie jest odrzucana albo tura przechodzi dalej\n\nDefinition of Done:\n- TurnController/MatchState obsługuje timeout\n- test obejmuje akcję po czasie",
+    "id": "3-56",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-37",
+    "summary": "Match: Dodać komendę restartu lokalnego meczu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- klawisz R resetuje debug match\n- odtwarza teren, graczy, HP, turę i HUD\n- nie wymaga restartu sceny Godot\n\nDefinition of Done:\n- lokalny test gameplayu można szybko powtarzać",
+    "id": "3-57",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-38",
+    "summary": "Match: Dodać prosty ekran/komunikat końca meczu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- po zwycięstwie blokować strzały\n- HUD pokazuje winner/draw\n- R restartuje mecz\n\nDefinition of Done:\n- mecz ma czytelny stan końcowy",
+    "id": "3-58",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-39",
+    "summary": "Server: Rozdzielić client debug runtime od core match runnera",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- MatchRunner jako server/core adapter\n- wejście: PlayerActionCommand\n- wyjście: authoritative turn result\n- debug scene używa podobnego flow lokalnie\n\nDefinition of Done:\n- gameplay-critical decyzje można odpalić bez scen klienta",
+    "id": "3-59",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-40",
+    "summary": "Server: Dodać walidację komendy strzału",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- active player\n- turn_id\n- weapon_id dostępny dla gracza\n- shot_power clamp\n- aim_direction normalizacja\n\nDefinition of Done:\n- niepoprawne komendy są odrzucane z reason code\n- testy pokrywają przypadki odrzuceń",
+    "id": "3-60",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-41",
+    "summary": "Networking: Zdefiniować PlayerActionCommand serialization",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- JSON/dictionary schema dla komendy\n- serialize/deserialize\n- walidacja brakujących pól\n\nDefinition of Done:\n- komenda gotowa do wysłania klient -> server\n- testy serializacji przechodzą headless",
+    "id": "3-61",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-42",
+    "summary": "Networking: Zdefiniować TurnResult serialization",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- projectile result\n- explosion event\n- terrain deltas\n- player damage deltas\n- next turn id/player\n\nDefinition of Done:\n- wynik tury można przesłać do klienta bez synchronizacji całego świata",
+    "id": "3-62",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-43",
+    "summary": "QA: Dodać smoke test lokalnej tury ze strzałem",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- instancjonować scenę debugową\n- wykonać programowy strzał albo bezpośredni flow matcha\n- potwierdzić, że tura przechodzi i teren dostaje delty\n\nDefinition of Done:\n- regresje lokalnej pętli są wykrywane przez tools/run_godot_tests.sh",
+    "id": "3-63",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-44",
+    "summary": "Docs: Zaktualizować docs/terrain.md i docs/weapons.md po configach",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zakres:\n- opisać parametry grawitacji i broni\n- opisać falloff eksplozji\n- opisać aktualne ograniczenia MVP\n\nDefinition of Done:\n- dokumentacja odpowiada aktualnemu kodowi\n- nowe decyzje tuningowe są jasne dla kolejnych iteracji",
+    "id": "3-64",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-61",
+    "summary": "Rules: Ograniczyć zakresy konfiguracji i koszt symulacji",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Walidacja skończonych wartości, maksymalnych promieni, prędkości, fuse/lifetime i minimalnego sweep kroku. DoD: niepoprawny config odrzucany przed alokacją lub pętlą, testy skrajnych wartości.",
+    "id": "3-291",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-62",
+    "summary": "UI: Tab scoreboard z indywidualnym HP i stanem graczy",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Tabela gracz/team/HP/alive/aktywny. DoD: aktualizuje się z MatchState w local i network; Tab pokazuje i ukrywa, brak wpływu na core.",
+    "id": "3-292",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-63",
+    "summary": "Settings: Regulacja i wyciszenie master audio",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Suwak głośności i mute w panelu klienta. DoD: zmienia AudioServer master bus, zapisuje preferencję, test przywracania.",
+    "id": "3-293",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-64",
+    "summary": "Settings: Czułość myszy i odwrócenie osi Y",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Konfigurowalne sensitivity i invert Y. DoD: input faktycznie używa ustawień, test obu osi i ograniczeń zakresu.",
+    "id": "3-294",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-65",
+    "summary": "Settings: Tryb okna i fullscreen",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Przełącznik fullscreen/windowed z przywróceniem preferencji; bez wymuszania rozdzielczości systemu. DoD: ustawienie działa na desktopie i ma bezpieczny fallback headless.",
+    "id": "3-295",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-66",
+    "summary": "Settings: Trwały i walidowany zapis preferencji klienta",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Osobny model preferencji z ConfigFile, bez sekretów. DoD: błędny plik lub wartości mają bezpieczne defaulty, test roundtrip i uszkodzonego pliku.",
+    "id": "3-296",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-67",
+    "summary": "Input: Anulować ładowanie po utracie fokusu okna",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Utrata fokusu, otwarcie panelu i zmiana tury przerywają charge. DoD: odzyskanie fokusu i puszczenie LPM nie powodują strzału; regresja integracyjna.",
+    "id": "3-297",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-68",
+    "summary": "Weapons: Zapamiętywać wybór broni osobno dla graczy",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Przy zmianie tury przywrócić wybór danego gracza, reset przywraca bazookę. DoD: wybór gracza A nie nadpisuje B; test dwóch tur i resetu.",
+    "id": "3-298",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-69",
+    "summary": "Movement: Zablokować przenikanie przez pionowe ściany",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Wspólny core movement sprawdza kolizję poziomą i prześwit postaci zamiast teleportować na dach. DoD: test ściany, niskiego stopnia, skoku i krawędzi mapy; działa local/server.",
+    "id": "3-299",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-70",
+    "summary": "Grenade: Stabilne odbicia na podłożu i narożnikach",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Poprawne normalne z sweepu i zakończenie na fuse bez zakleszczania oraz tunelowania. DoD: deterministyczne testy podłogi, ściany, rogu i niskiej prędkości.",
+    "id": "3-300",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-71",
+    "summary": "Protocol: Walidować spójność pełnego stanu meczu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Spójne active_index/alive/status/winner, unikalni gracze, inventory i ograniczenia liczb/tekstu. DoD: niepoprawne snapshoty odrzucane atomowo, regresje adversarial.",
+    "id": "3-301",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-72",
+    "summary": "Networking: Wykrywać lukę revision i żądać resynchronizacji",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Klient nie stosuje częściowego wyniku po pominiętej turze; blokuje input i żąda snapshotu. DoD: test brakującej revision oraz powrotu do gotowego stanu.",
+    "id": "3-302",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-73",
+    "summary": "Networking: Snapshoty niezależne od wymiarów areny",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Metadane rozmiaru, chunk_size i liczby chunków, bez stałej 72. DoD: recovery działa dla dwóch aren i chunków brzegowych; niekompletna transmisja nie podmienia świata.",
+    "id": "3-303",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-74",
+    "summary": "Networking: Checksum terenu przy pełnej resynchronizacji",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Deterministyczna suma danych voxelowych z kontrolą na końcu transferu. DoD: przekłamany/brakujący chunk odrzucony bez częściowej podmiany, poprawny snapshot przyjęty.",
+    "id": "3-304",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-75",
+    "summary": "Server: Limity częstotliwości pakietów i snapshotów",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Budżet per peer dla ruchu, komend i kosztownej resynchronizacji; brak monopolizacji kolejki. DoD: burst od jednego peera nie blokuje drugiego, bounded counters, testy.",
+    "id": "3-305",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-76",
+    "summary": "Networking: Reconnect klienta z zachowaniem slotu",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Losowy token wznowienia i ograniczony czas rezerwacji slotu, przywrócenie przez snapshot. DoD: wracający peer odzyskuje własny slot; obcy token go nie przejmuje; UI retry.",
+    "id": "3-306",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-77",
+    "summary": "Nakama: Anulowanie matchmakingu i sprzątanie ticketów",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Zapamiętać ticket, przycisk anuluj, usuwanie poprzedniego przed ponownym queue i przy rozłączeniu. DoD: brak wielu aktywnych ticketów; test real backend cancel/requeue.",
+    "id": "3-307",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-78",
+    "summary": "Replay: Deterministyczny zapis i odtworzenie komend lokalnych",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Jawny format wersji, arena/config i komendy; replay w pure core bez rendererów. DoD: odtworzenie daje ten sam world/HP/turn hash, błędny format odrzucany.",
+    "id": "3-308",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-79",
+    "summary": "Bootstrap: Walidacja CLI mode/port/map/players",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Odrzucać nieznane tryby, błędne porty, mapy i liczbę graczy z czytelnym błędem. DoD: test headless poprawnych i niepoprawnych argumentów.",
+    "id": "3-309",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-80",
+    "summary": "Client: Czytelny stan połączenia i ponowienie po błędzie",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "Panel pokazuje connecting/ready/recovering/disconnected i pozwala retry, bez niejawnego pozostawienia aktywnego inputu. DoD: integracyjny test disconnect/retry i timeout.",
+    "id": "3-310",
+    "$type": "Issue"
+  },
+  {
+    "idReadable": "TB-81",
+    "summary": "Devtools: Headless smoke symulacji z wynikiem JSON",
+    "customFields": [
+      {
+        "value": {
+          "name": "To do",
+          "$type": "StateBundleElement"
+        },
+        "name": "State",
+        "$type": "StateIssueCustomField"
+      },
+      {
+        "value": {
+          "name": "Normal",
+          "$type": "EnumBundleElement"
+        },
+        "name": "Priority",
+        "$type": "SingleEnumIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Assignee",
+        "$type": "SingleUserIssueCustomField"
+      },
+      {
+        "value": null,
+        "name": "Due Date",
+        "$type": "DateIssueCustomField"
+      }
+    ],
+    "description": "CLI uruchamia deterministyczny scenariusz core na wybranej arenie i zapisuje summary bez UI. DoD: exit code na błędzie, powtarzalny checksum, test obu aren.",
+    "id": "3-311",
+    "$type": "Issue"
+  }
+]

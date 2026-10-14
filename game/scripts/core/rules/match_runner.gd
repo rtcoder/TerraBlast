@@ -4,6 +4,8 @@ extends RefCounted
 const Simulation := preload("res://scripts/core/projectiles/projectile_simulation.gd")
 const Destruction := preload("res://scripts/core/terrain/voxel_destruction.gd")
 const State := preload("res://scripts/core/rules/match_state.gd")
+const Motion := preload("res://scripts/core/rules/player_motion.gd")
+const Command := preload("res://scripts/core/turns/player_action_command.gd")
 const Player := preload("res://scripts/core/rules/player_state.gd")
 
 var world: RefCounted
@@ -50,6 +52,10 @@ func reset() -> void:
 			state.inventory[player.player_id][id] = weapons[id].max_uses_per_match
 
 func submit(command: RefCounted) -> Dictionary:
+	if command == null or not command is Command:
+		return {"ok": false, "reason": "invalid_command"}
+	if not rules.validate() or not weapons.values().all(func(weapon): return weapon.validate()):
+		return {"ok": false, "reason": "invalid_config"}
 	if command.generation != state.generation:
 		return {"ok": false, "reason": "stale_generation"}
 	if state.status != "playing":
@@ -85,11 +91,13 @@ func submit(command: RefCounted) -> Dictionary:
 			if not player.is_alive:
 				continue
 			var distance: float = player.position.distance_to(shot.position)
-			var amount := int(round(weapon.player_damage * maxf(0.0, 1.0 - distance / maxf(0.01, weapon.explosion_radius + 0.5))))
+			var amount: int = weapon.damage_at_distance(distance)
 			if amount > 0:
 				player.apply_damage(amount)
 				events.append({"type": "PlayerDamaged", "player_id": player.player_id, "amount": amount})
-		settle_players(events)
+			if player.is_alive and distance < weapon.player_damage_radius:
+				apply_knockback(player, shot.position, weapon)
+	settle_players(events)
 	events.append({"type": "ShotResolved", "hit": shot.hit, "position": [shot.position.x, shot.position.y, shot.position.z], "weapon_id": weapon.id, "turn_id": state.turn_id, "seed": 0, "radius": weapon.explosion_radius})
 	advance(events)
 	state.revision += 1
@@ -99,17 +107,27 @@ func settle_players(events: Array = []) -> void:
 	for player in state.players:
 		if not player.is_alive:
 			continue
-		var found := false
-		for y in range(mini(floori(player.position.y), world.size.y - 1), -1, -1):
-			var voxel := Vector3i(floori(player.position.x), y, floori(player.position.z))
-			if world.get_material_id(voxel) != 0:
-				player.position.y = y + 1.0
-				found = true
+		var velocity := Vector3.ZERO
+		for tick in range(600):
+			velocity.y -= rules.player_gravity / 30.0
+			velocity = Motion.displace(world, player, velocity, 1.0 / 30.0)
+			if player.position.y < -7:
+				var amount: int = player.health
+				player.apply_damage(amount)
+				events.append({"type": "PlayerDamaged", "player_id": player.player_id, "amount": amount})
 				break
-		if not found:
-			var amount: int = player.health
-			player.apply_damage(amount)
-			events.append({"type": "PlayerDamaged", "player_id": player.player_id, "amount": amount})
+			if velocity.y == 0:
+				break
+
+func apply_knockback(player: RefCounted, center: Vector3, weapon: Resource) -> void:
+	var offset: Vector3 = player.position - center
+	var factor := clampf(1.0 - offset.length() / weapon.player_damage_radius, 0.0, 1.0)
+	var velocity: Vector3 = (offset.normalized() + Vector3.UP * 0.5).normalized() * weapon.knockback * factor
+	for tick in range(60):
+		velocity.y -= rules.player_gravity / 30.0
+		velocity = Motion.displace(world, player, velocity, 1.0 / 30.0)
+		if velocity.y == 0 or player.position.y < -7:
+			break
 
 func check_end(events: Array) -> bool:
 	if not state.has_winner():
@@ -149,5 +167,5 @@ func tick(delta: float) -> Array:
 func state_snapshot() -> Dictionary:
 	var players := []
 	for player in state.players:
-		players.append({"id": player.player_id, "name": player.display_name, "team": player.team_id, "position": [player.position.x, player.position.y, player.position.z], "health": player.health, "alive": player.is_alive})
-	return {"players": players, "turn_id": state.turn_id, "active_index": state.active_player_index, "status": state.status, "time_remaining": state.time_remaining, "winner_team": state.winner_team, "winner_player": state.winner_player, "inventory": state.inventory.duplicate(true), "revision": state.revision, "generation": state.generation}
+		players.append({"id": player.player_id, "name": player.display_name, "team": player.team_id, "position": [player.position.x, player.position.y, player.position.z], "rotation": [player.rotation.x.x,player.rotation.x.y,player.rotation.x.z,player.rotation.y.x,player.rotation.y.y,player.rotation.y.z,player.rotation.z.x,player.rotation.z.y,player.rotation.z.z], "health": player.health, "alive": player.is_alive})
+	return {"players": players, "max_shot_power": state.max_shot_power, "turn_id": state.turn_id, "active_index": state.active_player_index, "status": state.status, "time_remaining": state.time_remaining, "winner_team": state.winner_team, "winner_player": state.winner_player, "inventory": state.inventory.duplicate(true), "revision": state.revision, "generation": state.generation}

@@ -9,3 +9,5 @@ var spawns: Array[Dictionary] = []
 var boxes: Array[Dictionary] = []
 var carves: Array[Dictionary] = []
 
+
+var errors: Array[String] = []

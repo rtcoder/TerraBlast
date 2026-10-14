@@ -14,6 +14,15 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var preferences: RefCounted
+var settings_panel: PanelContainer
+var scoreboard: Label
+var debug_panel: Label
+var aim_indicator: MeshInstance3D
+var weapon_by_player: Dictionary = {}
+var selection_player := ""
+var observed_turn := -1
+var observed_generation := -1
 var effects: Node3D
 var backend_menu: CanvasLayer
 var menu_open := false
@@ -60,11 +69,15 @@ var max_charge_time := 1.4
 var aim_fallback_distance := 80.0
 
 func _ready() -> void:
+	preferences = preload("res://scripts/client/settings/client_settings.gd").new()
+	preferences.load_from()
+	preferences.apply()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	remote_mode = GameConfig.mode == "client"
 	_setup_players()
 	if remote_mode:
 		_connect_network(GameConfig.argument("--host", "127.0.0.1"))
+	_setup_client_panels()
 	_setup_trajectory_preview()
 	effects = load("res://scripts/client/vfx/match_effects.gd").new()
 	effects.name = "MatchEffects"
@@ -75,7 +88,7 @@ func _ready() -> void:
 	backend_menu = load("res://scripts/client/backend/backend_menu.gd").new()
 	add_child(backend_menu)
 	backend_menu.menu_visibility_changed.connect(func(open: bool):
-		menu_open = open
+		menu_open = open or settings_panel.visible
 		_cancel_aim()
 		mouse_look_enabled = not open
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if open else Input.MOUSE_MODE_CAPTURED)
@@ -95,6 +108,13 @@ func _physics_process(delta: float) -> void:
 			effects.play_events(events)
 			_cancel_aim()
 			_face_camera_toward_enemy()
+	_sync_selected_weapon()
+	if observed_turn != turn_controller.turn_id or observed_generation != turn_controller.generation:
+		_cancel_aim()
+		observed_turn = turn_controller.turn_id
+		observed_generation = turn_controller.generation
+	_update_scoreboard()
+	_update_debug_panel()
 	_update_hud()
 	_update_shot_charge(delta)
 	_update_active_player_movement(delta)
@@ -105,56 +125,7 @@ func _physics_process(delta: float) -> void:
 	_update_trajectory_preview()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
-		backend_menu.toggle(not menu_open)
-		get_viewport().set_input_as_handled()
-		return
-	if menu_open:
-		return
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if event.pressed:
-				if not is_aiming and Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-					Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-					mouse_look_enabled = true
-					return
-				mouse_look_enabled = true
-				_start_charging_shot()
-			else:
-				_release_charged_shot()
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			is_aiming = event.pressed and not projectile_in_flight and not turn_controller.has_winner()
-			if is_aiming:
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-				mouse_look_enabled = true
-			else:
-				_cancel_aim()
-			_update_hud()
-		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			camera_distance = maxf(6.0, camera_distance - 1.0)
-			_update_camera_transform()
-		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			camera_distance = minf(18.0, camera_distance + 1.0)
-			_update_camera_transform()
-
-	if event is InputEventMouseMotion and mouse_look_enabled:
-		orbit_yaw -= event.relative.x * 0.006
-		camera_visual_yaw = orbit_yaw
-		camera_pitch = clampf(camera_pitch - event.relative.y * 0.004, min_camera_pitch, max_camera_pitch)
-		_update_camera_transform()
-
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode in [KEY_1, KEY_2, KEY_3] and not projectile_in_flight:
-			selected_weapon_id = event.keycode - KEY_1 + 1
-			_cancel_aim()
-		elif event.keycode == KEY_R:
-			restart_match()
-		elif event.keycode == KEY_SPACE:
-			_try_jump_active_player()
-		elif event.keycode == KEY_ESCAPE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-			mouse_look_enabled = false
-			_cancel_aim()
+	preload("res://scripts/client/input/desktop_input.gd").handle(self, event)
 
 func _start_charging_shot() -> void:
 	if not _can_control() or not is_aiming or projectile_in_flight or turn_controller.has_winner():
@@ -256,7 +227,7 @@ func _finish_playback() -> void:
 	_update_hud()
 
 func _setup_players() -> void:
-	runner = MatchFactory.create_match(2 if remote_mode else 10)
+	runner = MatchFactory.create_match(2 if remote_mode else int(GameConfig.argument("--players", "10")), GameConfig.map_path())
 	rules = runner.rules
 	move_speed = rules.move_speed
 	jump_speed = rules.jump_speed
@@ -264,8 +235,7 @@ func _setup_players() -> void:
 	min_shot_power = rules.min_shot_power
 	max_shot_power = rules.max_shot_power
 	max_charge_time = rules.max_charge_time
-	voxel_world.world = runner.world
-	voxel_world.material_configs = runner.materials
+	voxel_world.set_world(runner.world, runner.materials)
 	_bind_players()
 
 func _bind_players() -> void:
@@ -297,6 +267,8 @@ func restart_match() -> void:
 	pending_result = {}
 	runner.reset()
 	selected_weapon_id = 1
+	weapon_by_player.clear()
+	selection_player = ""
 	_bind_players()
 	_cancel_aim()
 	voxel_world._mark_all_chunks_dirty()
@@ -388,23 +360,25 @@ func _update_hud() -> void:
 	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
 	var weapon: Resource = runner.weapons[selected_weapon_id]
 	var ammo: int = runner.state.inventory[active_player.player_id][selected_weapon_id] if active_player != null else 0
-	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart / F2 multiplayer" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
+	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart / F2 multiplayer / F3 settings / Tab scores" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	if remote_mode:
-		status += "\n" + network_status
+		status += "\n" + network_status + " | F4 retry"
 	hud_label.text = status
 
 func _team_status_text(team_id: int, label: String) -> String:
 	var living_count := 0
+	var team_count := 0
 	var total_health := 0
 	for player: Variant in players:
 		if player.team_id != team_id:
 			continue
+		team_count += 1
 		if player.is_alive:
 			living_count += 1
 		total_health += player.health
-	return "%s %d/5 HP %d" % [label, living_count, total_health]
+	return "%s %d/%d HP %d" % [label, living_count, team_count, total_health]
 
 func _winner_status_text() -> String:
 	var living_teams := {}
@@ -438,6 +412,8 @@ func _update_active_player_movement(delta: float) -> void:
 		player_walk_phases[active_player.player_id] = phase + delta * 9.0 * clampf(horizontal_speed / move_speed, 0.25, 1.0)
 
 func _try_jump_active_player() -> void:
+	if not _can_control():
+		return
 	if remote_mode:
 		if _can_control() and not projectile_in_flight:
 			network.move_player(_get_move_input(), orbit_yaw, true)
@@ -449,8 +425,7 @@ func _try_jump_active_player() -> void:
 	if active_player == null:
 		return
 
-	var ground_y: float = PlayerMotion.surface(runner.world, floori(active_player.position.x), floori(active_player.position.z))
-	if active_player.position.y > ground_y + 0.05:
+	if not PlayerMotion.blocked(runner.world, active_player.position + Vector3.DOWN * 0.05):
 		return
 
 	var velocity: Vector3 = player_velocities.get(active_player.player_id, Vector3.ZERO)
@@ -458,16 +433,7 @@ func _try_jump_active_player() -> void:
 	player_velocities[active_player.player_id] = velocity
 
 func _get_move_input() -> Vector2:
-	var input_vector := Vector2.ZERO
-	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
-		input_vector.x -= 1.0
-	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
-		input_vector.x += 1.0
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
-		input_vector.y += 1.0
-	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
-		input_vector.y -= 1.0
-	return input_vector.normalized() if input_vector.length_squared() > 1.0 else input_vector
+	return preload("res://scripts/client/input/desktop_input.gd").move_axis()
 
 func _face_camera_toward_enemy() -> void:
 	var active_player: Variant = turn_controller.get_active_player()
@@ -545,6 +511,8 @@ func _cancel_aim() -> void:
 	_update_power_bar()
 	if trajectory_preview != null:
 		trajectory_preview.hide()
+	if aim_indicator != null:
+		aim_indicator.hide()
 	_update_hud()
 
 func _get_trajectory_points() -> PackedVector3Array:
@@ -568,7 +536,8 @@ func _setup_trajectory_preview() -> void:
 	trajectory_preview.hide()
 
 func _update_trajectory_preview() -> void:
-	trajectory_preview.visible = is_aiming and not projectile_in_flight and not turn_controller.has_winner()
+	trajectory_preview.visible = _can_control() and is_aiming and not projectile_in_flight and not turn_controller.has_winner()
+	aim_indicator.visible = trajectory_preview.visible
 	if not trajectory_preview.visible:
 		return
 	var points := _get_trajectory_points()
@@ -581,6 +550,17 @@ func _update_trajectory_preview() -> void:
 		mesh.surface_add_vertex(point)
 	mesh.surface_end()
 	trajectory_preview.mesh = mesh
+	var player = turn_controller.get_active_player()
+	var color := Color(0.2, 0.5, 1.0) if player.team_id == 1 else Color(1.0, 0.25, 0.15)
+	trajectory_preview.material_override.albedo_color = color
+	aim_indicator.material_override.albedo_color = color
+	var direction: Vector3 = (points[1] - points[0]).normalized()
+	var arrow := ImmediateMesh.new()
+	arrow.surface_begin(Mesh.PRIMITIVE_LINES)
+	arrow.surface_add_vertex(points[0])
+	arrow.surface_add_vertex(points[0] + direction * 3.0)
+	arrow.surface_end()
+	aim_indicator.mesh = arrow
 
 
 func _can_control() -> bool:
@@ -608,8 +588,9 @@ func _sync_network() -> void:
 	var replaced: bool = runner != network.runner
 	var previous_turn: int = turn_controller.turn_id
 	runner = network.runner
-	voxel_world.world = runner.world
+	rules = runner.rules
 	if replaced:
+		voxel_world.set_world(runner.world, runner.materials)
 		if is_instance_valid(active_projectile):
 			active_projectile.queue_free()
 		active_projectile = null
@@ -624,3 +605,92 @@ func _sync_network() -> void:
 	if previous_turn != turn_controller.turn_id:
 		_cancel_aim()
 		_face_camera_toward_enemy()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_node_ready():
+		scoreboard.hide()
+		_cancel_aim()
+		mouse_look_enabled = false
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _select_weapon(id: int) -> void:
+	if projectile_in_flight or not _can_control() or not runner.weapons.has(id):
+		return
+	var player = turn_controller.get_active_player()
+	if player == null:
+		return
+	weapon_by_player[player.player_id] = id
+	selection_player = player.player_id
+	selected_weapon_id = id
+	_cancel_aim()
+
+func _sync_selected_weapon() -> void:
+	var player = turn_controller.get_active_player()
+	if player != null and selection_player != player.player_id:
+		selection_player = player.player_id
+		selected_weapon_id = weapon_by_player.get(selection_player, 1)
+		_cancel_aim()
+
+func _setup_client_panels() -> void:
+	settings_panel = preload("res://scripts/client/ui/settings_panel.gd").new()
+	$Hud.add_child(settings_panel)
+	settings_panel.setup(preferences)
+	settings_panel.closed.connect(_toggle_settings)
+	scoreboard = Label.new()
+	scoreboard.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	scoreboard.offset_left = -560
+	scoreboard.offset_right = -20
+	scoreboard.offset_top = 210
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color(0.025, 0.04, 0.08, 0.94)
+	background.content_margin_left = 12
+	background.content_margin_right = 12
+	background.content_margin_top = 10
+	background.content_margin_bottom = 10
+	scoreboard.add_theme_stylebox_override("normal", background)
+	scoreboard.add_theme_color_override("font_shadow_color", Color.BLACK)
+	scoreboard.add_theme_constant_override("shadow_offset_x", 2)
+	scoreboard.add_theme_constant_override("shadow_offset_y", 2)
+	$Hud.add_child(scoreboard)
+	scoreboard.hide()
+	debug_panel = Label.new()
+	debug_panel.position = Vector2(30, 300)
+	$Hud.add_child(debug_panel)
+	debug_panel.hide()
+	aim_indicator = MeshInstance3D.new()
+	aim_indicator.name = "AimDirection"
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aim_indicator.material_override = material
+	add_child(aim_indicator)
+	aim_indicator.hide()
+
+func _toggle_settings() -> void:
+	var open := not settings_panel.visible
+	backend_menu.toggle(false)
+	settings_panel.visible = open
+	menu_open = open
+	_cancel_aim()
+	mouse_look_enabled = not open
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if open else Input.MOUSE_MODE_CAPTURED)
+
+func _update_scoreboard() -> void:
+	var rows := PackedStringArray(["SCOREBOARD — hold Tab"])
+	for player in players:
+		rows.append("%s | Team %d | HP %d | %s%s" % [player.display_name, player.team_id, player.health, "alive" if player.is_alive else "eliminated", " | ACTIVE" if player == turn_controller.get_active_player() else ""])
+	scoreboard.text = "\n".join(rows)
+
+func _update_debug_panel() -> void:
+	if remote_mode:
+		debug_panel.hide()
+	if not debug_panel.visible:
+		return
+	var weapon: Resource = runner.weapons[selected_weapon_id]
+	debug_panel.text = "LOCAL DEBUG — F1 | [ / ] gravity\nGravity %.1f × %.2f | %s\nBlast %.1f / terrain %d / player %d\nTurn %d | dirty %d / rebuilt %d / meshes %d" % [rules.base_gravity, weapon.gravity_scale, weapon.code, weapon.explosion_radius, weapon.terrain_damage, weapon.player_damage, turn_controller.turn_id, voxel_world.last_dirty_chunk_count, voxel_world.last_rebuilt_chunk_count, voxel_world.total_mesh_count]
+
+func _adjust_debug_gravity(amount: float) -> void:
+	if remote_mode or not debug_panel.visible or projectile_in_flight:
+		return
+	rules.base_gravity = clampf(rules.base_gravity + amount, 1.0, 100.0)
+	_cancel_aim()
+	_update_debug_panel()

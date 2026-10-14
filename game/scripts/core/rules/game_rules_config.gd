@@ -19,4 +19,4 @@ func validate() -> bool:
 	for value in [turn_time, min_shot_power, max_shot_power, base_gravity, projectile_step, max_projectile_lifetime, sweep_step, move_speed, jump_speed, player_gravity, max_charge_time]:
 		if not is_finite(value) or value <= 0.0:
 			return false
-	return min_shot_power <= max_shot_power and is_equal_approx(projectile_step, 1.0 / 30.0) and default_explosion_radius >= 0 and starting_health > 0
+	return turn_time <= 600 and max_shot_power <= 10 and base_gravity <= 100 and max_projectile_lifetime <= 20 and sweep_step >= 0.05 and sweep_step <= 0.25 and move_speed <= 30 and jump_speed <= 30 and player_gravity <= 100 and max_charge_time <= 10 and default_explosion_radius <= 16 and starting_health <= 10000 and min_shot_power < max_shot_power and is_equal_approx(projectile_step, 1.0 / 30.0) and default_explosion_radius >= 0 and starting_health > 0

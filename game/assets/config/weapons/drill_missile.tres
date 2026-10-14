@@ -12,3 +12,5 @@ terrain_damage = 180
 player_damage = 35
 max_uses_per_match = 3
 behavior = "drill"
+player_damage_radius = 4.5
+player_damage_falloff = 1.0

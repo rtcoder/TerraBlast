@@ -1,14 +1,9 @@
 class_name VoxelWorldNode
 extends Node3D
 
-const ChunkPosition := preload("res://scripts/core/chunks/chunk_position.gd")
 const VoxelDestruction := preload("res://scripts/core/terrain/voxel_destruction.gd")
-const VoxelMaterialConfig := preload("res://scripts/core/voxels/voxel_material_config.gd")
 const VoxelWorldData := preload("res://scripts/core/voxels/voxel_world_data.gd")
 const VoxelChunkMeshBuilder := preload("res://scripts/client/rendering/voxel_chunk_mesh_builder.gd")
-const MapBuilder := preload("res://scripts/core/maps/map_builder.gd")
-const MapLoader := preload("res://scripts/core/maps/map_loader.gd")
-const MapValidator := preload("res://scripts/core/maps/map_validator.gd")
 
 @export var world_size := Vector3i(96, 24, 96)
 @export var chunk_size := 16
@@ -20,17 +15,21 @@ var material_configs: Dictionary = {}
 var dirty_chunks: Dictionary = {}
 var chunk_nodes: Dictionary = {}
 var terrain_material: StandardMaterial3D
+var last_dirty_chunk_count := 0
+var last_rebuilt_chunk_count := 0
+var total_mesh_count := 0
 
 func _ready() -> void:
 	_setup_material()
-	_setup_world()
+	if world == null:
+		_setup_world()
 	rebuild_dirty_chunks()
 
 func apply_debug_explosion(center: Vector3i, radius: int = 5, damage: int = 140) -> Array:
 	var destruction := VoxelDestruction.new(world, material_configs)
 	var deltas: Array = destruction.apply_explosion(center, radius, damage)
 	for delta: Variant in deltas:
-		mark_chunk_dirty(world.get_chunk_position(delta.position))
+		mark_voxel_dirty(delta.position)
 	rebuild_dirty_chunks()
 	return deltas
 
@@ -57,10 +56,41 @@ func get_surface_y(x: int, z: int) -> float:
 func mark_chunk_dirty(chunk_position: Vector3i) -> void:
 	dirty_chunks[chunk_position] = true
 
+func mark_voxel_dirty(position: Vector3i) -> void:
+	if world == null or not world.is_in_bounds(position):
+		return
+	mark_chunk_dirty(world.get_chunk_position(position))
+	for direction in [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.UP, Vector3i.DOWN, Vector3i.FORWARD, Vector3i.BACK]:
+		var neighbor: Vector3i = position + direction
+		if world.is_in_bounds(neighbor) and world.get_chunk_position(neighbor) != world.get_chunk_position(position):
+			mark_chunk_dirty(world.get_chunk_position(neighbor))
+
 func rebuild_dirty_chunks() -> void:
+	last_dirty_chunk_count = dirty_chunks.size()
+	last_rebuilt_chunk_count = 0
 	for chunk_position: Vector3i in dirty_chunks.keys():
 		_rebuild_chunk(chunk_position)
+		last_rebuilt_chunk_count += 1
 	dirty_chunks.clear()
+	total_mesh_count = 0
+	for mesh_instance: MeshInstance3D in chunk_nodes.values():
+		if mesh_instance.mesh != null and mesh_instance.mesh.get_surface_count() > 0:
+			total_mesh_count += 1
+
+func set_world(new_world: RefCounted, materials: Dictionary) -> void:
+	for mesh_instance: MeshInstance3D in chunk_nodes.values():
+		remove_child(mesh_instance)
+		mesh_instance.queue_free()
+	chunk_nodes.clear()
+	dirty_chunks.clear()
+	world = new_world
+	material_configs = materials
+	world_size = world.size
+	chunk_size = world.chunk_size
+	if terrain_material == null:
+		_setup_material()
+	_mark_all_chunks_dirty()
+	rebuild_dirty_chunks()
 
 func _setup_material() -> void:
 	terrain_material = StandardMaterial3D.new()
@@ -71,27 +101,20 @@ func _setup_material() -> void:
 	terrain_material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 
 func _setup_world() -> void:
-	var map_definition: RefCounted = null
+	var generator = load("res://scripts/core/maps/arena_generator.gd")
 	if not map_path.is_empty():
-		map_definition = MapLoader.load_from_file(map_path)
-		if map_definition.id.is_empty():
-			map_definition = null
-		else:
-			world_size = map_definition.size
-
-	world = VoxelWorldData.new(world_size, chunk_size)
-	material_configs = {
-		0: _material(0, "air", "Air", 0, 1.0, false, false),
-		1: _material(1, "dirt", "Dirt", 100, 1.0, true, true),
-		2: _material(2, "stone", "Stone", 180, 2.0, true, true),
-		3: _material(3, "metal", "Metal", 255, 4.0, true, false),
-	}
-	if map_definition == null:
-		_generate_debug_arena()
-	else:
-		MapBuilder.apply_to_world(world, material_configs, map_definition)
-		for error: String in MapValidator.validate(map_definition, world):
+		var arena: Dictionary = generator.generate(map_path, chunk_size)
+		if arena.errors.is_empty():
+			world = arena.world
+			material_configs = arena.materials
+			world_size = world.size
+			_mark_all_chunks_dirty()
+			return
+		for error: String in arena.errors:
 			push_error("Map validation failed: %s" % error)
+	world = VoxelWorldData.new(world_size, chunk_size)
+	material_configs = generator.materials()
+	_generate_debug_arena()
 	_mark_all_chunks_dirty()
 
 func _generate_debug_arena() -> void:
@@ -127,22 +150,9 @@ func _rebuild_chunk(chunk_position: Vector3i) -> void:
 		chunk_nodes[chunk_position] = mesh_instance
 	mesh_instance.mesh = mesh
 
-func _material(id: int, code: String, display_name: String, max_health: int, blast_resistance: float, is_solid: bool, is_destructible: bool) -> Resource:
-	var material: Resource = VoxelMaterialConfig.new()
-	material.id = id
-	material.code = code
-	material.display_name = display_name
-	material.max_health = max_health
-	material.blast_resistance = blast_resistance
-	material.is_solid = is_solid
-	material.is_destructible = is_destructible
-	return material
-
 func refresh_deltas(deltas: Array) -> void:
 	for delta in deltas:
-		var pos := Vector3i(delta.position[0], delta.position[1], delta.position[2])
-		mark_chunk_dirty(world.get_chunk_position(pos))
-		for direction in [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.UP, Vector3i.DOWN, Vector3i.FORWARD, Vector3i.BACK]:
-			if world.is_in_bounds(pos + direction):
-				mark_chunk_dirty(world.get_chunk_position(pos + direction))
+		var position: Variant = delta.position
+		var pos: Vector3i = position if position is Vector3i else Vector3i(position[0], position[1], position[2])
+		mark_voxel_dirty(pos)
 	rebuild_dirty_chunks()

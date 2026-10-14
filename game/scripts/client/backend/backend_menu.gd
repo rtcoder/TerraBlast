@@ -13,7 +13,7 @@ func _ready() -> void:
 	backend = load("res://scripts/client/backend/nakama_client.gd").new()
 	add_child(backend)
 	panel = PanelContainer.new()
-	panel.position = Vector2(30, 150)
+	panel.position = Vector2(30, 210)
 	panel.custom_minimum_size = Vector2(500, 360)
 	add_child(panel)
 	var box := VBoxContainer.new()
@@ -35,6 +35,7 @@ func _ready() -> void:
 	box.add_child(lobby)
 	_button(box, "Join lobby", _join)
 	_button(box, "Find opponent — 1v1", _find)
+	_button(box, "Cancel matchmaking", _cancel_search)
 	host = LineEdit.new()
 	host.text = "127.0.0.1"
 	host.placeholder_text = "Gameplay server address"
@@ -103,3 +104,7 @@ func _matched(_data: Dictionary) -> void:
 	if result.has("match_id"):
 		lobby.text = result.match_id
 		status.text = "Opponent found; lobby joined. Enter the shared gameplay server address."
+
+func _cancel_search() -> void:
+	if await backend.cancel_matchmaking():
+		status.text = "Matchmaking cancelled"

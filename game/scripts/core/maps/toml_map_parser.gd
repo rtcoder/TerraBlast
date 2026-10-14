@@ -2,7 +2,7 @@ class_name TomlMapParser
 extends RefCounted
 
 static func parse(text: String) -> Dictionary:
-	var result := {}
+	var result := {"_errors": []}
 	var current_array_name := ""
 	var current_item: Dictionary = {}
 
@@ -15,16 +15,22 @@ static func parse(text: String) -> Dictionary:
 			current_array_name = line.substr(2, line.length() - 4).strip_edges()
 			if not result.has(current_array_name):
 				result[current_array_name] = []
+			if not result[current_array_name] is Array:
+				result._errors.append("Table conflicts with value: " + current_array_name)
+				return result
 			current_item = {}
 			result[current_array_name].append(current_item)
 			continue
 
 		var separator := line.find("=")
 		if separator < 0:
+			result._errors.append("Expected key = value")
 			continue
 
 		var key := line.substr(0, separator).strip_edges()
 		var value: Variant = _parse_value(line.substr(separator + 1).strip_edges())
+		if key.is_empty() or value == null:
+			result._errors.append("Invalid key or value: " + key)
 		if current_array_name.is_empty():
 			result[key] = value
 		else:
@@ -51,12 +57,16 @@ static func _parse_value(value: String) -> Variant:
 		return true
 	if value == "false":
 		return false
-	if value.contains("."):
+	if value.is_valid_int():
+		return value.to_int()
+	if value.is_valid_float():
 		return value.to_float()
-	return value.to_int()
+	return null
 
 static func _parse_array(value: String) -> Array:
 	var parsed: Array = []
+	if value.strip_edges().is_empty():
+		return parsed
 	for item in value.split(","):
 		parsed.append(_parse_value(item.strip_edges()))
 	return parsed

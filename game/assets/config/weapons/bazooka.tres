@@ -12,3 +12,5 @@ terrain_damage = 150
 player_damage = 42
 max_uses_per_match = -1
 behavior = "impact"
+player_damage_radius = 5.5
+player_damage_falloff = 1.0
