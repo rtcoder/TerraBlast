@@ -15,7 +15,13 @@ extends Resource
 @export var max_charge_time := 1.4
 @export var starting_health := 100
 
+@export var max_turns := 0
+@export var wind := 0.0
+@export var preset := "classic"
+
 func validate() -> bool:
+	if max_turns < 0 or max_turns > 10000 or not is_finite(wind) or absf(wind) > 100 or not preset in ["classic", "quick", "training"]:
+		return false
 	for value in [turn_time, min_shot_power, max_shot_power, base_gravity, projectile_step, max_projectile_lifetime, sweep_step, move_speed, jump_speed, player_gravity, max_charge_time]:
 		if not is_finite(value) or value <= 0.0:
 			return false

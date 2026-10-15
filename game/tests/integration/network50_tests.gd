@@ -60,21 +60,23 @@ func run() -> void:
 	var World = load("res://scripts/core/voxels/voxel_world_data.gd")
 	source.world = World.new(Vector3i(7, 5, 3), 4)
 	source.world.set_voxel(Vector3i(6, 4, 2), 2, 170)
+	source.state.players[0].position = Vector3(1, 2, 1)
+	source.state.players[1].position = Vector3(5, 2, 1)
 	var dynamic = Client.new()
 	dynamic.runner = Factory.create_match(2)
 	var previous_world = dynamic.runner.world
-	var begin := {"type": "snapshot_begin", "player_id": "blue_1", "resume_token": "test", "size": [7, 5, 3], "chunk_size": 4, "chunk_count": 4, "generation": 0, "revision": 0, "terrain_revision": 0}
+	var begin := {"type": "snapshot_begin", "transfer_id": 1, "configuration": Protocol.encode_configuration(source), "player_id": "blue_1", "resume_token": "test", "size": [7, 5, 3], "chunk_size": 4, "chunk_count": 4, "generation": 0, "revision": 0, "terrain_revision": 0}
 	dynamic._handle(begin)
 	for y in range(2):
 		for x in range(2):
-			dynamic._handle({"type": "chunk", "chunk": Protocol.chunk_snapshot(source.world, Vector3i(x,y,0))})
-	dynamic._handle({"type": "snapshot_end", "state": source.state_snapshot(), "terrain_revision": 0, "checksum": "corrupted"})
+			dynamic._handle({"type": "chunk", "transfer_id": 1, "chunk": Protocol.chunk_snapshot(source.world, Vector3i(x,y,0))})
+	dynamic._handle({"type": "snapshot_end", "transfer_id": 1, "state": source.state_snapshot(), "terrain_revision": 0, "checksum": "corrupted"})
 	check(not dynamic.ready_for_match and dynamic.runner.world == previous_world, "Checksum mismatch preserves published world atomically")
 	dynamic._handle(begin)
 	for y in range(2):
 		for x in range(2):
-			dynamic._handle({"type": "chunk", "chunk": Protocol.chunk_snapshot(source.world, Vector3i(x,y,0))})
-	dynamic._handle({"type": "snapshot_end", "state": source.state_snapshot(), "terrain_revision": 0, "checksum": Protocol.terrain_checksum(source.world)})
+			dynamic._handle({"type": "chunk", "transfer_id": 1, "chunk": Protocol.chunk_snapshot(source.world, Vector3i(x,y,0))})
+	dynamic._handle({"type": "snapshot_end", "transfer_id": 1, "state": source.state_snapshot(), "terrain_revision": 0, "checksum": Protocol.terrain_checksum(source.world)})
 	check(dynamic.ready_for_match and dynamic.runner.world.size == Vector3i(7,5,3) and dynamic.runner.world.health_values == source.world.health_values, "Dynamic partial-edge snapshot accepts advertised chunk count")
 	dynamic.timeout = 90.0
 	dynamic.request_snapshot()

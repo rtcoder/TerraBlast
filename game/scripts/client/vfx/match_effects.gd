@@ -29,7 +29,7 @@ func _explosion(position: Vector3, radius: float) -> void:
 	visual.material_override = material
 	add_child(visual)
 	visual.global_position = position
-	var tween := create_tween().set_parallel(true)
+	var tween := create_tween().bind_node(visual).set_parallel(true)
 	tween.tween_property(visual, "scale", Vector3.ONE * maxf(1, radius * 2), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(material, "albedo_color:a", 0.0, 0.45)
 	tween.chain().tween_callback(visual.queue_free)
@@ -59,3 +59,7 @@ func _tone(frequency: float, duration: float, noise: bool = false) -> void:
 	add_child(player)
 	player.play()
 	get_tree().create_timer(duration + 0.05).timeout.connect(player.queue_free)
+
+func clear() -> void:
+	for child in get_children():
+		child.queue_free()

@@ -4,13 +4,15 @@ extends RefCounted
 static func materials() -> Dictionary:
 	return load("res://scripts/core/maps/arena_generator.gd").materials()
 
-static func create_match(player_limit: int = 10, map_path: String = "res://maps/twin_forts.toml") -> RefCounted:
+static func create_match(player_limit: int = 10, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic") -> RefCounted:
 	var arena: Dictionary = load("res://scripts/core/maps/arena_generator.gd").generate(map_path)
 	if not arena.errors.is_empty() or player_limit <= 0:
 		return null
 	var world = arena.world
 	var configs: Dictionary = arena.materials
-	var rules = load("res://assets/config/game_rules.tres").duplicate()
+	var rules = load("res://scripts/core/rules/rule_presets.gd").create(preset)
+	if rules == null:
+		return null
 	var players := []
 	var counts := {1: 0, 2: 0}
 	for spawn in arena.spawns.slice(0, player_limit):

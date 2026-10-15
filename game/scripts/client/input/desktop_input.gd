@@ -6,8 +6,18 @@ static func handle(scene: Node, event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_F2:
-			scene.settings_panel.hide()
-			scene.backend_menu.toggle(not scene.backend_menu.panel.visible)
+			var open: bool = not scene.backend_menu.panel.visible
+			scene._close_overlays()
+			scene.backend_menu.toggle(open)
+			return
+		if event.keycode == KEY_P:
+			scene._toggle_pause()
+			return
+		if event.keycode == KEY_F5:
+			scene._toggle_setup()
+			return
+		if event.keycode == KEY_F6:
+			scene._toggle_help()
 			return
 		if event.keycode == KEY_F3:
 			scene._toggle_settings()

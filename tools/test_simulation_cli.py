@@ -5,7 +5,8 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-GODOT = os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot')
+from devtools import godot_binary
+GODOT = godot_binary()
 
 def run(*args):
     return subprocess.run([GODOT, '--headless', '--path', str(ROOT / 'game'), '--log-file', '/tmp/terrablast-cli.log', '--', *args], capture_output=True, text=True, timeout=30)

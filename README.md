@@ -64,3 +64,13 @@ Choose an arena with `--map twin_forts` or `--map two_islands`. Local player cou
 ```
 
 The extended tests also use UDP 19176 and verify CLI determinism on both maps. See [terrain](docs/terrain.md) and [weapons](docs/weapons.md) for collision, damage falloff, replay and limits.
+
+## Match controls and diagnostics
+
+P opens the match menu: local time, movement and projectile playback pause; online matches keep running on the server. F5 configures a new local match (arena, 2–10 players, rules preset), F6 shows controls. The match menu also offers surrender. Match results show final statistics and a restart button; only the blue network slot can restart the server match.
+
+Rule presets: `classic` preserves defaults, `quick` uses 20-second turns and a 30-turn draw limit, `training` starts players at 500 HP. Configure horizontal X-axis wind through `GameRulesConfig.wind` (default zero). The server transfers its validated configuration to clients. Protocol v2 requires complete configuration and transfer IDs; client and server must use the same version.
+
+Scoreboard includes shots, hits, enemy HP damage and eliminations. The last 32 shot summaries are retained; HP labels update above living pawns. F3 now includes HUD text scaling, trajectory visibility, a high-contrast crosshair and Restore defaults. These preferences never alter core rules.
+
+Use the [portable tools](tools/README.md) for launchers, map auditing, environment diagnostics, replay verification, export presets and test JSON reports. A full offline headless workflow is defined in `.github/workflows/godot.yml`; Nakama and renderer checks remain explicit local options.

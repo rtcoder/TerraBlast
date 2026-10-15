@@ -1,5 +1,6 @@
 class_name MatchClient
 extends Node
+signal snapshot_progress_changed(completed: int, total: int)
 signal synchronized
 signal result_received(result: Dictionary)
 signal status_changed(message: String)
@@ -7,6 +8,12 @@ signal connection_state_changed(state: String)
 const Protocol := preload("res://scripts/networking/messages/match_protocol.gd")
 const Factory := preload("res://scripts/core/rules/match_factory.gd")
 const World := preload("res://scripts/core/voxels/voxel_world_data.gd")
+var match_phase := "waiting"
+var latency_ms := -1
+var snapshot_progress := {"completed": 0, "total": 0}
+var ping_pending := -1
+var ping_sent_at := 0
+var ping_elapsed := 0.0
 var peer: ENetMultiplayerPeer
 var runner: RefCounted
 var staging: RefCounted
@@ -75,6 +82,13 @@ func _process(delta: float) -> void:
 	if not ready_for_match and timeout > 15:
 		_fail("Server snapshot timed out. Retry connection.")
 		return
+	ping_elapsed += delta
+	if had_connection and ping_elapsed >= 1.0:
+		ping_elapsed = 0.0
+		if ping_pending == -1 or Time.get_ticks_msec() - ping_sent_at > 3000:
+			ping_sent_at = Time.get_ticks_msec()
+			ping_pending = ping_sent_at % 2147483647
+			_send({"type": "ping", "nonce": ping_pending})
 	if recovery_wait > 0:
 		recovery_wait -= delta
 		if recovery_wait <= 0:
@@ -86,35 +100,59 @@ func _process(delta: float) -> void:
 
 func _handle(data: Dictionary) -> void:
 	match data.get("type", ""):
+		"server_shutdown":
+			_fail("server_shutdown")
+		"pong":
+			if ping_pending >= 0 and data.get("nonce") == ping_pending:
+				latency_ms = clampi(Time.get_ticks_msec() - ping_sent_at, 0, 60000)
+				ping_pending = -1
+		"phase":
+			_set_phase(data.get("phase"))
 		"snapshot_begin":
 			if not Protocol.valid_snapshot_metadata(data):
+				request_snapshot()
+				return
+			var configuration := Protocol.decode_configuration(data.configuration)
+			if configuration.is_empty():
 				request_snapshot()
 				return
 			ready_for_match = false
 			player_id = data.player_id
 			resume_token = data.get("resume_token", resume_token)
 			staging = Factory.create_match(2)
+			staging.rules = configuration.rules
+			staging.weapons = configuration.weapons
 			staging.world = World.new(Vector3i(data.size[0], data.size[1], data.size[2]), int(data.chunk_size))
 			snapshot_metadata = data.duplicate(true)
 			chunks.clear()
+			_progress(0, int(data.chunk_count))
 			timeout = 0.0
 			recovery_wait = 0.0
 			_status("synchronizing", "Synchronizing arena…")
 		"chunk":
-			if staging != null and Protocol.apply_chunk(staging.world, data.get("chunk")):
-				chunks[str(data.chunk.chunk)] = true
+			var chunk = data.get("chunk")
+			if staging == null or not chunk is Dictionary or data.get("transfer_id") != snapshot_metadata.get("transfer_id") or chunks.has(str(chunk.get("chunk"))) or not Protocol.apply_chunk(staging.world, chunk):
+				request_snapshot()
+				return
+			chunks[str(chunk.chunk)] = true
+			_progress(chunks.size(), int(snapshot_metadata.chunk_count))
 		"snapshot_end":
 			var state = Protocol.decode_state(data.get("state"))
-			if staging == null or state == null or chunks.size() != snapshot_metadata.get("chunk_count", -1) or data.get("checksum") != Protocol.terrain_checksum(staging.world) or data.get("terrain_revision") != snapshot_metadata.get("terrain_revision") or state.generation != snapshot_metadata.get("generation") or state.revision != snapshot_metadata.get("revision"):
+			if staging == null or state == null or data.get("transfer_id") != snapshot_metadata.get("transfer_id") or chunks.size() != snapshot_metadata.get("chunk_count", -1) or data.get("checksum") != Protocol.terrain_checksum(staging.world) or data.get("terrain_revision") != snapshot_metadata.get("terrain_revision") or state.generation != snapshot_metadata.get("generation") or state.revision != snapshot_metadata.get("revision"):
 				request_snapshot()
 				return
 			if not state.players.any(func(player): return player.player_id == player_id):
+				request_snapshot()
+				return
+			if not Protocol.valid_configured_state(state, staging):
 				request_snapshot()
 				return
 			staging.initial_materials = staging.world.material_ids.duplicate()
 			staging.initial_health = staging.world.health_values.duplicate()
 			staging.state = state
 			runner = staging
+			_summary(data.state)
+			_set_phase(snapshot_metadata.get("phase", "playing"))
 			staging = null
 			terrain_revision = int(data.terrain_revision)
 			ready_for_match = true
@@ -129,8 +167,13 @@ func _handle(data: Dictionary) -> void:
 			if state.generation != runner.state.generation or state.revision > runner.state.revision + 1 or data.get("terrain_revision", 0) != terrain_revision:
 				request_snapshot()
 				return
+			if not Protocol.valid_configured_state(state, runner):
+				request_snapshot()
+				return
 			if state.revision >= runner.state.revision:
 				runner.state = state
+				_summary(data.state)
+				_set_phase(data.get("phase", match_phase))
 				synchronized.emit()
 		"result":
 			if not ready_for_match:
@@ -145,11 +188,16 @@ func _handle(data: Dictionary) -> void:
 			if state.generation != runner.state.generation or state.revision > runner.state.revision + 1 or data.get("base_terrain_revision") != terrain_revision or data.get("terrain_revision") != terrain_revision + 1:
 				request_snapshot()
 				return
+			if not Protocol.valid_configured_state(state, runner):
+				request_snapshot()
+				return
 			if not Protocol.apply_deltas(runner.world, result.deltas):
 				request_snapshot()
 				return
 			terrain_revision = int(data.terrain_revision)
 			runner.state = state
+			_summary(result.state)
+			_set_phase(data.get("phase", "playback"))
 			last_result = result
 			var decoded: Dictionary = result.duplicate(true)
 			decoded.path = Protocol.decode_path(result.path)
@@ -164,7 +212,7 @@ func _handle(data: Dictionary) -> void:
 				status_changed.emit(reason)
 
 func send_command(command: RefCounted) -> void:
-	if ready_for_match:
+	if ready_for_match and match_phase == "playing":
 		_send({"type": "command", "command": Protocol.encode_command(command)})
 
 func request_snapshot() -> void:
@@ -172,6 +220,7 @@ func request_snapshot() -> void:
 	ready_for_match = false
 	staging = null
 	chunks.clear()
+	_progress(0, 0)
 	_status("synchronizing", "Recovering arena snapshot…")
 	_send({"type": "snapshot"})
 	# If the server's snapshot rate limit rejected this request, retry once the window expires.
@@ -196,10 +245,38 @@ func close() -> void:
 	staging = null
 	recovery_wait = 0.0
 	connection_state = "disconnected"
+	match_phase = "waiting"
+	latency_ms = -1
+	ping_pending = -1
+	ping_elapsed = 0.0
+	_progress(0, 0)
 
 func _exit_tree() -> void:
 	close()
 
 func move_player(axis: Vector2, yaw: float, jump: bool = false) -> void:
-	if ready_for_match:
+	if ready_for_match and match_phase == "playing":
 		_send({"type": "move", "axis": [axis.x, axis.y], "yaw": yaw, "jump": jump, "turn_id": runner.state.turn_id, "generation": runner.state.generation})
+
+func _progress(completed: int, total: int) -> void:
+	snapshot_progress = {"completed": completed, "total": total}
+	snapshot_progress_changed.emit(completed, total)
+
+func _set_phase(value: Variant) -> void:
+	if value is String and value in ["waiting", "playing", "playback", "ended"]:
+		match_phase = value
+		status_changed.emit("Waiting for second player" if value == "waiting" else value)
+
+func _summary(data: Dictionary) -> void:
+	runner.statistics = data.get("statistics", {}).duplicate(true)
+	for row in runner.statistics.values():
+		for key in row:
+			row[key] = int(row[key])
+	runner.history.assign(data.get("history", []).duplicate(true))
+	for row in runner.history:
+		for key in ["weapon_id", "turn_id", "damage", "kills", "terrain_changes", "terrain_destroyed"]:
+			row[key] = int(row[key])
+
+func surrender() -> void:
+	if ready_for_match and match_phase in ["playing", "waiting"]:
+		_send({"type": "surrender"})

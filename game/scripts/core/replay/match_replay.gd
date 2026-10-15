@@ -45,7 +45,7 @@ func tick(runner: RefCounted, delta: float) -> Array:
 
 func move(runner: RefCounted, velocity: Vector3, input: Vector2, yaw: float, jump: bool, delta: float) -> Vector3:
 	data.actions.append({"type": "move", "velocity": [velocity.x,velocity.y,velocity.z], "input": [input.x,input.y], "yaw": yaw, "jump": jump, "delta": delta})
-	return Motion.move(runner.world, runner.state.get_active_player(), velocity, input, yaw, jump, delta, runner.rules)
+	return Motion.move(runner.world, runner.state.get_active_player(), velocity, input, yaw, jump, delta, runner.rules, runner.materials)
 
 func reset(runner: RefCounted) -> void:
 	runner.reset()
@@ -83,6 +83,14 @@ func replay() -> RefCounted:
 		runner.state.players[i].is_alive = data.state.players[i].alive
 	for key in ["turn_id","status","time_remaining","winner_team","winner_player","revision","generation"]:
 		runner.state.set(key,data.state[key])
+	runner.statistics = data.state.statistics.duplicate(true)
+	runner.history = data.state.history.duplicate(true)
+	for metrics in runner.statistics.values():
+		for key in metrics:
+			metrics[key] = int(metrics[key])
+	for row in runner.history:
+		for key in ["weapon_id", "turn_id", "damage", "kills", "terrain_changes", "terrain_destroyed"]:
+			row[key] = int(row[key])
 	runner.state.active_player_index = int(data.state.active_index)
 	for player_id in data.state.inventory:
 		for weapon_id in data.state.inventory[player_id]:
@@ -93,7 +101,7 @@ func replay() -> RefCounted:
 			"move":
 				if runner.state.status != "playing" or runner.state.get_active_player() == null or not runner.state.get_active_player().is_alive:
 					return null
-				Motion.move(world,runner.state.get_active_player(),vector(action.velocity),Vector2(action.input[0],action.input[1]),action.yaw,action.jump,action.delta,runner.rules)
+				Motion.move(world,runner.state.get_active_player(),vector(action.velocity),Vector2(action.input[0],action.input[1]),action.yaw,action.jump,action.delta,runner.rules,runner.materials)
 			"shot":
 				var command = Command.new()
 				command.player_id = action.player_id
@@ -137,7 +145,7 @@ static func valid_config(value: Variant, prototype: Resource) -> bool:
 			TYPE_INT:
 				if not number(value[key],-1,10000,true): return false
 			TYPE_FLOAT:
-				if not number(value[key],0,10000): return false
+				if not number(value[key],-100 if key == "wind" else 0,10000): return false
 			TYPE_STRING:
 				if not text_value(value[key],256,true): return false
 			TYPE_BOOL:
@@ -211,10 +219,22 @@ func valid_data() -> bool:
 			living_teams[int(row.team)] = true
 	if state.status == "playing":
 		if state.active_index < 0 or not state.players[int(state.active_index)].alive or state.winner_team != 0 or state.winner_player != "": return false
-	else:
+	elif not (data.rules.max_turns > 0 and state.turn_id >= data.rules.max_turns and state.winner_team == 0 and state.winner_player == ""):
 		var team_match: bool = state.players.any(func(row): return row.team != 0)
 		if (team_match and living_teams.size() > 1) or (not team_match and living.size() > 1): return false
 		if state.winner_team != (living[0].team if not living.is_empty() else 0) or state.winner_player != (living[0].id if living.size() == 1 else ""): return false
+	if not state.get("statistics") is Dictionary or state.statistics.size() != players.size() or not state.get("history") is Array or state.history.size() > 32:
+		return false
+	for id in players:
+		var metrics = state.statistics.get(id)
+		if not metrics is Dictionary or metrics.size() != 4: return false
+		for key in ["shots", "hits", "damage", "kills"]:
+			if not number(metrics.get(key),0,2147483647,true): return false
+		if metrics.hits > metrics.shots: return false
+	for row in state.history:
+		if not row is Dictionary or row.size() != 7 or not text_value(row.get("player_id"),64) or not players.has(row.player_id) or not number(row.get("weapon_id"),1,10000,true) or not weapons.has(int(row.weapon_id)): return false
+		for key in ["turn_id", "damage", "kills", "terrain_changes", "terrain_destroyed"]:
+			if not number(row.get(key),0,2147483647,true): return false
 	if not data.get("actions") is Array or data.actions.size() > 10000: return false
 	var shots := 0
 	for action in data.actions:

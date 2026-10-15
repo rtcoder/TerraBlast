@@ -20,12 +20,13 @@ func run() -> void:
 	client.ready_for_match = true
 	state = runner.state_snapshot()
 	state.revision = 1
-	client._handle({"type": "result", "result": {"version": 1, "ok": true, "reason": "impact", "state": state, "path": [[1, 2, 3]], "events": "malformed", "deltas": [{"position": [0, 0, 0], "material_id": 0, "health": 0}]}})
+	client._handle({"type": "result", "result": {"version": Protocol.VERSION, "ok": true, "reason": "impact", "state": state, "path": [[1, 2, 3]], "events": "malformed", "deltas": [{"position": [0, 0, 0], "material_id": 0, "health": 0}]}})
 	check(runner.world.get_material_id(Vector3i.ZERO) == 2 and runner.state.revision == 0, "Malformed events reject entire result atomically")
 	var server = load("res://scripts/networking/transport/match_server.gd").new()
 	root.add_child(server)
 	server.runner = Factory.create_match(2)
 	server.slots[2] = "blue_1"
+	server.slots[3] = "red_1"
 	var motion := {"type": "move", "axis": [0, 0], "yaw": 0.0, "jump": true, "turn_id": 0, "generation": 0}
 	server._handle(2, motion)
 	motion.jump = false

@@ -1,7 +1,6 @@
 # Godot
 .godot/
 .import/
-export_presets.cfg
 *.translation
 
 # Godot imports
@@ -29,3 +28,8 @@ token
 project-id
 create-youtrack-issue.sh
 set-youtrack-status.sh
+
+# Python tooling caches
+__pycache__/
+*.pyc
+build/

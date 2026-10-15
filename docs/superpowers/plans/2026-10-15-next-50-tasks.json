@@ -1,0 +1,290 @@
+[
+  {
+    "group": "core",
+    "title": "Match: Statystyki strzałów, trafień, obrażeń i eliminacji",
+    "description": "MatchRunner gromadzi per-player shots/hits/damage/kills; reset zeruje, test dokładnego naliczania.",
+    "id": "TB-84"
+  },
+  {
+    "group": "core",
+    "title": "Match: Ograniczona historia wyników tur",
+    "description": "Historia ostatnich 32 strzałów z graczem/bronią/damage/deltami; bez pełnych trajektorii; reset czyści.",
+    "id": "TB-85"
+  },
+  {
+    "group": "core",
+    "title": "Match: Autorytatywne poddanie gracza",
+    "description": "Runner.surrender(player_id), usuwa żywego gracza i rozstrzyga turę/winner; powtórzenia odrzucane; bez zmiany terenu.",
+    "id": "TB-86"
+  },
+  {
+    "group": "core",
+    "title": "Rules: Limit tur kończący mecz remisem",
+    "description": "Opcjonalny max_turns, domyślnie unlimited; osiągnięcie limitu kończy remis, blokuje akcje; restart działa.",
+    "id": "TB-87"
+  },
+  {
+    "group": "core",
+    "title": "Rules: Presety classic, quick i training",
+    "description": "Czysty rejestr presetów walidowanych reguł; quick krótsze tury, training większe HP; kopie bez mutacji globalnych zasobów.",
+    "id": "TB-88"
+  },
+  {
+    "group": "core",
+    "title": "Projectile: Deterministyczny wiatr poziomy",
+    "description": "Konfigurowalna skończona siła w osi X; default 0; preview i core używają identycznego przyspieszenia; test kierunku i determinism.",
+    "id": "TB-89"
+  },
+  {
+    "group": "core",
+    "title": "Core: Wspólny raycast voxelowy dla celowania",
+    "description": "Czysty bounded raycast zwracający pierwszy solid voxel; test osi, skosu, bounds i zerowego kierunku; klient używa core.",
+    "id": "TB-90"
+  },
+  {
+    "group": "core",
+    "title": "Core: Respektować is_solid materiałów w kolizjach",
+    "description": "Projectile/movement/raycast respektują materiał niesolidny; znane materiały zachowują zachowanie; headless regresje.",
+    "id": "TB-91"
+  },
+  {
+    "group": "core",
+    "title": "Replay: Atomowy zapis i ograniczony odczyt pliku",
+    "description": "Wersjonowany plik JSON z limitem rozmiaru, atomic rename i kontrolowanym błędem; malformed/read-only/missing testy.",
+    "id": "TB-92"
+  },
+  {
+    "group": "core",
+    "title": "Replay: Sprawdzać hash końcowego wyniku nagrania",
+    "description": "Archiwum przechowuje expected state hash; odtworzenie weryfikuje wynik i wykrywa edycję komend; brak crasha.",
+    "id": "TB-93"
+  },
+  {
+    "group": "network",
+    "title": "Network: Przesyłać reguły i konfigurację broni w snapshotach",
+    "description": "Walidowane konfiguracje autorytatywne, w tym preset/wind/maxturns; klient preview identyczny; atomic reject invalid config.",
+    "id": "TB-94"
+  },
+  {
+    "group": "network",
+    "title": "Network: Synchronizować statystyki i historię meczu",
+    "description": "Snapshot/state/result niosą ograniczone stats/history z walidacją; reconnect zachowuje wynik; bez zaufania klientowi.",
+    "id": "TB-95"
+  },
+  {
+    "group": "network",
+    "title": "Network: Komenda poddania przypisana do peera",
+    "description": "Serwer wywołuje surrender tylko dla własnego slotu; spoof/repeat reject; zwycięstwo synchronizowane.",
+    "id": "TB-96"
+  },
+  {
+    "group": "network",
+    "title": "Network: Jawny stan oczekiwania na drugiego gracza",
+    "description": "Server status waiting/playing/playback/ended; czas stoi gdy brak klienta; client pokazuje powód bez inputu w waiting.",
+    "id": "TB-97"
+  },
+  {
+    "group": "network",
+    "title": "Network: Ping/pong i pomiar opóźnienia",
+    "description": "Bounded pending ping, RTT w ms, rate limit; heartbeat nie zmienia match revision; test real ENet.",
+    "id": "TB-98"
+  },
+  {
+    "group": "network",
+    "title": "Server: Diagnostyka obsłużonych i odrzuconych pakietów",
+    "description": "Bounded counters packets/bytes/rejections/snapshots per session bez tokenów; reset server clears; test rate rejection.",
+    "id": "TB-99"
+  },
+  {
+    "group": "network",
+    "title": "Network: Postęp pobierania snapshotu",
+    "description": "Client completed/total chunks i sygnał postępu; reset/failed transfer zeruje; procent tylko po metadanych.",
+    "id": "TB-100"
+  },
+  {
+    "group": "network",
+    "title": "Protocol: Odrzucać duplikaty i nieoczekiwane chunki",
+    "description": "Transfer wymaga unikalnego kompletnego zbioru chunków; duplikat/mixed transfer nie publikuje świata; recovery.",
+    "id": "TB-101"
+  },
+  {
+    "group": "network",
+    "title": "Protocol: Walidacja pozycji graczy względem areny",
+    "description": "Pozycje żywych graczy muszą być zgodne z wymiarami i tolerancją fizyki; snapshot/result atomic rejection.",
+    "id": "TB-102"
+  },
+  {
+    "group": "network",
+    "title": "Protocol: Walidacja ortonormalnej rotacji gracza",
+    "description": "Odrzucać shear/scale/reflection/NaN, zachować poprawny yaw; tests invalid snapshots.",
+    "id": "TB-103"
+  },
+  {
+    "group": "network",
+    "title": "Network: Czytelne powody odrzuconych intencji",
+    "description": "Błędne move/command/unknown type mają bounded reason codes bez crash/spam; klient sygnalizuje odmowę.",
+    "id": "TB-104"
+  },
+  {
+    "group": "network",
+    "title": "Server: Kontrolowane zamknięcie sesji",
+    "description": "Powiadomienie server_shutdown przed zamknięciem transportu; klient blokuje input i pokazuje retry; test real ENet.",
+    "id": "TB-105"
+  },
+  {
+    "group": "devtools",
+    "title": "CI: Headless pipeline testów Godot",
+    "description": "Workflow pinned Godot4.6.2 Linux, unit+integration bez zależności od macOS; testy backend/render osobno; YAML/commands checked.",
+    "id": "TB-106"
+  },
+  {
+    "group": "devtools",
+    "title": "Build: Presety eksportu desktop i Linux server",
+    "description": "Godot export_presets dla macOS/Windows/Linux/headless bez sekretów i wymagania templates przy zwykłym starcie; walidacja konfiguracji, uczciwie opisać eksport.",
+    "id": "TB-107"
+  },
+  {
+    "group": "devtools",
+    "title": "Devtools: Doctor środowiska w JSON",
+    "description": "Sprawdza Godot, projekt, mapy i optional Nakama bez sekretów; sensowny exitcode, test fake missing binary.",
+    "id": "TB-108"
+  },
+  {
+    "group": "devtools",
+    "title": "Tests: Limit czasu każdego procesu testowego",
+    "description": "Timeout zabija process group i zgłasza nazwę testu; regresja zawieszonego procesu; bez zależności systemowego timeout.",
+    "id": "TB-109"
+  },
+  {
+    "group": "devtools",
+    "title": "Tests: Raport JSON z wynikami zestawu",
+    "description": "Lista testów status/duration/log path, raport także przy failure/timeout; test schema; brak utraty logów.",
+    "id": "TB-110"
+  },
+  {
+    "group": "devtools",
+    "title": "Tests: Przenośny runner osobnych procesów sieciowych",
+    "description": "GODOT_BIN i root independent cwd, configurable ports, cleanup finally, timeout i bounded logs; rzeczywisty smoke.",
+    "id": "TB-111"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Pomoc --help bez uruchamiania meczu",
+    "description": "Czytelne flagi/tryby, exit0, brak renderera/network bind; test subprocess.",
+    "id": "TB-112"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Wersja --version bez uruchamiania sceny",
+    "description": "Jednoznaczna wersja aplikacji/silnika, exit0, test; wspólna stała bez rozjechania.",
+    "id": "TB-113"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Atomowy zapis summary przez --output",
+    "description": "Simulate zapisuje JSON do wskazanego pliku, stdout nadal działa; invalid path exitnonzero; tests file schema.",
+    "id": "TB-114"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Weryfikacja nagrania replay z pliku",
+    "description": "Tryb replay --replay path używa walidowanego archiwum i hash; summary JSON exitcode mismatch; malformed tests.",
+    "id": "TB-115"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Wybór presetów reguł przy uruchomieniu",
+    "description": "--preset classic/quick/training dla local/server/simulate, walidowane; server przekazuje coreconfig; unknown rejects.",
+    "id": "TB-116"
+  },
+  {
+    "group": "devtools",
+    "title": "CLI: Lista dostępnych aren z metadanymi",
+    "description": "--list-maps JSON nazwa/size/spawncount/errors bez UI; błędny katalog/mapa kontrolowane; tests.",
+    "id": "TB-117"
+  },
+  {
+    "group": "client",
+    "title": "UI: Pauza lokalnego meczu",
+    "description": "P otwiera pauzę blokując timer/movement/charge; wznowienie nie oddaje strzału; sieciowy czas nie pauzuje.",
+    "id": "TB-118"
+  },
+  {
+    "group": "client",
+    "title": "UI: Panel nowego meczu z areną i presetem",
+    "description": "F5 local setup wybiera arena/playercount/preset i startuje reset; błędne ustawienia odrzucone; network nie zmienia authority.",
+    "id": "TB-119"
+  },
+  {
+    "group": "client",
+    "title": "Settings: Przywrócenie domyślnych preferencji",
+    "description": "Przycisk reset ustawia wszystkie prefs, odświeża widgets i zapisuje; test bez zmiany core.",
+    "id": "TB-120"
+  },
+  {
+    "group": "client",
+    "title": "Accessibility: Skalowanie tekstu HUD",
+    "description": "Persisted HUD text scale z bounded choices; HUD/panele czytelne przy1280x720; test scaling.",
+    "id": "TB-121"
+  },
+  {
+    "group": "client",
+    "title": "Settings: Przełącznik preview trajektorii",
+    "description": "Persisted bool wyłącza tylko preview, nie kierunek/celowanie/symulację; test obu stanów.",
+    "id": "TB-122"
+  },
+  {
+    "group": "client",
+    "title": "Accessibility: Kontrastowy wariant celownika",
+    "description": "Persisted high-contrast crosshair preferencja, widoczna na jasnym tle; test/render, bez core wpływu.",
+    "id": "TB-123"
+  },
+  {
+    "group": "client",
+    "title": "UI: Pomoc sterowania w grze",
+    "description": "F6 czytelny panel aktualnych klawiszy, blokuje wejście gameplay, zamknięcie przywraca; test.",
+    "id": "TB-124"
+  },
+  {
+    "group": "client",
+    "title": "UI: Etykiety HP nad postaciami",
+    "description": "Imię/HP/status aktywnego, aktualizacja po damage/reset/network, martwi ukryci; test node lifecycle.",
+    "id": "TB-125"
+  },
+  {
+    "group": "client",
+    "title": "UI: Baner zmiany tury",
+    "description": "Krótki baner player/team przy zmianie turn/generation, bez wielokrotnego animowania od state tick; test.",
+    "id": "TB-126"
+  },
+  {
+    "group": "client",
+    "title": "UI: Podsumowanie ostatniego strzału",
+    "description": "HUD strzelec/broń/damage/destroyed z authoritative history po playback; reset clears; local/network.",
+    "id": "TB-127"
+  },
+  {
+    "group": "client",
+    "title": "UI: Panel końca meczu z restartem",
+    "description": "Winner/draw + finalstats i przycisk restart; zero input shot; network respektuje restart authority; test.",
+    "id": "TB-128"
+  },
+  {
+    "group": "client",
+    "title": "UI: Statystyki meczu w scoreboardzie",
+    "description": "Shots/hits/damage/kills obok HP z runnerstats local/network; bounded responsive content; test.",
+    "id": "TB-129"
+  },
+  {
+    "group": "client",
+    "title": "UI: Przycisk poddania w menu meczu",
+    "description": "Jawna akcja surrender local/network zgodnie z authority; stan zakończenia od runnera; test no spoof.",
+    "id": "TB-130"
+  },
+  {
+    "group": "client",
+    "title": "UI: Postęp synchronizacji i RTT połączenia",
+    "description": "Widoczny connecting/waiting/snapshot progress/RTT/retry; input gated readiness; test status updates.",
+    "id": "TB-131"
+  }
+]

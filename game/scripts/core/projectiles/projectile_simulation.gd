@@ -16,7 +16,7 @@ static func simulate(world: RefCounted, origin: Vector3, direction: Vector3, pow
 	var duration: float = weapon.fuse_time if weapon.behavior == "grenade" else rules.max_projectile_lifetime
 	for tick in range(ceili(duration / dt)):
 		var step_dt := minf(dt, duration - tick * dt)
-		velocity += Vector3.DOWN * rules.base_gravity * weapon.gravity_scale * step_dt
+		velocity += Vector3(rules.wind, -rules.base_gravity * weapon.gravity_scale, 0) * step_dt
 		var next := position + velocity * step_dt
 		var distance := position.distance_to(next)
 		var steps := maxi(1, ceili(distance / rules.sweep_step))
@@ -30,7 +30,7 @@ static func simulate(world: RefCounted, origin: Vector3, direction: Vector3, pow
 			var point := position.lerp(next, float(step) / steps)
 			var voxel := Vector3i(floori(point.x), floori(point.y), floori(point.z))
 			var material_id: int = world.get_material_id(voxel)
-			if material_id != 0 and not removed.has(voxel):
+			if material_id != 0 and (not materials.has(material_id) or materials[material_id].is_solid) and not removed.has(voxel):
 				var destructible: bool = materials[material_id].is_destructible if materials.has(material_id) else material_id != 3
 				if weapon.behavior == "drill" and removed.size() < weapon.drill_voxels and destructible:
 					removed[voxel] = true

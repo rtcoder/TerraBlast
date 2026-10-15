@@ -1,50 +1,71 @@
 #!/usr/bin/env python3
-"""Run a real server and two real gameplay clients; no mock transports."""
-import os
+"""Exercise a real server and two gameplay clients, with bounded durable logs."""
+import argparse
+import signal
 from pathlib import Path
-import subprocess
+import socket
 import tempfile
 import time
+from devtools import ROOT, godot_binary, spawn, stop
 
-binary = os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot')
-with tempfile.TemporaryDirectory(prefix='terrablast-network-') as tmp:
-    root = Path(tmp)
-    processes = []
-    files = []
-    def start(name, args):
-        output = (root / f'{name}.out').open('w')
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--port', type=int, default=0)
+    parser.add_argument('--timeout', type=float, default=30)
+    parser.add_argument('--log-dir', type=Path)
+    args = parser.parse_args()
+    def interrupted(_signum, _frame):
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, interrupted)
+    if not 0 <= args.port <= 65535:
+        parser.error('port must be 0..65535')
+    port = args.port
+    if not port:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.bind(('127.0.0.1', 0))
+            port = sock.getsockname()[1]
+    directory = args.log_dir or Path(tempfile.mkdtemp(prefix='terrablast-network-'))
+    directory.mkdir(parents=True, exist_ok=True)
+    processes, files = [], []
+    def start(name, arguments):
+        output = (directory / (name + '.out')).open('w')
         files.append(output)
-        process = subprocess.Popen([binary, '--headless', '--log-file', str(root / f'{name}.log'), '--path', 'game', *args], stdout=output, stderr=subprocess.STDOUT)
+        process = spawn([godot_binary(), '--headless', '--log-file', str(directory / (name + '.log')), '--path', str(ROOT / 'game'), *arguments], stdout=output, stderr=-2)
         processes.append(process)
         return process
+    def read(name):
+        path = directory / (name + '.out')
+        if path.stat().st_size > 8 * 1024 * 1024:
+            raise RuntimeError(name + ': log limit exceeded')
+        return path.read_text(errors='replace')
     try:
-        server = start('server', ['--', '--mode', 'server', '--port', '19175'])
-        deadline = time.monotonic() + 10
-        while 'server ready' not in (root / 'server.out').read_text():
-            if server.poll() is not None or time.monotonic() > deadline:
-                raise RuntimeError((root / 'server.out').read_text())
+        server = start('server', ['--', '--mode', 'server', '--port', str(port)])
+        deadline = time.monotonic() + args.timeout
+        while 'server ready' not in read('server'):
+            if server.poll() is not None or time.monotonic() >= deadline:
+                raise RuntimeError('Server did not become ready: ' + read('server'))
             time.sleep(.05)
-        clients = [start(f'client-{i}', ['--script', 'tests/integration/network_process_client.gd', '--', '--mode', 'client', '--port', '19175']) for i in range(2)]
-        for client in clients:
-            client.wait(timeout=20)
+        clients = [start('client-' + str(i), ['--script', 'tests/integration/network_process_client.gd', '--', '--mode', 'client', '--port', str(port)]) for i in range(2)]
+        while any(client.poll() is None for client in clients):
+            for name in ['server', 'client-0', 'client-1']:
+                read(name)
+            if time.monotonic() >= deadline:
+                raise RuntimeError('Separate-process clients timed out')
+            time.sleep(.05)
         for i, client in enumerate(clients):
-            output = (root / f'client-{i}.out').read_text()
-            print(output)
+            output = read('client-' + str(i))
             if client.returncode or 'ERROR:' in output or 'leaked at exit' in output or 'Network process client passed' not in output:
-                raise RuntimeError('Separate-process client failed')
-        server_output = (root / 'server.out').read_text()
-        if 'ERROR:' in server_output:
-            raise RuntimeError(server_output)
+                raise RuntimeError(output)
+        if 'ERROR:' in read('server'):
+            raise RuntimeError(read('server'))
         print('Separate-process server + two gameplay clients passed')
+        return 0
     finally:
         for process in processes:
-            if process.poll() is None:
-                process.terminate()
-        for process in processes:
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
-        for file in files:
-            file.close()
+            stop(process)
+        for output in files:
+            output.close()
+        print('Network logs: ' + str(directory.resolve()))
+
+if __name__ == '__main__':
+    raise SystemExit(main())

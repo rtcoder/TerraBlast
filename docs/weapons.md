@@ -26,3 +26,11 @@ The core uses semi-implicit Euler at 30 Hz, with sampled sweeps to avoid skippin
 Config validation caps gravity, speeds, radii, duration, drill depth and ammo. A shot additionally has a 65,536-sample sweep budget. Invalid configs are rejected before consuming ammo; excessive legal simulation work terminates with `simulation_budget`. Catalogs reject duplicate IDs and codes.
 
 `MatchReplay` captures the arena, configs, initial state and accepted shots/movement/time updates. `data` is JSON serializable; `replay()` reconstructs a runner and `state_hash()` compares terrain, HP, positions, turns and inventory. This is a local diagnostic format for trusted recordings, not a network upload format. The client preview and resolved path use the same simulator; previews never mutate the arena.
+
+## Match diagnostics and recordings
+
+`RulePresets.create` returns isolated classic/quick/training rule resources. `max_turns=0` disables the turn cap; reaching a positive cap produces a draw after the turn resolves. `wind` is a bounded X acceleration in the same fixed-step projectile integrator, shared by preview and server. Voxel raycasting and pawn/projectile collision honour `VoxelMaterialConfig.is_solid`.
+
+`MatchRunner.statistics` records accepted shots, shots harming an enemy, actual enemy HP removed and enemy eliminations. Overkill is capped by the victim's previous HP; self/team damage is excluded from these metrics. `history` contains at most 32 compact authoritative shot summaries. Reset clears both; network snapshots preserve them. Surrender eliminates the requesting player without changing terrain, then checks turn and winner state.
+
+`ReplayArchive.save(path, recorder, runner)` stores a versioned recording and final state hash using a temporary sibling and atomic rename. `load_verified(path)` rejects malformed, oversized or hash-mismatched recordings before returning a restored runner. Archives are limited to 32 MiB. Recording requires routing tick/move/shot calls through the recorder APIs; the live client does not automatically archive every match. The CLI verifies supplied archives with `--mode replay --replay path`.

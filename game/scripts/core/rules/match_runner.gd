@@ -16,6 +16,8 @@ var state: RefCounted
 var initial_materials: PackedInt32Array
 var initial_health: PackedInt32Array
 var initial_players: Array = []
+var statistics: Dictionary = {}
+var history: Array = []
 
 func _init(initial_world: RefCounted, configs: Dictionary, players: Array, config: Resource, catalog: Dictionary) -> void:
 	world = initial_world
@@ -29,6 +31,8 @@ func _init(initial_world: RefCounted, configs: Dictionary, players: Array, confi
 	reset()
 
 func reset() -> void:
+	statistics.clear()
+	history.clear()
 	var generation: int = state.generation + 1 if state != null else 0
 	world.material_ids = initial_materials.duplicate()
 	world.health_values = initial_health.duplicate()
@@ -47,6 +51,7 @@ func reset() -> void:
 	state.max_shot_power = rules.max_shot_power
 	state.time_remaining = rules.turn_time
 	for player in players:
+		statistics[player.player_id] = {"shots": 0, "hits": 0, "damage": 0, "kills": 0}
 		state.inventory[player.player_id] = {}
 		for id in weapons:
 			state.inventory[player.player_id][id] = weapons[id].max_uses_per_match
@@ -77,6 +82,9 @@ func submit(command: RefCounted) -> Dictionary:
 		state.inventory[active.player_id][command.weapon_id] -= 1
 	command.shot_power = clampf(command.shot_power, rules.min_shot_power, rules.max_shot_power)
 	var weapon: Resource = weapons[command.weapon_id]
+	var previous_health := {}
+	for player in state.players:
+		previous_health[player.player_id] = player.health
 	var shot := Simulation.simulate(world, active.position + Vector3.UP * 1.3, command.aim_direction, command.shot_power, weapon, rules, materials)
 	var deltas: Array = shot.deltas.duplicate(true)
 	for delta in deltas:
@@ -99,6 +107,7 @@ func submit(command: RefCounted) -> Dictionary:
 				apply_knockback(player, shot.position, weapon)
 	settle_players(events)
 	events.append({"type": "ShotResolved", "hit": shot.hit, "position": [shot.position.x, shot.position.y, shot.position.z], "weapon_id": weapon.id, "turn_id": state.turn_id, "seed": 0, "radius": weapon.explosion_radius})
+	record_shot(active, weapon.id, previous_health, deltas.size(), deltas.filter(func(change): return change.material_id == 0).size())
 	advance(events)
 	state.revision += 1
 	return {"ok": true, "reason": shot.reason, "events": events, "deltas": deltas, "path": shot.path, "state": state_snapshot()}
@@ -110,7 +119,7 @@ func settle_players(events: Array = []) -> void:
 		var velocity := Vector3.ZERO
 		for tick in range(600):
 			velocity.y -= rules.player_gravity / 30.0
-			velocity = Motion.displace(world, player, velocity, 1.0 / 30.0)
+			velocity = Motion.displace(world, player, velocity, 1.0 / 30.0, materials)
 			if player.position.y < -7:
 				var amount: int = player.health
 				player.apply_damage(amount)
@@ -125,7 +134,7 @@ func apply_knockback(player: RefCounted, center: Vector3, weapon: Resource) -> v
 	var velocity: Vector3 = (offset.normalized() + Vector3.UP * 0.5).normalized() * weapon.knockback * factor
 	for tick in range(60):
 		velocity.y -= rules.player_gravity / 30.0
-		velocity = Motion.displace(world, player, velocity, 1.0 / 30.0)
+		velocity = Motion.displace(world, player, velocity, 1.0 / 30.0, materials)
 		if velocity.y == 0 or player.position.y < -7:
 			break
 
@@ -143,6 +152,12 @@ func advance(events: Array) -> void:
 	if check_end(events):
 		return
 	state.complete_turn()
+	if rules.max_turns > 0 and state.turn_id >= rules.max_turns:
+		state.status = "ended"
+		state.winner_team = 0
+		state.winner_player = ""
+		events.append({"type": "MatchEnded", "team_id": 0, "player_id": ""})
+		return
 	state.time_remaining = rules.turn_time
 	events.append({"type": "TurnStarted", "turn_id": state.turn_id, "player_id": state.get_active_player().player_id})
 
@@ -168,4 +183,41 @@ func state_snapshot() -> Dictionary:
 	var players := []
 	for player in state.players:
 		players.append({"id": player.player_id, "name": player.display_name, "team": player.team_id, "position": [player.position.x, player.position.y, player.position.z], "rotation": [player.rotation.x.x,player.rotation.x.y,player.rotation.x.z,player.rotation.y.x,player.rotation.y.y,player.rotation.y.z,player.rotation.z.x,player.rotation.z.y,player.rotation.z.z], "health": player.health, "alive": player.is_alive})
-	return {"players": players, "max_shot_power": state.max_shot_power, "turn_id": state.turn_id, "active_index": state.active_player_index, "status": state.status, "time_remaining": state.time_remaining, "winner_team": state.winner_team, "winner_player": state.winner_player, "inventory": state.inventory.duplicate(true), "revision": state.revision, "generation": state.generation}
+	return {"statistics": statistics.duplicate(true), "history": history.duplicate(true), "players": players, "max_shot_power": state.max_shot_power, "turn_id": state.turn_id, "active_index": state.active_player_index, "status": state.status, "time_remaining": state.time_remaining, "winner_team": state.winner_team, "winner_player": state.winner_player, "inventory": state.inventory.duplicate(true), "revision": state.revision, "generation": state.generation}
+
+func record_shot(shooter: RefCounted, weapon_id: int, previous_health: Dictionary, terrain_changes: int, terrain_destroyed: int) -> void:
+	var damage := 0
+	var kills := 0
+	for player in state.players:
+		if player.player_id == shooter.player_id or (shooter.team_id != 0 and player.team_id == shooter.team_id):
+			continue
+		damage += maxi(0, int(previous_health[player.player_id]) - player.health)
+		if previous_health[player.player_id] > 0 and not player.is_alive:
+			kills += 1
+	var metrics: Dictionary = statistics[shooter.player_id]
+	metrics.shots += 1
+	metrics.hits += 1 if damage > 0 else 0
+	metrics.damage += damage
+	metrics.kills += kills
+	history.append({"player_id": shooter.player_id, "weapon_id": weapon_id, "turn_id": state.turn_id, "damage": damage, "kills": kills, "terrain_changes": terrain_changes, "terrain_destroyed": terrain_destroyed})
+	if history.size() > 32:
+		history.pop_front()
+
+func surrender(player_id: String) -> Dictionary:
+	if state.status != "playing":
+		return {"ok": false, "reason": "match_ended"}
+	for player in state.players:
+		if player.player_id != player_id:
+			continue
+		if not player.is_alive:
+			return {"ok": false, "reason": "player_dead"}
+		var was_active: bool = player == state.get_active_player()
+		player.apply_damage(player.health)
+		var events: Array = [{"type": "PlayerSurrendered", "player_id": player_id}]
+		if was_active:
+			advance(events)
+		else:
+			check_end(events)
+		state.revision += 1
+		return {"ok": true, "reason": "surrendered", "events": events, "deltas": [], "path": PackedVector3Array(), "state": state_snapshot()}
+	return {"ok": false, "reason": "unknown_player"}

@@ -1,7 +1,7 @@
 extends Node
 ## Seeded, render-free scenario runner for reproducible diagnostics.
 func _ready() -> void:
-	var runner = load("res://scripts/core/rules/match_factory.gd").create_match(int(GameConfig.argument("--players", "2")), GameConfig.map_path())
+	var runner = load("res://scripts/core/rules/match_factory.gd").create_match(int(GameConfig.argument("--players", "2")), GameConfig.map_path(), GameConfig.argument("--preset", "classic"))
 	if runner == null:
 		printerr("Arena could not be generated")
 		get_tree().quit(2)
@@ -40,5 +40,13 @@ func _ready() -> void:
 	checksum.start(HashingContext.HASH_SHA256)
 	checksum.update(runner.world.material_ids.to_byte_array())
 	checksum.update(runner.world.health_values.to_byte_array())
-	print(JSON.stringify({"map": GameConfig.argument("--map", "twin_forts"), "seed": rng.seed, "shots": accepted, "deltas": deltas, "terrain_hash": checksum.finish().hex_encode(), "state": runner.state_snapshot()}))
+	var summary := JSON.stringify({"map": GameConfig.argument("--map", "twin_forts"), "seed": rng.seed, "shots": accepted, "deltas": deltas, "terrain_hash": checksum.finish().hex_encode(), "state": runner.state_snapshot()})
+	print(summary)
+	var output: String = GameConfig.argument("--output", "")
+	if not output.is_empty():
+		var error: Error = load("res://scripts/server/utility_cli.gd").write_atomic(output, summary)
+		if error != OK:
+			printerr("Cannot write summary: " + error_string(error))
+			get_tree().quit(2)
+			return
 	get_tree().quit(0)

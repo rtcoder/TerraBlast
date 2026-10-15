@@ -14,6 +14,13 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var end_presented_key := ""
+var local_paused := false
+var match_panels: Control
+var turn_banner: Label
+var turn_banner_count := 0
+var banner_remaining := 0.0
+var last_shot_label: Label
 var preferences: RefCounted
 var settings_panel: PanelContainer
 var scoreboard: Label
@@ -87,12 +94,8 @@ func _ready() -> void:
 	_update_hud()
 	backend_menu = load("res://scripts/client/backend/backend_menu.gd").new()
 	add_child(backend_menu)
-	backend_menu.menu_visibility_changed.connect(func(open: bool):
-		menu_open = open or settings_panel.visible
-		_cancel_aim()
-		mouse_look_enabled = not open
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if open else Input.MOUSE_MODE_CAPTURED)
-	)
+	backend_menu.menu_visibility_changed.connect(func(_open: bool): _refresh_menu_state())
+	_apply_client_preferences()
 	backend_menu.connect_game.connect(func(host: String):
 		remote_mode = true
 		if is_instance_valid(network):
@@ -102,19 +105,21 @@ func _ready() -> void:
 	)
 
 func _physics_process(delta: float) -> void:
-	if not remote_mode and not projectile_in_flight:
+	if not remote_mode and not projectile_in_flight and not local_paused:
 		var events: Array = runner.tick(delta)
 		if not events.is_empty():
 			effects.play_events(events)
 			_cancel_aim()
 			_face_camera_toward_enemy()
 	_sync_selected_weapon()
-	if observed_turn != turn_controller.turn_id or observed_generation != turn_controller.generation:
+	if not projectile_in_flight and (observed_turn != turn_controller.turn_id or observed_generation != turn_controller.generation):
 		_cancel_aim()
 		observed_turn = turn_controller.turn_id
 		observed_generation = turn_controller.generation
+		_show_turn_banner()
 	_update_scoreboard()
 	_update_debug_panel()
+	_update_match_panels(delta)
 	_update_hud()
 	_update_shot_charge(delta)
 	_update_active_player_movement(delta)
@@ -200,7 +205,7 @@ func _get_crosshair_world_point(screen_position: Vector2) -> Vector3:
 		return origin
 
 	var normalized_direction := direction.normalized()
-	var aimed_voxel: Vector3i = voxel_world.get_first_solid_on_ray(origin, normalized_direction)
+	var aimed_voxel: Vector3i = preload("res://scripts/core/voxels/voxel_raycast.gd").first_solid(runner.world, origin, normalized_direction, runner.materials)
 	if aimed_voxel.x >= 0:
 		return Vector3(aimed_voxel) + Vector3(0.5, 0.5, 0.5)
 	return origin + normalized_direction * aim_fallback_distance
@@ -209,6 +214,9 @@ func _play_result(result: Dictionary) -> void:
 	projectile_in_flight = true
 	pending_result = result
 	_cancel_aim()
+	if result.path.is_empty():
+		_finish_playback()
+		return
 	active_projectile = DebugProjectile.new()
 	add_child(active_projectile)
 	active_projectile.play_path(result.path, rules.projectile_step)
@@ -218,6 +226,8 @@ func _finish_playback() -> void:
 	effects.play_events(pending_result.get("events", []))
 	voxel_world.refresh_deltas(pending_result.get("deltas", []))
 	pending_result = {}
+	if is_instance_valid(active_projectile):
+		active_projectile.queue_free()
 	active_projectile = null
 	projectile_in_flight = false
 	for id in player_velocities:
@@ -227,7 +237,7 @@ func _finish_playback() -> void:
 	_update_hud()
 
 func _setup_players() -> void:
-	runner = MatchFactory.create_match(2 if remote_mode else int(GameConfig.argument("--players", "10")), GameConfig.map_path())
+	runner = MatchFactory.create_match(2 if remote_mode else int(GameConfig.argument("--players", "10")), GameConfig.map_path(), GameConfig.argument("--preset", "classic"))
 	rules = runner.rules
 	move_speed = rules.move_speed
 	jump_speed = rules.jump_speed
@@ -257,6 +267,9 @@ func _bind_players() -> void:
 	_update_player_nodes()
 
 func restart_match() -> void:
+	end_presented_key = ""
+	effects.clear()
+	_close_overlays()
 	if remote_mode:
 		network.restart_match()
 		return
@@ -273,6 +286,8 @@ func restart_match() -> void:
 	_cancel_aim()
 	voxel_world._mark_all_chunks_dirty()
 	voxel_world.rebuild_dirty_chunks()
+	last_shot_label.text = ""
+	_update_match_panels(0.0)
 
 func _create_player_marker(color: Color) -> Node3D:
 	var root := Node3D.new()
@@ -302,6 +317,14 @@ func _create_player_marker(color: Color) -> Node3D:
 	ring_material.emission = Color(1.0, 0.82, 0.08)
 	active_ring.material_override = ring_material
 	root.add_child(active_ring)
+	var label := Label3D.new()
+	label.name = "HealthLabel"
+	label.position = Vector3(0, 2.65, 0)
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font_size = 28
+	label.outline_size = 6
+	label.pixel_size = 0.007
+	root.add_child(label)
 	return root
 
 func _add_box_part(parent: Node3D, part_name: String, size: Vector3, position: Vector3, material: Material) -> void:
@@ -326,6 +349,9 @@ func _update_player_nodes() -> void:
 		var marker: Node3D = player_nodes[player.player_id]
 		marker.position = player.position
 		marker.visible = player.is_alive
+		var health_label: Label3D = marker.get_node("HealthLabel")
+		health_label.text = "%s  HP %d%s" % [player.display_name, player.health, " •" if player == active_player else ""]
+		health_label.modulate = Color(0.5,0.75,1) if player.team_id == 1 else Color(1,0.55,0.45)
 		if active_player != null and player.player_id == active_player.player_id:
 			marker.rotation.y = orbit_yaw
 		else:
@@ -353,18 +379,20 @@ func _set_part_rotation(marker: Node3D, part_name: String, rotation: Vector3) ->
 func _update_hud() -> void:
 	var active_player: Variant = turn_controller.get_active_player()
 	var status := ""
-	if turn_controller.has_winner():
+	if runner.state.status == "ended":
 		status = _winner_status_text()
 	elif active_player != null:
 		status = "Turn %d: %s" % [turn_controller.turn_id + 1, active_player.display_name]
 	status += "\n%s   %s" % [_team_status_text(1, "Blue"), _team_status_text(2, "Red")]
 	var weapon: Resource = runner.weapons[selected_weapon_id]
 	var ammo: int = runner.state.inventory[active_player.player_id][selected_weapon_id] if active_player != null else 0
-	status += "\n%s | Ammo: %s | %.0fs | 1-3 weapon / R restart / F2 multiplayer / F3 settings / Tab scores" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
+	status += "\n%s | Ammo: %s | %.0fs | 1–3 weapon | R restart | P menu | F6 help" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	if remote_mode:
 		status += "\n" + network_status + " | F4 retry"
+		if network != null:
+			status += " | %s | %d%% | RTT %.0f ms" % [network.match_phase, int(100.0 * network.snapshot_progress.completed / maxi(1, network.snapshot_progress.total)), network.latency_ms]
 	hud_label.text = status
 
 func _team_status_text(team_id: int, label: String) -> String:
@@ -381,6 +409,8 @@ func _team_status_text(team_id: int, label: String) -> String:
 	return "%s %d/%d HP %d" % [label, living_count, team_count, total_health]
 
 func _winner_status_text() -> String:
+	if runner.state.status == "ended" and runner.state.winner_team == 0:
+		return "Draw"
 	var living_teams := {}
 	for player: Variant in players:
 		if player.is_alive:
@@ -404,7 +434,7 @@ func _update_active_player_movement(delta: float) -> void:
 	if active_player == null or not active_player.is_alive:
 		return
 
-	var velocity: Vector3 = PlayerMotion.move(runner.world, active_player, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta, rules)
+	var velocity: Vector3 = PlayerMotion.move(runner.world, active_player, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta, rules, runner.materials)
 	player_velocities[active_player.player_id] = velocity
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	if horizontal_speed > 0.05:
@@ -425,7 +455,7 @@ func _try_jump_active_player() -> void:
 	if active_player == null:
 		return
 
-	if not PlayerMotion.blocked(runner.world, active_player.position + Vector3.DOWN * 0.05):
+	if not PlayerMotion.blocked(runner.world, active_player.position + Vector3.DOWN * 0.05, runner.materials):
 		return
 
 	var velocity: Vector3 = player_velocities.get(active_player.player_id, Vector3.ZERO)
@@ -536,9 +566,9 @@ func _setup_trajectory_preview() -> void:
 	trajectory_preview.hide()
 
 func _update_trajectory_preview() -> void:
-	trajectory_preview.visible = _can_control() and is_aiming and not projectile_in_flight and not turn_controller.has_winner()
-	aim_indicator.visible = trajectory_preview.visible
-	if not trajectory_preview.visible:
+	aim_indicator.visible = _can_control() and is_aiming and not projectile_in_flight
+	trajectory_preview.visible = aim_indicator.visible and preferences.show_trajectory
+	if not aim_indicator.visible:
 		return
 	var points := _get_trajectory_points()
 	if points.size() < 2:
@@ -564,12 +594,12 @@ func _update_trajectory_preview() -> void:
 
 
 func _can_control() -> bool:
-	if menu_open:
+	if menu_open or local_paused or runner.state.status != "playing":
 		return false
 	if not remote_mode:
 		return true
 	var active = turn_controller.get_active_player()
-	return network != null and network.ready_for_match and active != null and active.player_id == network.player_id
+	return network != null and network.ready_for_match and network.match_phase == "playing" and active != null and active.player_id == network.player_id
 
 func _connect_network(host: String) -> void:
 	network = load("res://scripts/networking/transport/match_client.gd").new()
@@ -589,6 +619,7 @@ func _sync_network() -> void:
 	var previous_turn: int = turn_controller.turn_id
 	runner = network.runner
 	rules = runner.rules
+	_sync_rule_controls()
 	if replaced:
 		voxel_world.set_world(runner.world, runner.materials)
 		if is_instance_valid(active_projectile):
@@ -636,6 +667,26 @@ func _setup_client_panels() -> void:
 	$Hud.add_child(settings_panel)
 	settings_panel.setup(preferences)
 	settings_panel.closed.connect(_toggle_settings)
+	settings_panel.preferences_changed.connect(_apply_client_preferences)
+	match_panels = preload("res://scripts/client/ui/match_panels.gd").new()
+	$Hud.add_child(match_panels)
+	match_panels.resume_requested.connect(_close_overlays)
+	match_panels.close_requested.connect(_close_overlays)
+	match_panels.setup_requested.connect(func(map_name: String, count: int, preset: String):
+		if not start_local_match(map_name, count, preset):
+			match_panels.setup_error.text = "Cannot start this match"
+	)
+	match_panels.restart_requested.connect(restart_match)
+	match_panels.surrender_requested.connect(_surrender)
+	turn_banner = Label.new()
+	turn_banner.position = Vector2(30, 160)
+	turn_banner.add_theme_color_override("font_color", Color(1,0.9,0.4))
+	$Hud.add_child(turn_banner)
+	last_shot_label = Label.new()
+	last_shot_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	last_shot_label.offset_left = 70
+	last_shot_label.offset_top = -35
+	$Hud.add_child(last_shot_label)
 	scoreboard = Label.new()
 	scoreboard.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	scoreboard.offset_left = -560
@@ -666,18 +717,16 @@ func _setup_client_panels() -> void:
 	aim_indicator.hide()
 
 func _toggle_settings() -> void:
-	var open := not settings_panel.visible
-	backend_menu.toggle(false)
+	var open: bool = not settings_panel.visible
+	_close_overlays()
 	settings_panel.visible = open
-	menu_open = open
-	_cancel_aim()
-	mouse_look_enabled = not open
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if open else Input.MOUSE_MODE_CAPTURED)
+	_refresh_menu_state()
 
 func _update_scoreboard() -> void:
-	var rows := PackedStringArray(["SCOREBOARD — hold Tab"])
+	var rows := PackedStringArray(["SCOREBOARD — Shots / Hits / Damage / Kills"])
 	for player in players:
-		rows.append("%s | Team %d | HP %d | %s%s" % [player.display_name, player.team_id, player.health, "alive" if player.is_alive else "eliminated", " | ACTIVE" if player == turn_controller.get_active_player() else ""])
+		var stats: Dictionary = runner.statistics.get(player.player_id, {})
+		rows.append("%s%s | HP %d | %d / %d / %d / %d%s" % [player.display_name, " ACTIVE" if player == turn_controller.get_active_player() else "", player.health, stats.get("shots",0), stats.get("hits",0), stats.get("damage",0), stats.get("kills",0), " OUT" if not player.is_alive else ""])
 	scoreboard.text = "\n".join(rows)
 
 func _update_debug_panel() -> void:
@@ -694,3 +743,155 @@ func _adjust_debug_gravity(amount: float) -> void:
 	rules.base_gravity = clampf(rules.base_gravity + amount, 1.0, 100.0)
 	_cancel_aim()
 	_update_debug_panel()
+
+func _sync_rule_controls() -> void:
+	move_speed = rules.move_speed
+	jump_speed = rules.jump_speed
+	player_gravity = rules.player_gravity
+	min_shot_power = rules.min_shot_power
+	max_shot_power = rules.max_shot_power
+	max_charge_time = rules.max_charge_time
+
+func _refresh_menu_state() -> void:
+	menu_open = settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
+	local_paused = menu_open and not remote_mode
+	if menu_open:
+		turn_banner.hide()
+	if is_instance_valid(active_projectile):
+		active_projectile.set_physics_process(not local_paused)
+	_cancel_aim()
+	mouse_look_enabled = not menu_open
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if menu_open else Input.MOUSE_MODE_CAPTURED)
+
+func _close_overlays() -> void:
+	settings_panel.hide()
+	match_panels.hide_panels()
+	if backend_menu != null:
+		backend_menu.toggle(false)
+	_refresh_menu_state()
+
+func _toggle_pause() -> void:
+	var open: bool = not match_panels.pause_panel.visible
+	_close_overlays()
+	match_panels.pause_panel.visible = open
+	_refresh_menu_state()
+
+func _toggle_setup() -> void:
+	if remote_mode:
+		return
+	var open: bool = not match_panels.setup_panel.visible
+	_close_overlays()
+	match_panels.setup_panel.visible = open
+	_refresh_menu_state()
+
+func _toggle_help() -> void:
+	var open: bool = not match_panels.help_panel.visible
+	_close_overlays()
+	match_panels.help_panel.visible = open
+	_refresh_menu_state()
+
+func start_local_match(map_name: String, count: int, preset: String) -> bool:
+	if remote_mode or not GameConfig.MAPS.has(map_name) or count < 2 or count > 10 or preset not in ["classic", "quick", "training"]:
+		return false
+	var replacement = MatchFactory.create_match(count, GameConfig.MAPS[map_name], preset)
+	if replacement == null:
+		return false
+	if is_instance_valid(active_projectile):
+		active_projectile.queue_free()
+	active_projectile = null
+	projectile_in_flight = false
+	pending_result = {}
+	end_presented_key = ""
+	effects.clear()
+	runner = replacement
+	rules = runner.rules
+	_sync_rule_controls()
+	weapon_by_player.clear()
+	selection_player = ""
+	selected_weapon_id = 1
+	observed_turn = -1
+	observed_generation = -1
+	camera_transition_initialized = false
+	voxel_world.set_world(runner.world, runner.materials)
+	_bind_players()
+	_close_overlays()
+	last_shot_label.text = ""
+	_update_hud()
+	return true
+
+func _surrender() -> void:
+	if projectile_in_flight or runner.state.status != "playing":
+		return
+	if remote_mode:
+		if network != null and network.ready_for_match:
+			network.surrender()
+	else:
+		var player = turn_controller.get_active_player()
+		if player != null:
+			var result: Dictionary = runner.surrender(player.player_id)
+			if result.ok:
+				_update_player_nodes()
+	_close_overlays()
+	_update_match_panels(0.0)
+
+func _show_turn_banner() -> void:
+	if projectile_in_flight or runner.state.status != "playing":
+		return
+	var active = turn_controller.get_active_player()
+	if active == null:
+		return
+	turn_banner.text = "Turn %d — %s / Team %d" % [turn_controller.turn_id + 1, active.display_name, active.team_id]
+	turn_banner_count += 1
+	banner_remaining = 2.5
+	turn_banner.show()
+
+func _update_match_panels(delta: float) -> void:
+	banner_remaining = maxf(0.0, banner_remaining - delta)
+	turn_banner.visible = banner_remaining > 0 and not menu_open and not projectile_in_flight
+	if not projectile_in_flight and not runner.history.is_empty():
+		var shot: Dictionary = runner.history.back()
+		last_shot_label.text = "Last shot: %s | weapon %d | damage %d | destroyed voxels %d" % [shot.player_id, shot.weapon_id, shot.damage, shot.terrain_destroyed]
+	elif runner.history.is_empty():
+		last_shot_label.text = ""
+	if runner.state.status == "playing":
+		end_presented_key = ""
+	if runner.state.status == "ended" and not projectile_in_flight:
+		var key := "%d/%d/%d" % [runner.state.generation, runner.state.revision, runner.state.winner_team]
+		if end_presented_key != key:
+			end_presented_key = key
+			_close_overlays()
+			match_panels.end_panel.show()
+			_refresh_menu_state()
+		_update_scoreboard()
+		match_panels.end_label.text = _winner_status_text() + "\n" + scoreboard.text
+		match_panels.restart_button.disabled = remote_mode and (network == null or network.player_id != "blue_1")
+
+func _apply_client_preferences() -> void:
+	var text_size := roundi(20 * preferences.hud_scale)
+	hud_label.add_theme_font_size_override("font_size", text_size)
+	scoreboard.add_theme_font_size_override("font_size", roundi(15 * preferences.hud_scale))
+	turn_banner.add_theme_font_size_override("font_size", text_size)
+	last_shot_label.add_theme_font_size_override("font_size", roundi(16 * preferences.hud_scale))
+	for panel in [settings_panel, match_panels]:
+		_scale_panel(panel, roundi(16 * preferences.hud_scale))
+	var contrast: bool = preferences.high_contrast
+	if not $Hud/Crosshair.has_node("OutlineHorizontal"):
+		for data in [["OutlineHorizontal", Vector2(2,15), Vector2(32,6)], ["OutlineVertical", Vector2(15,2), Vector2(6,32)]]:
+			var outline := ColorRect.new()
+			outline.name = data[0]
+			outline.position = data[1]
+			outline.size = data[2]
+			outline.color = Color.BLACK
+			outline.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			$Hud/Crosshair.add_child(outline)
+			$Hud/Crosshair.move_child(outline, 0)
+	$Hud/Crosshair/OutlineHorizontal.visible = contrast
+	$Hud/Crosshair/OutlineVertical.visible = contrast
+	for part in [$Hud/Crosshair/Horizontal, $Hud/Crosshair/Vertical]:
+		part.color = Color(1.0, 0.95, 0.1, 1) if contrast else Color(1,1,1,0.9)
+
+func _scale_panel(node: Node, size: int) -> void:
+	if node is Control:
+		node.add_theme_font_size_override("font_size", size)
+	for child in node.get_children():
+		_scale_panel(child, size)

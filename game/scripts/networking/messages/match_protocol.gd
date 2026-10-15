@@ -1,7 +1,7 @@
 class_name MatchProtocol
 extends RefCounted
 
-const VERSION := 1
+const VERSION := 2
 const MAX_PACKET_BYTES := 4 * 1024 * 1024
 const Command := preload("res://scripts/core/turns/player_action_command.gd")
 const State := preload("res://scripts/core/rules/match_state.gd")
@@ -116,6 +116,8 @@ static func decode_state(data: Variant) -> RefCounted:
 			return null
 	if not data.get("winner_player") is String or data.winner_player.length() > 64 or data.time_remaining < 0 or data.time_remaining > 3600 or data.inventory.size() != data.players.size():
 		return null
+	if not valid_summary(data):
+		return null
 	var players := []
 	var inventory := {}
 	for entry in data.players:
@@ -144,7 +146,7 @@ static func decode_state(data: Variant) -> RefCounted:
 				if not number(component) or absf(component) > 1.001:
 					return null
 			var basis := Basis(Vector3(entry.rotation[0], entry.rotation[1], entry.rotation[2]), Vector3(entry.rotation[3], entry.rotation[4], entry.rotation[5]), Vector3(entry.rotation[6], entry.rotation[7], entry.rotation[8]))
-			if not is_equal_approx(basis.determinant(), 1.0):
+			if not is_equal_approx(basis.determinant(), 1.0) or not basis.is_equal_approx(basis.orthonormalized()):
 				return null
 			player.rotation = basis
 		players.append(player)
@@ -166,6 +168,8 @@ static func decode_state(data: Variant) -> RefCounted:
 		if state.get_active_player() == null or not state.get_active_player().is_alive or state.winner_team != 0 or not state.winner_player.is_empty():
 			return null
 	else:
+		if state.winner_team == 0 and state.winner_player.is_empty():
+			return state
 		if not state.has_winner():
 			return null
 		var living: Array = state.get_living_players()
@@ -176,7 +180,7 @@ static func decode_state(data: Variant) -> RefCounted:
 	return state
 
 static func packet(data: Dictionary) -> PackedByteArray:
-	return JSON.stringify(data).to_utf8_buffer()
+	return JSON.stringify(data, "", true, true).to_utf8_buffer()
 
 static func unpack(bytes: PackedByteArray) -> Dictionary:
 	if bytes.size() > MAX_PACKET_BYTES:
@@ -215,6 +219,8 @@ static func terrain_checksum(world: RefCounted) -> String:
 	return context.finish().hex_encode()
 
 static func valid_snapshot_metadata(data: Dictionary) -> bool:
+	if not data.get("configuration") is Dictionary or not integer(data.get("transfer_id"), 1, 2147483647):
+		return false
 	if not data.get("player_id") is String or data.player_id.is_empty() or data.player_id.length() > 64 or not vector(data.get("size")) or not integer(data.get("chunk_size"), 1, 32):
 		return false
 	var count := 1
@@ -228,3 +234,92 @@ static func valid_snapshot_metadata(data: Dictionary) -> bool:
 
 static func valid_result(result: Variant) -> bool:
 	return result is Dictionary and result.get("version") == VERSION and result.get("ok") == true and result.get("reason") is String and valid_events(result.get("events")) and decode_state(result.get("state")) != null and not decode_path(result.get("path")).is_empty() and result.get("deltas") is Array
+
+# Only exported primitive fields cross the wire; resources/scripts never do.
+static func encode_config(resource: Resource) -> Dictionary:
+	var output := {}
+	for property in resource.get_property_list():
+		if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE and property.usage & PROPERTY_USAGE_EDITOR:
+			output[property.name] = resource.get(property.name)
+	return output
+
+static func decode_config(data: Variant, resource: Resource) -> Resource:
+	if not data is Dictionary:
+		return null
+	var defaults := encode_config(resource)
+	if data.size() != defaults.size():
+		return null
+	for key in defaults:
+		if not data.has(key):
+			return null
+		var value = data[key]
+		match typeof(defaults[key]):
+			TYPE_INT:
+				if not integer(value, -100000, 100000):
+					return null
+			TYPE_FLOAT:
+				if not number(value):
+					return null
+			TYPE_STRING:
+				if not value is String or value.length() > 128:
+					return null
+			_:
+				return null
+		resource.set(key, value)
+	return resource if resource.validate() else null
+
+static func encode_configuration(runner: RefCounted) -> Dictionary:
+	var weapons := {}
+	for id in runner.weapons:
+		weapons[str(id)] = encode_config(runner.weapons[id])
+	return {"rules": encode_config(runner.rules), "weapons": weapons}
+
+static func decode_configuration(data: Variant) -> Dictionary:
+	if not data is Dictionary or not data.get("weapons") is Dictionary or data.weapons.size() != 3:
+		return {}
+	var rules = decode_config(data.get("rules"), load("res://scripts/core/rules/game_rules_config.gd").new())
+	if rules == null:
+		return {}
+	var weapons := {}
+	for id in [1, 2, 3]:
+		var weapon = decode_config(data.weapons.get(str(id)), load("res://scripts/core/weapons/weapon_config.gd").new())
+		if weapon == null or weapon.id != id:
+			return {}
+		weapons[id] = weapon
+	return {"rules": rules, "weapons": weapons}
+
+static func valid_arena_players(state: RefCounted, size: Vector3i) -> bool:
+	for player in state.players:
+		var p: Vector3 = player.position
+		if player.is_alive and (p.x < -1 or p.z < -1 or p.y < -4 or p.x > size.x + 1 or p.z > size.z + 1 or p.y > size.y + 16):
+			return false
+	return true
+
+static func valid_summary(data: Dictionary) -> bool:
+	var stats = data.get("statistics")
+	var history = data.get("history")
+	if not stats is Dictionary or not history is Array or stats.size() != data.players.size() or history.size() > 32:
+		return false
+	for player in data.players:
+		if not player is Dictionary or not player.get("id") is String:
+			return false
+		var row = stats.get(player.id)
+		if not row is Dictionary or row.size() != 4:
+			return false
+		for key in ["shots", "hits", "damage", "kills"]:
+			if not integer(row.get(key), 0, 2147483647):
+				return false
+	for row in history:
+		if not row is Dictionary or not stats.has(row.get("player_id")) or not integer(row.get("weapon_id"), 1, 3):
+			return false
+		for key in ["turn_id", "damage", "kills", "terrain_changes", "terrain_destroyed"]:
+			if not integer(row.get(key), 0, 2147483647):
+				return false
+	return true
+
+static func valid_configured_state(state: RefCounted, runner: RefCounted) -> bool:
+	if not valid_arena_players(state, runner.world.size):
+		return false
+	if state.status == "ended" and state.winner_team == 0 and state.winner_player.is_empty() and not state.get_living_players().is_empty():
+		return runner.rules.max_turns > 0 and state.turn_id >= runner.rules.max_turns
+	return true
