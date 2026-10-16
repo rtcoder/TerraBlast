@@ -6,6 +6,8 @@ static func handle(scene: Node, event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_F2:
+			if scene.session.playback != null:
+				return
 			var open: bool = not scene.backend_menu.panel.visible
 			scene._close_overlays()
 			scene.backend_menu.toggle(open)

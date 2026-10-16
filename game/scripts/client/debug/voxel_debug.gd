@@ -14,6 +14,7 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var session: RefCounted
 var end_presented_key := ""
 var local_paused := false
 var match_panels: Control
@@ -82,6 +83,7 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	remote_mode = GameConfig.mode == "client"
 	_setup_players()
+	session = preload("res://scripts/client/session/local_session.gd").new(self)
 	if remote_mode:
 		_connect_network(GameConfig.argument("--host", "127.0.0.1"))
 	_setup_client_panels()
@@ -97,6 +99,9 @@ func _ready() -> void:
 	backend_menu.menu_visibility_changed.connect(func(_open: bool): _refresh_menu_state())
 	_apply_client_preferences()
 	backend_menu.connect_game.connect(func(host: String):
+		if session.playback != null:
+			return
+		session.bot = null
 		remote_mode = true
 		if is_instance_valid(network):
 			network.close()
@@ -105,12 +110,13 @@ func _ready() -> void:
 	)
 
 func _physics_process(delta: float) -> void:
-	if not remote_mode and not projectile_in_flight and not local_paused:
-		var events: Array = runner.tick(delta)
+	if not remote_mode and not projectile_in_flight and not local_paused and session.playback == null and runner.state.status == "playing":
+		var events: Array = session.recorder.tick(runner, delta)
 		if not events.is_empty():
 			effects.play_events(events)
 			_cancel_aim()
 			_face_camera_toward_enemy()
+	session.update_bot()
 	_sync_selected_weapon()
 	if not projectile_in_flight and (observed_turn != turn_controller.turn_id or observed_generation != turn_controller.generation):
 		_cancel_aim()
@@ -193,7 +199,7 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 		network.send_command(command)
 		_cancel_aim()
 		return
-	var result: Dictionary = runner.submit(command)
+	var result: Dictionary = session.recorder.submit(runner, command)
 	if not result.ok:
 		return
 	_play_result(result)
@@ -267,6 +273,8 @@ func _bind_players() -> void:
 	_update_player_nodes()
 
 func restart_match() -> void:
+	if session.playback != null:
+		return
 	end_presented_key = ""
 	effects.clear()
 	_close_overlays()
@@ -279,6 +287,7 @@ func restart_match() -> void:
 	projectile_in_flight = false
 	pending_result = {}
 	runner.reset()
+	session.new_recording()
 	selected_weapon_id = 1
 	weapon_by_player.clear()
 	selection_player = ""
@@ -393,7 +402,12 @@ func _update_hud() -> void:
 		status += "\n" + network_status + " | F4 retry"
 		if network != null:
 			status += " | %s | %d%% | RTT %.0f ms" % [network.match_phase, int(100.0 * network.snapshot_progress.completed / maxi(1, network.snapshot_progress.total)), network.latency_ms]
+	if not remote_mode:
+		status += "\nReplay inspection" if session.playback != null else ("\nSolo / %s%s" % [session.options.difficulty, " — Bot thinking" if session.is_bot_turn() else " — Your team"] if session.options.mode == "solo" else "\nLocal hotseat")
+	if not remote_mode and not session.recorder.recording_error.is_empty():
+		status += "\nRecording stopped: " + session.recorder.recording_error
 	hud_label.text = status
+	hud_label.visible = not menu_open
 
 func _team_status_text(team_id: int, label: String) -> String:
 	var living_count := 0
@@ -421,7 +435,7 @@ func _winner_status_text() -> String:
 	return "Winner: Blue" if team_id == 1 else "Winner: Red"
 
 func _update_active_player_movement(delta: float) -> void:
-	if menu_open:
+	if not _can_control():
 		return
 	if remote_mode:
 		if _can_control() and not projectile_in_flight:
@@ -434,7 +448,7 @@ func _update_active_player_movement(delta: float) -> void:
 	if active_player == null or not active_player.is_alive:
 		return
 
-	var velocity: Vector3 = PlayerMotion.move(runner.world, active_player, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta, rules, runner.materials)
+	var velocity: Vector3 = session.recorder.move(runner, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta)
 	player_velocities[active_player.player_id] = velocity
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	if horizontal_speed > 0.05:
@@ -594,7 +608,7 @@ func _update_trajectory_preview() -> void:
 
 
 func _can_control() -> bool:
-	if menu_open or local_paused or runner.state.status != "playing":
+	if menu_open or local_paused or runner.state.status != "playing" or session.playback != null or session.is_bot_turn():
 		return false
 	if not remote_mode:
 		return true
@@ -640,6 +654,9 @@ func _sync_network() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_node_ready():
 		scoreboard.hide()
+		if not remote_mode and session != null and session.playback == null:
+			match_panels.pause_panel.show()
+			_refresh_menu_state()
 		_cancel_aim()
 		mouse_look_enabled = false
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -673,11 +690,18 @@ func _setup_client_panels() -> void:
 	match_panels.resume_requested.connect(_close_overlays)
 	match_panels.close_requested.connect(_close_overlays)
 	match_panels.setup_requested.connect(func(map_name: String, count: int, preset: String):
-		if not start_local_match(map_name, count, preset):
+		if not start_local_match(map_name, count, preset, match_panels.mode_select.get_item_text(match_panels.mode_select.selected), match_panels.difficulty_select.get_item_text(match_panels.difficulty_select.selected)):
 			match_panels.setup_error.text = "Cannot start this match"
 	)
 	match_panels.restart_requested.connect(restart_match)
 	match_panels.surrender_requested.connect(_surrender)
+	match_panels.save_requested.connect(func(): _save_session())
+	match_panels.load_requested.connect(func(): _load_session())
+	match_panels.export_requested.connect(func(): _save_replay())
+	match_panels.replay_requested.connect(func(): _open_replay())
+	match_panels.step_requested.connect(_step_replay)
+	match_panels.rewind_requested.connect(_rewind_replay)
+	match_panels.return_requested.connect(_return_from_replay)
 	turn_banner = Label.new()
 	turn_banner.position = Vector2(30, 160)
 	turn_banner.add_theme_color_override("font_color", Color(1,0.9,0.4))
@@ -738,9 +762,10 @@ func _update_debug_panel() -> void:
 	debug_panel.text = "LOCAL DEBUG — F1 | [ / ] gravity\nGravity %.1f × %.2f | %s\nBlast %.1f / terrain %d / player %d\nTurn %d | dirty %d / rebuilt %d / meshes %d" % [rules.base_gravity, weapon.gravity_scale, weapon.code, weapon.explosion_radius, weapon.terrain_damage, weapon.player_damage, turn_controller.turn_id, voxel_world.last_dirty_chunk_count, voxel_world.last_rebuilt_chunk_count, voxel_world.total_mesh_count]
 
 func _adjust_debug_gravity(amount: float) -> void:
-	if remote_mode or not debug_panel.visible or projectile_in_flight:
+	if remote_mode or not debug_panel.visible or projectile_in_flight or session.playback != null:
 		return
 	rules.base_gravity = clampf(rules.base_gravity + amount, 1.0, 100.0)
+	session.new_recording() # Debug rule edits begin a new reproducible recording.
 	_cancel_aim()
 	_update_debug_panel()
 
@@ -771,13 +796,17 @@ func _close_overlays() -> void:
 	_refresh_menu_state()
 
 func _toggle_pause() -> void:
+	if session.playback != null:
+		match_panels.replay_panel.show()
+		_refresh_menu_state()
+		return
 	var open: bool = not match_panels.pause_panel.visible
 	_close_overlays()
 	match_panels.pause_panel.visible = open
 	_refresh_menu_state()
 
 func _toggle_setup() -> void:
-	if remote_mode:
+	if remote_mode or session.playback != null:
 		return
 	var open: bool = not match_panels.setup_panel.visible
 	_close_overlays()
@@ -790,7 +819,9 @@ func _toggle_help() -> void:
 	match_panels.help_panel.visible = open
 	_refresh_menu_state()
 
-func start_local_match(map_name: String, count: int, preset: String) -> bool:
+func start_local_match(map_name: String, count: int, preset: String, mode := "hotseat", difficulty := "normal") -> bool:
+	if mode not in ["hotseat", "solo"] or difficulty not in ["easy", "normal"] or session.playback != null:
+		return false
 	if remote_mode or not GameConfig.MAPS.has(map_name) or count < 2 or count > 10 or preset not in ["classic", "quick", "training"]:
 		return false
 	var replacement = MatchFactory.create_match(count, GameConfig.MAPS[map_name], preset)
@@ -804,6 +835,8 @@ func start_local_match(map_name: String, count: int, preset: String) -> bool:
 	end_presented_key = ""
 	effects.clear()
 	runner = replacement
+	session.options = {"mode": mode, "difficulty": difficulty, "human_team": 1}
+	session.new_recording()
 	rules = runner.rules
 	_sync_rule_controls()
 	weapon_by_player.clear()
@@ -820,6 +853,8 @@ func start_local_match(map_name: String, count: int, preset: String) -> bool:
 	return true
 
 func _surrender() -> void:
+	if session.playback != null or session.is_bot_turn():
+		return
 	if projectile_in_flight or runner.state.status != "playing":
 		return
 	if remote_mode:
@@ -828,7 +863,7 @@ func _surrender() -> void:
 	else:
 		var player = turn_controller.get_active_player()
 		if player != null:
-			var result: Dictionary = runner.surrender(player.player_id)
+			var result: Dictionary = session.recorder.surrender(runner, player.player_id)
 			if result.ok:
 				_update_player_nodes()
 	_close_overlays()
@@ -855,7 +890,7 @@ func _update_match_panels(delta: float) -> void:
 		last_shot_label.text = ""
 	if runner.state.status == "playing":
 		end_presented_key = ""
-	if runner.state.status == "ended" and not projectile_in_flight:
+	if runner.state.status == "ended" and not projectile_in_flight and session.playback == null:
 		var key := "%d/%d/%d" % [runner.state.generation, runner.state.revision, runner.state.winner_team]
 		if end_presented_key != key:
 			end_presented_key = key
@@ -895,3 +930,119 @@ func _scale_panel(node: Node, size: int) -> void:
 		node.add_theme_font_size_override("font_size", size)
 	for child in node.get_children():
 		_scale_panel(child, size)
+
+func _session_message(message: String) -> void:
+	match_panels.session_status.text = message
+
+func _save_session(path := "user://last_session.json") -> bool:
+	if not session.can_archive():
+		_session_message("Save is available in a local match between shots.")
+		return false
+	var error: Error = preload("res://scripts/core/replay/session_store.gd").save(path, runner, session.options, player_velocities)
+	_session_message("Game saved: " + path if error == OK else "Save failed: " + error_string(error))
+	return error == OK
+
+func _load_session(path := "user://last_session.json") -> bool:
+	if not session.can_archive():
+		_session_message("Load is available in a local match between shots.")
+		return false
+	var loaded: Dictionary = preload("res://scripts/core/replay/session_store.gd").load(path)
+	if not loaded.ok:
+		_session_message("Load failed: " + loaded.reason)
+		return false
+	session.options = loaded.options
+	_replace_local_runner(loaded.runner)
+	player_velocities = loaded.velocities
+	session.new_recording()
+	_close_overlays()
+	return true
+
+func _save_replay(path := "user://last_replay.json") -> bool:
+	if not session.can_archive():
+		_session_message("Export is available in a local match between shots.")
+		return false
+	var error: Error = preload("res://scripts/core/replay/replay_archive.gd").save(path, session.recorder, runner)
+	_session_message("Replay saved: " + path if error == OK else "Export failed: " + error_string(error) + " " + session.recorder.recording_error)
+	return error == OK
+
+func _open_replay(path := "user://last_replay.json") -> bool:
+	if not session.can_archive():
+		_session_message("Replay inspection is available locally between shots.")
+		return false
+	var loaded: Dictionary = preload("res://scripts/core/replay/replay_archive.gd").load_verified(path)
+	if not loaded.ok:
+		_session_message("Replay failed: " + loaded.reason)
+		return false
+	var playback = preload("res://scripts/core/replay/replay_playback.gd").new()
+	if not playback.load_recording(loaded.recorder):
+		_session_message("Replay could not be initialized.")
+		return false
+	session.live_runner = runner
+	session.live_velocities = player_velocities.duplicate()
+	session.playback = playback
+	session.bot = null
+	_replace_local_runner(playback.runner)
+	_close_overlays()
+	match_panels.replay_panel.show()
+	_refresh_menu_state()
+	_update_replay_status()
+	return true
+
+func _step_replay() -> void:
+	if session.playback == null or session.playback.finished:
+		return
+	var result: Dictionary = session.playback.step()
+	if not result.ok:
+		match_panels.replay_status.text = "Invalid replay action"
+		return
+	# Inspector displays the authoritative result immediately, without advancing live time.
+	if result.has("result"):
+		voxel_world.refresh_deltas(result.result.get("deltas", []))
+	_update_player_nodes()
+	_update_hud()
+	_update_scoreboard()
+	_update_replay_status()
+
+func _rewind_replay() -> void:
+	if session.playback != null and session.playback.seek(0):
+		_replace_local_runner(session.playback.runner)
+		_update_replay_status()
+
+func _update_replay_status() -> void:
+	var playback = session.playback
+	match_panels.replay_status.text = "Action %d / %d — %s%s" % [playback.index, playback.action_count, playback.current_action_type, " — Finished" if playback.finished else ""]
+
+func _return_from_replay() -> void:
+	if session.playback == null:
+		return
+	var live: RefCounted = session.live_runner
+	session.playback = null
+	session.live_runner = null
+	_replace_local_runner(live)
+	player_velocities = session.live_velocities
+	session.live_velocities = {}
+	_close_overlays()
+
+func _replace_local_runner(replacement: RefCounted) -> void:
+	_cancel_aim()
+	if is_instance_valid(active_projectile):
+		active_projectile.queue_free()
+	active_projectile = null
+	projectile_in_flight = false
+	pending_result = {}
+	effects.clear()
+	session.bot = null
+	runner = replacement
+	rules = runner.rules
+	_sync_rule_controls()
+	weapon_by_player.clear()
+	selection_player = ""
+	selected_weapon_id = 1
+	observed_turn = -1
+	observed_generation = -1
+	end_presented_key = ""
+	camera_transition_initialized = false
+	voxel_world.set_world(runner.world, runner.materials)
+	_bind_players()
+	_update_hud()
+	_update_scoreboard()

@@ -9,7 +9,18 @@ const Rules = preload("res://scripts/core/rules/game_rules_config.gd")
 const Weapon = preload("res://scripts/core/weapons/weapon_config.gd")
 const VoxelMaterial = preload("res://scripts/core/voxels/voxel_material_config.gd")
 const Motion = preload("res://scripts/core/rules/player_motion.gd")
-var data: Dictionary = {}
+const MAX_ACTIONS := 100000
+const MAX_SHOTS := 256
+var _shot_count := 0
+var recording_error := ""
+var data: Dictionary = {}:
+	set(value):
+		data = value
+		_shot_count = 0
+		if value.get("actions") is Array:
+			for action in value.actions:
+				if action is Dictionary and action.get("type") == "shot":
+					_shot_count += 1
 
 static func properties(resource: Resource) -> Dictionary:
 	var result := {}
@@ -24,6 +35,7 @@ static func configure(resource: Resource, values: Dictionary) -> Resource:
 	return resource
 
 func capture(runner: RefCounted) -> void:
+	recording_error = ""
 	var materials := []
 	var weapons := []
 	for material in runner.materials.values():
@@ -36,16 +48,36 @@ func submit(runner: RefCounted, command: RefCounted) -> Dictionary:
 	var action := {"type": "shot", "player_id": command.player_id, "turn_id": command.turn_id, "generation": command.generation, "weapon_id": command.weapon_id, "power": command.shot_power, "direction": [command.aim_direction.x,command.aim_direction.y,command.aim_direction.z]}
 	var result: Dictionary = runner.submit(command)
 	if result.ok:
-		data.actions.append(action)
+		record_action(action)
 	return result
 
 func tick(runner: RefCounted, delta: float) -> Array:
-	data.actions.append({"type": "tick", "delta": delta})
+	record_action({"type": "tick", "delta": delta})
 	return runner.tick(delta)
 
 func move(runner: RefCounted, velocity: Vector3, input: Vector2, yaw: float, jump: bool, delta: float) -> Vector3:
-	data.actions.append({"type": "move", "velocity": [velocity.x,velocity.y,velocity.z], "input": [input.x,input.y], "yaw": yaw, "jump": jump, "delta": delta})
+	record_action({"type": "move", "velocity": [velocity.x,velocity.y,velocity.z], "input": [input.x,input.y], "yaw": yaw, "jump": jump, "delta": delta})
 	return Motion.move(runner.world, runner.state.get_active_player(), velocity, input, yaw, jump, delta, runner.rules, runner.materials)
+
+func record_action(action: Dictionary) -> void:
+	if not recording_error.is_empty():
+		return
+	if not data.has("actions"):
+		recording_error = "capture_required"
+	elif data.actions.size() >= MAX_ACTIONS:
+		recording_error = "action_limit"
+	elif action.type == "shot" and _shot_count >= MAX_SHOTS:
+		recording_error = "shot_limit"
+	else:
+		data.actions.append(action)
+		if action.type == "shot":
+			_shot_count += 1
+
+func surrender(runner: RefCounted, player_id: String) -> Dictionary:
+	var result: Dictionary = runner.surrender(player_id)
+	if result.ok:
+		record_action({"type": "surrender", "player_id": player_id})
+	return result
 
 func reset(runner: RefCounted) -> void:
 	runner.reset()
@@ -54,7 +86,7 @@ func reset(runner: RefCounted) -> void:
 static func vector(values: Array) -> Vector3:
 	return Vector3(values[0],values[1],values[2])
 
-func replay() -> RefCounted:
+func initial_runner() -> RefCounted:
 	if not valid_data():
 		return null
 	var world = World.new(Vector3i(data.size[0],data.size[1],data.size[2]))
@@ -95,27 +127,44 @@ func replay() -> RefCounted:
 	for player_id in data.state.inventory:
 		for weapon_id in data.state.inventory[player_id]:
 			runner.state.inventory[player_id][int(weapon_id)] = int(data.state.inventory[player_id][weapon_id])
-	for action in data.actions:
-		match action.type:
-			"tick": runner.tick(action.delta)
-			"move":
-				if runner.state.status != "playing" or runner.state.get_active_player() == null or not runner.state.get_active_player().is_alive:
-					return null
-				Motion.move(world,runner.state.get_active_player(),vector(action.velocity),Vector2(action.input[0],action.input[1]),action.yaw,action.jump,action.delta,runner.rules,runner.materials)
-			"shot":
-				var command = Command.new()
-				command.player_id = action.player_id
-				command.turn_id = int(action.turn_id)
-				command.generation = int(action.generation)
-				command.weapon_id = int(action.weapon_id)
-				command.shot_power = action.power
-				command.aim_direction = vector(action.direction)
-				if not runner.submit(command).ok:
-					return null
 	return runner
 
-static func state_hash(runner: RefCounted) -> String:
-	return JSON.stringify({"state": runner.state_snapshot(), "terrain": Array(runner.world.material_ids), "health": Array(runner.world.health_values)}).sha256_text()
+func replay() -> RefCounted:
+	var runner = initial_runner()
+	if runner == null:
+		return null
+	for action in data.actions:
+		if not execute_action(runner, action).ok:
+			return null
+	return runner
+
+# Callers validate the complete recording before executing this shared timeline path.
+static func execute_action(runner: RefCounted, action: Dictionary) -> Dictionary:
+	match action.get("type"):
+		"tick":
+			return {"ok": true, "events": runner.tick(action.delta)}
+		"move":
+			if runner.state.status != "playing" or runner.state.get_active_player() == null or not runner.state.get_active_player().is_alive:
+				return {"ok": false, "reason": "invalid_move_state"}
+			var velocity: Vector3 = Motion.move(runner.world,runner.state.get_active_player(),vector(action.velocity),Vector2(action.input[0],action.input[1]),action.yaw,action.jump,action.delta,runner.rules,runner.materials)
+			return {"ok": true, "velocity": velocity}
+		"shot":
+			var command = Command.new()
+			command.player_id = action.player_id
+			command.turn_id = int(action.turn_id)
+			command.generation = int(action.generation)
+			command.weapon_id = int(action.weapon_id)
+			command.shot_power = action.power
+			command.aim_direction = vector(action.direction)
+			var result: Dictionary = runner.submit(command)
+			return {"ok": result.ok, "result": result}
+		"surrender":
+			var result: Dictionary = runner.surrender(action.player_id)
+			return {"ok": result.ok, "result": result}
+	return {"ok": false, "reason": "unknown_action"}
+
+static func state_hash(runner: RefCounted, full_precision := true) -> String:
+	return JSON.stringify({"state": runner.state_snapshot(), "terrain": Array(runner.world.material_ids), "health": Array(runner.world.health_values)}, "", true, full_precision).sha256_text()
 
 static func number(value: Variant, low: float, high: float, integral := false) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and value >= low and value <= high and (not integral or value == floor(value))
@@ -235,7 +284,7 @@ func valid_data() -> bool:
 		if not row is Dictionary or row.size() != 7 or not text_value(row.get("player_id"),64) or not players.has(row.player_id) or not number(row.get("weapon_id"),1,10000,true) or not weapons.has(int(row.weapon_id)): return false
 		for key in ["turn_id", "damage", "kills", "terrain_changes", "terrain_destroyed"]:
 			if not number(row.get(key),0,2147483647,true): return false
-	if not data.get("actions") is Array or data.actions.size() > 10000: return false
+	if not data.get("actions") is Array or data.actions.size() > MAX_ACTIONS: return false
 	var shots := 0
 	for action in data.actions:
 		if not action is Dictionary: return false
@@ -244,8 +293,10 @@ func valid_data() -> bool:
 				if action.size() != 2 or not number(action.get("delta"),0,600): return false
 			"move":
 				if action.size() != 6 or not numbers(action.get("velocity"),3,-100,100) or not numbers(action.get("input"),2,-1,1) or not number(action.get("yaw"),-100000,100000) or not action.get("jump") is bool or not number(action.get("delta"),0,0.3): return false
+			"surrender":
+				if action.size() != 2 or not text_value(action.get("player_id"),64) or not players.has(action.player_id): return false
 			"shot":
 				shots += 1
-				if shots > 256 or action.size() != 7 or not text_value(action.get("player_id"),64) or not players.has(action.player_id) or not number(action.get("turn_id"),0,2147483647,true) or not number(action.get("generation"),0,2147483647,true) or not number(action.get("weapon_id"),1,10000,true) or not weapons.has(int(action.weapon_id)) or not number(action.get("power"),0,100) or not numbers(action.get("direction"),3,-100,100) or vector(action.direction).length_squared() < 0.001: return false
+				if shots > MAX_SHOTS or action.size() != 7 or not text_value(action.get("player_id"),64) or not players.has(action.player_id) or not number(action.get("turn_id"),0,2147483647,true) or not number(action.get("generation"),0,2147483647,true) or not number(action.get("weapon_id"),1,10000,true) or not weapons.has(int(action.weapon_id)) or not number(action.get("power"),0,100) or not numbers(action.get("direction"),3,-100,100) or vector(action.direction).length_squared() < 0.001: return false
 			_: return false
 	return true

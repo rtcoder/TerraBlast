@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Cwd-independent launcher: launch.py client|server|test|doctor [arguments]."""
+"""Cwd-independent launcher: launch.py client|local-dev|server|simulate|replay|test|doctor [arguments].
+Simulation: --bots easy|normal --record PATH --output PATH --map MAP --shots N.
+Arguments are forwarded separately; quote paths containing spaces.
+"""
 import sys
 from pathlib import Path
 import subprocess

@@ -29,12 +29,12 @@ def main():
         names += [p.stem for p in sorted((ROOT / 'game/tests/integration').glob('*next_tests.gd'))]
         if os.environ.get('RUN_NAKAMA_TESTS') == '1':
             names += ['nakama_smoke', 'nakama50_tests']
-        scripts += [ROOT / 'game/tests/integration' / (name + '.gd') for name in names]
+        scripts += [ROOT / 'game/tests/integration' / (name + '.gd') for name in dict.fromkeys(names)]
         commands = [(p.stem, [binary, '--headless', '--path', str(ROOT / 'game'), '--log-file', str(directory / (p.stem + '.log')), '--script', str(p)]) for p in scripts]
         commands.append(('server', [binary, '--headless', '--log-file', str(directory / 'server.log'), '--path', str(ROOT / 'game'), '--', '--mode', 'server', '--port', '19174', '--smoke']))
         if os.environ.get('RUN_RENDER_TESTS') == '1':
             commands.append(('render', [binary, '--log-file', str(directory / 'render.log'), '--path', str(ROOT / 'game'), '--script', 'tests/integration/mvp_smoke.gd']))
-        for script in ['test_devtools.py', 'run_network_process_test.py', 'test_simulation_cli.py']:
+        for script in ['test_devtools.py', 'run_network_process_test.py', 'test_simulation_cli.py', 'test_bot_cli.py']:
             commands.append((Path(script).stem, [sys.executable, str(ROOT / 'tools' / script)]))
         for name, command in commands:
             result = run_case(name, command, directory, args.timeout)

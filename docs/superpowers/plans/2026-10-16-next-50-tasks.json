@@ -1,0 +1,302 @@
+[
+  {
+    "group": "bots",
+    "title": "Bot: Deterministyczny wybór żywego przeciwnika",
+    "description": "BotPlanner wybiera przeciwnika innej drużyny; stabilny tie-break po ID; ignoruje martwych.",
+    "id": "TB-132"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Generowanie ograniczonego zestawu strzałów",
+    "description": "Skończony katalog kierunków łuku i mocy; wartości zgodne z rules; limit kandydatów.",
+    "id": "TB-133"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Ocena strzału wspólną symulacją",
+    "description": "Ocena trajektorii przez ProjectileSimulation bez mutacji świata; uwzględnia wiatr i przeszkody.",
+    "id": "TB-134"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Kara za trafienie siebie i drużyny",
+    "description": "Punktacja preferuje obrażenia przeciwnika; penalizuje friendly fire oraz własne obrażenia.",
+    "id": "TB-135"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Wybór broni z dostępnej amunicji",
+    "description": "Tylko zarejestrowane bronie z ammo; brak amunicji daje null zamiast nielegalnej komendy.",
+    "id": "TB-136"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Poziomy easy i normal",
+    "description": "Jawne budżety kandydatów, normal ocenia więcej; nie zmienia parametrów broni.",
+    "id": "TB-137"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Planowanie porcjami",
+    "description": "begin(runner,difficulty), step(candidate_budget), finished, command; kilka kandydatów na klatkę; bez wątków.",
+    "id": "TB-138"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Odrzucanie nieaktualnego planu",
+    "description": "Zmiana turn/generation/revision aktywnego gracza unieważnia plan przed wysłaniem.",
+    "id": "TB-139"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Obsługa braku celu i końca meczu",
+    "description": "Brak żywych wrogów/ended zwraca null i kończy plan; brak zapętlenia.",
+    "id": "TB-140"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Wspólny synchroniczny interfejs CLI",
+    "description": "BotPlanner.choose(runner,difficulty=\"normal\") -> command/null wykorzystuje ten sam ograniczony planner.",
+    "id": "TB-141"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Test deterministyczności i niemutowania świata",
+    "description": "Powtórzony wybór identyczny; hash i ammo runnera niezmienione przez planowanie.",
+    "id": "TB-142"
+  },
+  {
+    "group": "bots",
+    "title": "Bot: Test gry na obu arenach",
+    "description": "Legalne zaakceptowane komendy na twin_forts i two_islands; test wyczerpania ammo i invalidation.",
+    "id": "TB-143"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Nagrywanie poddania gracza",
+    "description": "MatchReplay.surrender zapisuje tylko zaakceptowane poddanie; walidacja oraz replay obsługują surrender.",
+    "id": "TB-144"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Limit nagrywania na żywo",
+    "description": "Ograniczyć bufor akcji; po limicie jawny błąd recording_error bez przerwania samej gry; save nie akceptuje uciętego nagrania.",
+    "id": "TB-145"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Bezstratna serializacja float",
+    "description": "Archive/hash używa full_precision; test długiej sekwencji ruchu i ticków.",
+    "id": "TB-146"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Dostęp do zweryfikowanego nagrania",
+    "description": "load_verified oprócz runner zwraca recorder; istniejący format v1 nadal czytelny.",
+    "id": "TB-147"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Odtworzenie pojedynczej akcji",
+    "description": "Refaktoryzacja wspólnego wykonania action, kontrolowany wynik; bez powielania logiki timeline.",
+    "id": "TB-148"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Kursor odtwarzania krokowego",
+    "description": "ReplayPlayback.load_recording(recorder), runner, index, step() -> Dictionary z result dla shot; reset do początku.",
+    "id": "TB-149"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Ograniczone przewijanie do indeksu",
+    "description": "seek(index) odbudowuje od początku; reject out of range; hash ostatniej akcji równy verified.",
+    "id": "TB-150"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Metadane postępu",
+    "description": "Playback action_count, finished i czas/typ aktualnej akcji do UI; puste nagranie działa.",
+    "id": "TB-151"
+  },
+  {
+    "group": "replay",
+    "title": "Save: Migawka do wznowienia lokalnego meczu",
+    "description": "SessionStore.save(path,runner,options) oraz load(path) -> ok/reason/runner/options. Snapshot poprzez Replay.capture bez akcji; atomowy plik z verified hash.",
+    "id": "TB-152"
+  },
+  {
+    "group": "replay",
+    "title": "Save: Walidacja ustawień sesji",
+    "description": "Options tylko mode hotseat/solo, difficulty easy/normal, human_team 1/2; błąd nie podmienia aktywnego meczu.",
+    "id": "TB-153"
+  },
+  {
+    "group": "replay",
+    "title": "Save: Ograniczony odczyt i wersjonowanie sesji",
+    "description": "Własny format v2 max32MiB z prędkościami postaci i odczytem v1, brak arbitralnych zasobów; malformed/version/hash testy.",
+    "id": "TB-154"
+  },
+  {
+    "group": "replay",
+    "title": "Replay: Testy roundtrip i błędnych zapisów",
+    "description": "Nowy core_replay_oct16_tests.gd pokrywa surrender, movement, step/seek, checkpoint options, limit i corrupted files.",
+    "id": "TB-155"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Tryb symulacji botów",
+    "description": "--bots easy|normal przełącza simulate na BotPlanner; dotychczasowy seeded shooter pozostaje default.",
+    "id": "TB-156"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Eksport powtórki z symulacji",
+    "description": "--record PATH zapisuje ReplayArchive wszystkich zaakceptowanych strzałów; nie nadpisuje summary.",
+    "id": "TB-157"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Raport decyzji botów",
+    "description": "JSON summary zawiera bot difficulty i liczbę zaakceptowanych decyzji; zachowuje state/terrain_hash.",
+    "id": "TB-158"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Walidacja nowych argumentów",
+    "description": "Nieznany poziom, brak wartości i --record poza simulate zgłaszają exit2; bez uruchamiania serwera.",
+    "id": "TB-159"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Launcher udostępnia boty i nagrywanie",
+    "description": "tools/launch.py przekazuje --bots i --record jako osobne args; działa z obcego cwd.",
+    "id": "TB-160"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Regresja symulacji botów",
+    "description": "Test obu aren i powtarzalnego wyniku easy; poprawny exit dla zablokowanego output.",
+    "id": "TB-161"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Test eksportu i weryfikacji replay",
+    "description": "CLI simulate --record następnie replay w osobnym procesie kończy verified; corrupt odrzucony.",
+    "id": "TB-162"
+  },
+  {
+    "group": "tools",
+    "title": "Docs: Instrukcja gry solo i ograniczenia botów",
+    "description": "Dokument opisuje easy/normal, brak ruchu botów, hotseat/solo i zasady sterowania drużyną.",
+    "id": "TB-163"
+  },
+  {
+    "group": "tools",
+    "title": "Docs: Instrukcja zapisów i powtórek",
+    "description": "Wyjaśnia checkpoint vs replay, lokalne ścieżki i brak zapisu autorytatywnego meczu online.",
+    "id": "TB-164"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Automatyczne uruchamianie nowych regresji",
+    "description": "Runner zbiera nowe unit/integration next_tests oraz python test_bot_cli.py; logi i raport jak dotychczas.",
+    "id": "TB-165"
+  },
+  {
+    "group": "client",
+    "title": "UI: Wybór hotseat lub solo",
+    "description": "F5 udostępnia tryb hotseat/solo bez zmiany istniejącego domyślnego hotseat.",
+    "id": "TB-166"
+  },
+  {
+    "group": "client",
+    "title": "UI: Wybór trudności botów",
+    "description": "F5 easy/normal, solo człowiek kontroluje niebieską drużynę; czerwoni boty.",
+    "id": "TB-167"
+  },
+  {
+    "group": "client",
+    "title": "Client: Harmonogram tur botów",
+    "description": "Planer uruchamia się tylko w lokalnej turze czerwonych i po zakończeniu lotu; porcjami na klatkę.",
+    "id": "TB-168"
+  },
+  {
+    "group": "client",
+    "title": "Client: Blokada sterowania turą bota",
+    "description": "Ruch/strzał człowieka nie steruje botem; kamera i menu nadal działają.",
+    "id": "TB-169"
+  },
+  {
+    "group": "client",
+    "title": "Client: Pauza i anulowanie planu bota",
+    "description": "Menu/focus pause wstrzymuje plan, restart/nowy/load anuluje; brak starego strzału.",
+    "id": "TB-170"
+  },
+  {
+    "group": "client",
+    "title": "HUD: Stan myślenia bota",
+    "description": "Czytelny tryb sesji, trudność i stan planowania; brak debugowej listy kandydatów.",
+    "id": "TB-171"
+  },
+  {
+    "group": "client",
+    "title": "Client: Automatyczne nagrywanie lokalnego meczu",
+    "description": "Każda lokalna mutacja tick/move/shot/surrender przez recorder; restart nowy recorder, online bez lokalnego zapisu.",
+    "id": "TB-172"
+  },
+  {
+    "group": "client",
+    "title": "UI: Zapis powtórki do pliku",
+    "description": "Przycisk menu eksportuje user://last_replay.json, pokazuje sukces/błąd; blokada w locie/online.",
+    "id": "TB-173"
+  },
+  {
+    "group": "client",
+    "title": "UI: Zapis stanu gry",
+    "description": "Menu save checkpoint user://last_session.json z options; blokada podczas lotu i online.",
+    "id": "TB-174"
+  },
+  {
+    "group": "client",
+    "title": "UI: Wczytanie zapisanej gry",
+    "description": "Weryfikacja przed podmianą runner; odbudowa świata/pawnów/kamery; restore solo options; błędy zachowują mecz.",
+    "id": "TB-175"
+  },
+  {
+    "group": "client",
+    "title": "UI: Otwarcie ostatniej powtórki",
+    "description": "Menu otwiera zweryfikowane last_replay w lokalnym read-only playback z osobnym panelem.",
+    "id": "TB-176"
+  },
+  {
+    "group": "client",
+    "title": "UI: Sterowanie odtwarzaniem krokowym",
+    "description": "Replay panel pokazuje indeks/liczbę akcji, przyciski Next i Beginning; blokada gameplay tick/move/shot.",
+    "id": "TB-177"
+  },
+  {
+    "group": "client",
+    "title": "UI: Powrót z powtórki do meczu",
+    "description": "Zachowuje poprzedni runner i recorder/options; powrót odbudowuje widok bez utraty stanu.",
+    "id": "TB-178"
+  },
+  {
+    "group": "client",
+    "title": "Client: Test sceny solo i zapisu",
+    "description": "Integration client_oct16_next_tests obejmuje gating bota, pause, save/load invalid, replay return, nowy mecz i restart.",
+    "id": "TB-179"
+  },
+  {
+    "group": "client",
+    "title": "UI: Aktualizacja pomocy i układu menu",
+    "description": "Pomoc opisuje solo oraz zapis, panele mieszczą się w 1280x720 przy HUD125%; wizualna weryfikacja.",
+    "id": "TB-180"
+  },
+  {
+    "group": "client",
+    "title": "Acceptance: Sprawdzenie pełnego cyklu solo",
+    "description": "Smoke: solo bot wykonuje strzał, zapis/load zachowuje hash, export replay verified, step/end/return; pełny suite i review.",
+    "id": "TB-181"
+  }
+]

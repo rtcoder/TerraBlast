@@ -74,3 +74,23 @@ Rule presets: `classic` preserves defaults, `quick` uses 20-second turns and a 3
 Scoreboard includes shots, hits, enemy HP damage and eliminations. The last 32 shot summaries are retained; HP labels update above living pawns. F3 now includes HUD text scaling, trajectory visibility, a high-contrast crosshair and Restore defaults. These preferences never alter core rules.
 
 Use the [portable tools](tools/README.md) for launchers, map auditing, environment diagnostics, replay verification, export presets and test JSON reports. A full offline headless workflow is defined in `.github/workflows/godot.yml`; Nakama and renderer checks remain explicit local options.
+
+## Solo, saves and replay
+
+F5 selects **Hotseat** (default: both teams controlled locally) or **Solo**. In solo, you control the blue team; red players are bots. `easy` evaluates fewer candidate shots than `normal`. Both use the same weapon rules and ammunition as human players. Bots aim and fire from their current position; they do not move or jump. During a bot turn you can use the camera and menus, but cannot move or fire for the bot. Opening a local menu or losing focus pauses bot planning.
+
+P opens the local match menu with checkpoint and replay controls:
+
+- **Save game / Load game** stores or restores `user://last_session.json`: current terrain, players, turn, ammunition and solo settings. Loading verifies the file before replacing the match.
+- **Export replay / Inspect last replay** uses `user://last_replay.json`: the initial state and recorded actions, verified against the final state hash. It is an action recording, not a resumable checkpoint.
+- In replay, **Next action** advances one recorded action and **Beginning** returns to the start. The counter includes simulation ticks and movement as well as shots. Return restores the previous match; gameplay input is disabled while watching.
+
+`user://` is Godot's application data directory (Project → Open User Data Folder in the editor), not the repository. These files are overwritten by the next successful save. Saving during projectile flight is disabled. Local checkpoint/replay operations are disabled during network play: the authoritative online match remains on the server. Recording is limited to 100000 actions and 256 shots; reaching a limit stops recording with a visible error while the match continues. Debug gravity changes start a new recording. After loading a checkpoint, a new replay starts from that checkpoint; it does not recover actions before the save.
+
+```sh
+# Both sides controlled by the planner; summary and replay are separate files
+python3 tools/launch.py simulate --map two_islands --bots easy --shots 6 --record /tmp/solo-replay.json --output /tmp/solo-summary.json
+python3 tools/launch.py replay --replay /tmp/solo-replay.json
+```
+
+Omit `--bots` to retain the original seeded diagnostic shooter. `--bots` and `--record` apply only to `simulate`; use F5 to select solo in the graphical client.

@@ -27,7 +27,7 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 		if flag in ["--smoke", "--help", "--version", "--list-maps"]:
 			index += 1
 			continue
-		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir"]:
+		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record"]:
 			result.append("Unknown argument: " + flag)
 			index += 1
 			continue
@@ -53,8 +53,29 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 			"--preset":
 				if value not in ["classic", "quick", "training"]:
 					result.append("Unknown preset: " + value)
-			"--host", "--guest-id", "--output", "--replay", "--maps-dir":
+			"--bots":
+				if value not in ["easy", "normal"]:
+					result.append("Unknown bot difficulty: " + value)
+			"--host", "--guest-id", "--output", "--replay", "--maps-dir", "--record":
 				if value.strip_edges().is_empty() or value.length() > 255:
 					result.append("Invalid value for " + flag)
 		index += 2
+	var mode_index := args.find("--mode")
+	var selected_mode := args[mode_index + 1] if mode_index >= 0 and mode_index + 1 < args.size() else "local-dev"
+	for flag in ["--bots", "--record"]:
+		if seen.has(flag) and selected_mode != "simulate":
+			result.append(flag + " requires --mode simulate")
+	var record_index := args.find("--record")
+	var output_index := args.find("--output")
+	if record_index >= 0 and output_index >= 0 and record_index + 1 < args.size() and output_index + 1 < args.size():
+		var record_path := _absolute_output_path(args[record_index + 1])
+		var output_path := _absolute_output_path(args[output_index + 1])
+		if record_path == output_path:
+			result.append("--record and --output must use different paths")
 	return result
+
+static func _absolute_output_path(path: String) -> String:
+	var expanded := ProjectSettings.globalize_path(path)
+	if not expanded.is_absolute_path():
+		expanded = DirAccess.open(".").get_current_dir().path_join(expanded)
+	return expanded.simplify_path()
