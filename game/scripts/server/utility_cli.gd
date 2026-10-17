@@ -3,7 +3,7 @@ extends Node
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.has("--help"):
-		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps\n--map twin_forts|two_islands --preset classic|quick|training\n--players 2..10 --host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke")
+		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps\n--map twin_forts|two_islands|canyon_bridge --preset classic|quick|training\n--players 2..10 --lobby (server only; server defaults to 2 players)\n--host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke")
 		get_tree().quit(0)
 	elif args.has("--version"):
 		print("%s %s / Godot %s" % [GameConfig.GAME_NAME, GameConfig.VERSION, Engine.get_version_info().string])
@@ -39,7 +39,13 @@ func _list_maps() -> void:
 				var materials: Dictionary = load("res://scripts/core/maps/arena_generator.gd").materials()
 				load("res://scripts/core/maps/map_builder.gd").apply_to_world(world, materials, definition)
 				errors = load("res://scripts/core/maps/map_validator.gd").validate(definition, world)
-			maps.append({"file": filename, "id": definition.id, "name": definition.display_name, "size": [definition.size.x, definition.size.y, definition.size.z], "spawn_count": definition.spawns.size(), "errors": errors})
+			var teams: Array[int] = []
+			for spawn in definition.spawns:
+				var team := int(spawn.get("team", 0))
+				if not teams.has(team):
+					teams.append(team)
+			teams.sort()
+			maps.append({"file": filename, "id": definition.id, "name": definition.display_name, "size": [definition.size.x, definition.size.y, definition.size.z], "theme": definition.theme, "teams": teams, "capacity": mini(definition.spawns.size(), 10), "spawn_count": definition.spawns.size(), "errors": errors})
 			ok = ok and errors.is_empty()
 	ok = ok and not maps.is_empty()
 	print(JSON.stringify({"ok": ok, "maps": maps, "reason": "" if ok else "Missing directory, no maps, or invalid maps"}))

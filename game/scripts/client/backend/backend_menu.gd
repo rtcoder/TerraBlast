@@ -5,6 +5,7 @@ var panel: PanelContainer
 var status: Label
 var lobby: LineEdit
 var host: LineEdit
+var port: SpinBox
 var backend: Node
 var busy := false
 
@@ -13,7 +14,7 @@ func _ready() -> void:
 	backend = load("res://scripts/client/backend/nakama_client.gd").new()
 	add_child(backend)
 	panel = PanelContainer.new()
-	panel.position = Vector2(30, 210)
+	panel.position = Vector2(30, 30)
 	panel.custom_minimum_size = Vector2(500, 360)
 	add_child(panel)
 	var box := VBoxContainer.new()
@@ -40,6 +41,14 @@ func _ready() -> void:
 	host.text = "127.0.0.1"
 	host.placeholder_text = "Gameplay server address"
 	box.add_child(host)
+	var port_label := Label.new()
+	port_label.text = "Gameplay server port"
+	box.add_child(port_label)
+	port = SpinBox.new()
+	port.min_value = 1
+	port.max_value = 65535
+	port.value = int(GameConfig.argument("--port", "19170"))
+	box.add_child(port)
 	_button(box, "Connect to gameplay server", func(): connect_game.emit(host.text.strip_edges()); toggle(false))
 	backend.match_found.connect(_matched)
 	panel.hide()
@@ -108,3 +117,8 @@ func _matched(_data: Dictionary) -> void:
 func _cancel_search() -> void:
 	if await backend.cancel_matchmaking():
 		status.text = "Matchmaking cancelled"
+
+func selected_port() -> int:
+	if port.get_line_edit().has_focus():
+		port.apply()
+	return int(port.value)

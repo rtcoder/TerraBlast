@@ -5,8 +5,13 @@ static func materials() -> Dictionary:
 	return load("res://scripts/core/maps/arena_generator.gd").materials()
 
 static func create_match(player_limit: int = 10, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic") -> RefCounted:
-	var arena: Dictionary = load("res://scripts/core/maps/arena_generator.gd").generate(map_path)
-	if not arena.errors.is_empty() or player_limit <= 0:
+	if player_limit < 2 or player_limit > 10:
+		return null
+	var definition = load("res://scripts/core/maps/map_loader.gd").load_from_file(map_path)
+	if definition.spawns.size() < player_limit:
+		return null
+	var arena: Dictionary = load("res://scripts/core/maps/arena_generator.gd").from_definition(definition)
+	if not arena.errors.is_empty():
 		return null
 	var world = arena.world
 	var configs: Dictionary = arena.materials

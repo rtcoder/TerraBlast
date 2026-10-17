@@ -7,6 +7,8 @@ signal replay_requested
 signal step_requested
 signal rewind_requested
 signal return_requested
+var map_select: OptionButton
+var map_description: Label
 var mode_select: OptionButton
 var difficulty_select: OptionButton
 var session_status: Label
@@ -45,10 +47,17 @@ func _ready() -> void:
 	_button(replay_panel, "Return to match", func(): return_requested.emit())
 	setup_panel = _panel("New local match — F5 to close")
 	_label(setup_panel, "Arena")
-	var map_select := OptionButton.new()
+	map_select = OptionButton.new()
 	for key in GameConfig.MAPS:
-		map_select.add_item(key)
+		var info: Dictionary = preload("res://scripts/core/maps/map_registry.gd").describe(key)
+		map_select.add_item(info.get("name", key))
+		map_select.set_item_metadata(map_select.item_count - 1,key)
 	_box(setup_panel).add_child(map_select)
+	map_description = Label.new()
+	map_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_box(setup_panel).add_child(map_description)
+	map_select.item_selected.connect(_describe_map)
+	_describe_map(0)
 	_label(setup_panel, "Control mode / bot difficulty")
 	mode_select = OptionButton.new()
 	for key in ["hotseat", "solo"]:
@@ -72,11 +81,11 @@ func _ready() -> void:
 	_box(setup_panel).add_child(preset)
 	setup_error = Label.new()
 	_box(setup_panel).add_child(setup_error)
-	_button(setup_panel, "Start new match", func(): setup_requested.emit(map_select.get_item_text(map_select.selected), int(count.value), preset.get_item_text(preset.selected)))
+	_button(setup_panel, "Start new match", func(): setup_requested.emit(str(map_select.get_item_metadata(map_select.selected)), int(count.value), preset.get_item_text(preset.selected)))
 	_button(setup_panel, "Cancel", func(): close_requested.emit())
 	help_panel = _panel("Controls — F6 to close")
 	var help := Label.new()
-	help.text = "Mouse: look | Wheel: zoom\nWASD / arrows: move | Space: jump\nHold RMB: aim\nHold LMB while aiming: charge; release: fire\nRelease RMB / Esc: cancel\n1 / 2 / 3: weapon | R: restart\nP: match menu (pauses local game)\nTab: scoreboard | F1: local diagnostics\nF2: multiplayer | F3: settings | F4: retry\nF5: new local match | F6: controls\nSolo: blue team human, red stationary bots\nP menu: save/load game, export/inspect replay"
+	help.text = "Mouse: look | Wheel: zoom\nWASD / arrows: move | Space: jump\nHold RMB: aim\nHold LMB while aiming: charge; release: fire\nRelease RMB / Esc: cancel\n1 / 2 / 3: weapon | R: restart\nP: match menu (pauses local game)\nTab: scoreboard | F1: local diagnostics\nF2: multiplayer | F3: settings | F4: retry\nF5: new local match | F6: controls | F7: lobby\nOnline lobby: name + Ready before play\nRematch: all players vote after the match\nSolo: blue team human, red stationary bots\nP menu: save/load game, export/inspect replay"
 	_box(help_panel).add_child(help)
 	_button(help_panel, "Close", func(): close_requested.emit())
 	end_panel = _panel("Match finished")
@@ -135,3 +144,7 @@ func _process(_delta: float) -> void:
 		var scroll: ScrollContainer = panel.get_child(0)
 		var desired: float = _box(panel).get_combined_minimum_size().y
 		scroll.custom_minimum_size.y = minf(desired, maxf(150.0, get_viewport_rect().size.y - 90.0))
+
+func _describe_map(index: int) -> void:
+	var info: Dictionary = preload("res://scripts/core/maps/map_registry.gd").describe(str(map_select.get_item_metadata(index)))
+	map_description.text = "%s\nCapacity: %d players" % [info.get("description", ""),info.get("player_capacity",0)]

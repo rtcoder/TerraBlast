@@ -1,6 +1,10 @@
 class_name MapValidator
 extends RefCounted
 
+const MAX_VOLUME := 2097152
+const MAX_OPERATIONS := 4096
+const MAX_SPAWNS := 32
+
 const Loader := preload("res://scripts/core/maps/map_loader.gd")
 
 static func validate_definition(definition: RefCounted) -> Array[String]:
@@ -11,6 +15,14 @@ static func validate_definition(definition: RefCounted) -> Array[String]:
 	var size: Vector3i = definition.size
 	if size.x <= 0 or size.y <= 0 or size.z <= 0 or size.x > 256 or size.y > 128 or size.z > 256:
 		errors.append("Map dimensions must be positive and at most 256x128x256")
+	elif size.x * size.y * size.z > MAX_VOLUME:
+		errors.append("Map volume exceeds 2097152 voxels")
+	if definition.boxes.size() + definition.carves.size() > MAX_OPERATIONS:
+		errors.append("Map exceeds 4096 construction operations")
+	if definition.spawns.size() > MAX_SPAWNS:
+		errors.append("Map exceeds 32 spawns")
+	if not errors.is_empty():
+		return errors
 	if definition.spawns.is_empty():
 		errors.append("Map must define at least one spawn")
 	var positions := {}

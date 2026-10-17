@@ -56,18 +56,18 @@ Initial/recovery transfers use chunk snapshots. Normal shots send final voxel de
 - Opening a panel, changing turn or losing application focus cancels charging. Weapon selection is remembered per pawn; restart clears it.
 - F2 also provides matchmaking cancellation.
 
-Choose an arena with `--map twin_forts` or `--map two_islands`. Local player count is `--players 2` through `--players 10`; dedicated gameplay remains 1v1. Invalid modes, maps, ports and counts exit with code 2.
+Choose an arena with `--map twin_forts`, `--map two_islands` or `--map canyon_bridge`. Local and dedicated player count is `--players 2` through `--players 10`; dedicated servers default to 2. Invalid modes, maps, ports and counts exit with code 2.
 
 ```sh
 # Reproducible, renderer-free JSON summary
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path game -- --mode simulate --map two_islands --players 2 --shots 20 --seed 123
 ```
 
-The extended tests also use UDP 19176 and verify CLI determinism on both maps. See [terrain](docs/terrain.md) and [weapons](docs/weapons.md) for collision, damage falloff, replay and limits.
+The extended tests also use UDP 19176 and verify CLI determinism on all three maps. See [terrain](docs/terrain.md) and [weapons](docs/weapons.md) for collision, damage falloff, replay and limits.
 
 ## Match controls and diagnostics
 
-P opens the match menu: local time, movement and projectile playback pause; online matches keep running on the server. F5 configures a new local match (arena, 2–10 players, rules preset), F6 shows controls. The match menu also offers surrender. Match results show final statistics and a restart button; only the blue network slot can restart the server match.
+P opens the match menu: local time, movement and projectile playback pause; online matches keep running on the server. F5 configures a new local match (arena, 2–10 players, rules preset), F6 shows controls. The match menu also offers surrender. Match results show final statistics and a restart button; in auto mode only blue_1 can restart the server match; lobby mode uses unanimous rematch votes.
 
 Rule presets: `classic` preserves defaults, `quick` uses 20-second turns and a 30-turn draw limit, `training` starts players at 500 HP. Configure horizontal X-axis wind through `GameRulesConfig.wind` (default zero). The server transfers its validated configuration to clients. Protocol v2 requires complete configuration and transfer IDs; client and server must use the same version.
 
@@ -94,3 +94,17 @@ python3 tools/launch.py replay --replay /tmp/solo-replay.json
 ```
 
 Omit `--bots` to retain the original seeded diagnostic shooter. `--bots` and `--record` apply only to `simulate`; use F5 to select solo in the graphical client.
+
+## Online match lobby: 2v2 and 5v5
+
+```sh
+python3 tools/launch.py server --map canyon_bridge --players 4 --lobby --port 19170
+# Separate 5v5 server:
+python3 tools/launch.py server --map canyon_bridge --players 10 --lobby --port 19171
+```
+
+Use F2 to connect each client to the server host and port. F7 opens the authoritative match lobby: set your display name (1–24 characters), then select Ready. Everyone must connect and be ready before the match starts. Editing a name clears that player's readiness. Names persist across reconnects and rematches. F7 displays all slots and their connection/readiness states; it does not pause the server.
+
+Losing any player pauses match time and gameplay until the full configured roster reconnects. F4 retries using the in-memory resume token while its reservation is valid. After a lobby match ends, every connected player must vote for a rematch; votes can be cancelled. A successful vote resets the match and returns everyone to readiness selection. Disconnect clears readiness and rematch votes. The lobby offers **Disconnect to local** to start a fresh local match.
+
+Omit `--lobby` for legacy auto start once all configured slots connect; the default remains 1v1. Nakama provides separate metagame services. Start and allocate gameplay servers manually; matchmaking does not provision these processes.

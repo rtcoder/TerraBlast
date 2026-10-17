@@ -34,7 +34,7 @@ def main():
         commands.append(('server', [binary, '--headless', '--log-file', str(directory / 'server.log'), '--path', str(ROOT / 'game'), '--', '--mode', 'server', '--port', '19174', '--smoke']))
         if os.environ.get('RUN_RENDER_TESTS') == '1':
             commands.append(('render', [binary, '--log-file', str(directory / 'render.log'), '--path', str(ROOT / 'game'), '--script', 'tests/integration/mvp_smoke.gd']))
-        for script in ['test_devtools.py', 'run_network_process_test.py', 'test_simulation_cli.py', 'test_bot_cli.py']:
+        for script in ['test_devtools.py', 'run_network_process_test.py', 'test_simulation_cli.py', 'test_bot_cli.py', 'test_lobby_cli.py']:
             commands.append((Path(script).stem, [sys.executable, str(ROOT / 'tools' / script)]))
         for name, command in commands:
             result = run_case(name, command, directory, args.timeout)

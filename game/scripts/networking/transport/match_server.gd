@@ -4,6 +4,12 @@ const Factory := preload("res://scripts/core/rules/match_factory.gd")
 const Protocol := preload("res://scripts/networking/messages/match_protocol.gd")
 var diagnostics := {"packets": 0, "bytes": 0, "rejections": 0, "snapshots": 0}
 var match_phase := "waiting"
+var capacity := 2
+var require_ready := false
+var started := false
+var ready_slots := {}
+var rematch_votes := {}
+var lobby_budgets := {}
 var ping_times := {}
 var rejection_times := {}
 var transfer_serial := 0
@@ -29,10 +35,14 @@ const MAX_PACKETS_PER_SECOND := 100
 const MAX_BYTES_PER_SECOND := 65536
 const Motion := preload("res://scripts/core/rules/player_motion.gd")
 
-func start(port: int = 19170, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic") -> Error:
+func start(port: int = 19170, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic", player_count: int = 2, lobby_required: bool = false) -> Error:
 	close()
-	runner = Factory.create_match(2, map_path, preset)
-	if runner == null:
+	capacity = player_count
+	require_ready = lobby_required
+	if capacity < 2 or capacity > 10:
+		return ERR_INVALID_PARAMETER
+	runner = Factory.create_match(capacity, map_path, preset)
+	if runner == null or runner.state.players.size() != capacity:
 		return ERR_INVALID_DATA
 	peer = ENetMultiplayerPeer.new()
 	peer.peer_connected.connect(_connected)
@@ -51,16 +61,20 @@ func _disconnected(id: int) -> void:
 		reservations[token].expires = Time.get_ticks_msec() + int(reservation_seconds * 1000)
 		peer_tokens.erase(id)
 	if slots.has(id):
+		ready_slots.erase(slots[id])
+		rematch_votes.clear()
 		motion.erase(slots[id])
 		velocities.erase(slots[id])
 	slots.erase(id)
 	snapshot_times.erase(id)
 	restart_times.erase(id)
+	lobby_budgets.erase(id)
 	pending.erase(id)
 	packet_budgets.erase(id)
 	ping_times.erase(id)
 	rejection_times.erase(id)
 	_update_phase()
+	_broadcast_lobby()
 
 func _expire_reservations() -> void:
 	var now := Time.get_ticks_msec()
@@ -102,7 +116,9 @@ func _accept_hello(id: int, data: Dictionary) -> void:
 	peer_tokens[id] = token
 	slots[id] = player_id
 	pending.erase(id)
+	_maybe_start()
 	_update_phase()
+	_broadcast_lobby()
 	_send_snapshot(id)
 
 func _allow_packet(sender: int, byte_count: int) -> bool:
@@ -160,12 +176,17 @@ func _handle(sender: int, data: Dictionary) -> void:
 	if not slots.has(sender):
 		return
 	match data.get("type", ""):
+		"ready", "display_name", "rematch":
+			_handle_lobby(sender, data)
 		"ping":
 			var now := Time.get_ticks_msec()
 			if Protocol.integer(data.get("nonce"), 0, 2147483647) and now - int(ping_times.get(sender, -2000)) >= 500:
 				ping_times[sender] = now
 				_send(sender, {"type": "pong", "nonce": data.nonce})
 		"surrender":
+			if require_ready and not started:
+				_reject(sender, "match_not_started")
+				return
 			if data.has("player_id") and data.player_id != slots[sender]:
 				_reject(sender, "invalid_identity")
 				return
@@ -198,7 +219,7 @@ func _handle(sender: int, data: Dictionary) -> void:
 			if command == null or command.player_id != slots[sender]:
 				_reject(sender, "invalid_identity_or_command")
 				return
-			if slots.size() < 2 or playback_remaining > 0:
+			if _phase() != "playing":
 				_reject(sender, "waiting_for_players_or_projectile")
 				return
 			var result: Dictionary = runner.submit(command)
@@ -211,6 +232,9 @@ func _handle(sender: int, data: Dictionary) -> void:
 			else:
 				_reject(sender, result.reason)
 		"restart":
+			if require_ready:
+				_reject(sender, "rematch_quorum_required")
+				return
 			if slots[sender] == "blue_1":
 				var now := Time.get_ticks_msec()
 				if now - int(restart_times.get(sender, -2000)) < 1000:
@@ -233,7 +257,7 @@ func _send_snapshot(id: int) -> void:
 	var size: Vector3i = runner.world.size
 	var edge: int = runner.world.chunk_size
 	var count := ceili(float(size.x) / edge) * ceili(float(size.y) / edge) * ceili(float(size.z) / edge)
-	_send(id, {"type": "snapshot_begin", "transfer_id": transfer_serial, "configuration": Protocol.encode_configuration(runner), "player_id": slots[id], "resume_token": peer_tokens[id], "size": [size.x, size.y, size.z], "chunk_size": edge, "chunk_count": count, "generation": runner.state.generation, "revision": runner.state.revision, "terrain_revision": terrain_revision, "phase": _phase()})
+	_send(id, {"type": "snapshot_begin", "transfer_id": transfer_serial, "configuration": Protocol.encode_configuration(runner), "player_id": slots[id], "resume_token": peer_tokens[id], "size": [size.x, size.y, size.z], "chunk_size": edge, "chunk_count": count, "generation": runner.state.generation, "revision": runner.state.revision, "terrain_revision": terrain_revision, "phase": _phase(), "lobby": lobby_snapshot()})
 	for z in range(ceili(float(size.z) / edge)):
 		for y in range(ceili(float(size.y) / edge)):
 			for x in range(ceili(float(size.x) / edge)):
@@ -268,6 +292,10 @@ func close() -> void:
 	shutting_down = false
 	shutdown_remaining = 0.0
 	match_phase = "waiting"
+	started = false
+	ready_slots.clear()
+	rematch_votes.clear()
+	lobby_budgets.clear()
 	slots.clear()
 	transport_peers.clear()
 	reservations.clear()
@@ -291,7 +319,7 @@ func _count(key: String, amount: int = 1) -> void:
 func _phase() -> String:
 	if runner != null and runner.state.status == "ended":
 		return "ended"
-	if slots.size() < 2:
+	if slots.size() < capacity or (require_ready and not started):
 		return "waiting"
 	return "playback" if playback_remaining > 0 else "playing"
 
@@ -315,3 +343,81 @@ func graceful_shutdown() -> void:
 	shutdown_remaining = 0.25
 	_broadcast({"type": "server_shutdown"})
 	peer.host.flush()
+
+func lobby_snapshot() -> Dictionary:
+	var roster := []
+	if runner != null:
+		for player in runner.state.players:
+			roster.append({"id": player.player_id, "name": player.display_name, "team": player.team_id, "connected": slots.values().has(player.player_id), "ready": ready_slots.get(player.player_id, false), "rematch": rematch_votes.get(player.player_id, false)})
+	return {"capacity": capacity, "require_ready": require_ready, "started": started, "generation": runner.state.generation if runner != null else 0, "roster": roster}
+
+func _broadcast_lobby() -> void:
+	_broadcast({"type": "lobby_state", "lobby": lobby_snapshot()})
+
+func _maybe_start() -> void:
+	if started or slots.size() != capacity:
+		return
+	for player_id in slots.values():
+		if require_ready and not ready_slots.get(player_id, false):
+			return
+	started = true
+
+func _handle_lobby(sender: int, data: Dictionary) -> void:
+	var now := Time.get_ticks_msec()
+	var budget: Dictionary = lobby_budgets.get(sender, {"at": now, "count": 0})
+	if now - int(budget.at) >= 1000:
+		budget = {"at": now, "count": 0}
+	budget.count += 1
+	lobby_budgets[sender] = budget
+	if budget.count > 8:
+		_reject(sender, "lobby_rate_limit")
+		return
+	var player_id: String = slots[sender]
+	if data.has("player_id") and data.player_id != player_id:
+		_reject(sender, "invalid_identity")
+		return
+	if data.get("generation") != runner.state.generation or not Protocol.integer(data.get("generation"), 0, 2147483647):
+		_reject(sender, "stale_generation")
+		return
+	match data.type:
+		"ready":
+			if started or not require_ready or not data.get("ready") is bool:
+				_reject(sender, "invalid_ready")
+				return
+			ready_slots[player_id] = data.ready
+		"display_name":
+			if started or not Protocol.valid_display_name(data.get("name")):
+				_reject(sender, "invalid_display_name")
+				return
+			var name_value: String = data.name.strip_edges()
+			for player in runner.state.players:
+				if player.player_id == player_id:
+					player.display_name = name_value
+			for player in runner.initial_players:
+				if player.id == player_id:
+					player.name = name_value
+			ready_slots.erase(player_id)
+			_broadcast({"type": "state", "state": runner.state_snapshot(), "terrain_revision": terrain_revision, "phase": _phase()})
+		"rematch":
+			if not require_ready or runner.state.status != "ended" or not data.get("vote") is bool:
+				_reject(sender, "invalid_rematch")
+				return
+			rematch_votes[player_id] = data.vote
+			if slots.size() == capacity and slots.values().all(func(id): return rematch_votes.get(id, false)):
+				runner.reset()
+				started = false
+				ready_slots.clear()
+				rematch_votes.clear()
+				terrain_revision = 0
+				motion.clear()
+				velocities.clear()
+				playback_remaining = 0.0
+				state_timer = 0.0
+				_update_phase()
+				_broadcast_lobby()
+				for id in slots:
+					_send_snapshot(id)
+				return
+	_maybe_start()
+	_update_phase()
+	_broadcast_lobby()

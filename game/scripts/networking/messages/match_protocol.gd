@@ -323,3 +323,32 @@ static func valid_configured_state(state: RefCounted, runner: RefCounted) -> boo
 	if state.status == "ended" and state.winner_team == 0 and state.winner_player.is_empty() and not state.get_living_players().is_empty():
 		return runner.rules.max_turns > 0 and state.turn_id >= runner.rules.max_turns
 	return true
+
+static func valid_display_name(value: Variant) -> bool:
+	if not value is String or value.to_utf8_buffer().size() > 96:
+		return false
+	var trimmed: String = value.strip_edges()
+	if trimmed.is_empty() or trimmed.length() > 24:
+		return false
+	for index in range(value.length()):
+		var code: int = value.unicode_at(index)
+		if code < 32 or (code >= 127 and code <= 159):
+			return false
+	return true
+
+static func valid_lobby(data: Variant) -> bool:
+	if not data is Dictionary or not integer(data.get("capacity"), 2, 10) or not data.get("require_ready") is bool or not data.get("started") is bool or not integer(data.get("generation"), 0, 2147483647):
+		return false
+	if not data.get("roster") is Array or data.roster.size() != data.capacity:
+		return false
+	var ids := {}
+	for row in data.roster:
+		if not row is Dictionary or not row.get("id") is String or row.id.is_empty() or row.id.length() > 64 or ids.has(row.id) or not valid_display_name(row.get("name")) or not integer(row.get("team"), 1, 2):
+			return false
+		for key in ["connected", "ready", "rematch"]:
+			if not row.get(key) is bool:
+				return false
+		if not row.connected and (row.ready or row.rematch):
+			return false
+		ids[row.id] = true
+	return true

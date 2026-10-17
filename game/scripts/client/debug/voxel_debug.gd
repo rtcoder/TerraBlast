@@ -14,6 +14,9 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var lobby_panel: PanelContainer
+var shown_lobby_generation := -1
+var last_lobby_started := false
 var session: RefCounted
 var end_presented_key := ""
 var local_paused := false
@@ -99,14 +102,7 @@ func _ready() -> void:
 	backend_menu.menu_visibility_changed.connect(func(_open: bool): _refresh_menu_state())
 	_apply_client_preferences()
 	backend_menu.connect_game.connect(func(host: String):
-		if session.playback != null:
-			return
-		session.bot = null
-		remote_mode = true
-		if is_instance_valid(network):
-			network.close()
-			network.queue_free()
-		_connect_network(host)
+		_begin_network_connection(host, backend_menu.selected_port())
 	)
 
 func _physics_process(delta: float) -> void:
@@ -275,6 +271,9 @@ func _bind_players() -> void:
 func restart_match() -> void:
 	if session.playback != null:
 		return
+	if _uses_ready_lobby():
+		_vote_rematch()
+		return
 	end_presented_key = ""
 	effects.clear()
 	_close_overlays()
@@ -399,7 +398,9 @@ func _update_hud() -> void:
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
 	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
 	if remote_mode:
-		status += "\n" + network_status + " | F4 retry"
+		status += "\n" + network_status + " | F4 retry | F7 lobby"
+		if network != null:
+			status += "\n" + preload("res://scripts/client/ui/lobby_panel.gd").waiting_text(network.lobby_state,network.match_phase,network.ready_for_match)
 		if network != null:
 			status += " | %s | %d%% | RTT %.0f ms" % [network.match_phase, int(100.0 * network.snapshot_progress.completed / maxi(1, network.snapshot_progress.total)), network.latency_ms]
 	if not remote_mode:
@@ -615,20 +616,39 @@ func _can_control() -> bool:
 	var active = turn_controller.get_active_player()
 	return network != null and network.ready_for_match and network.match_phase == "playing" and active != null and active.player_id == network.player_id
 
-func _connect_network(host: String) -> void:
+func _connect_network(host: String, port: int = -1) -> void:
 	network = load("res://scripts/networking/transport/match_client.gd").new()
-	add_child(network)
-	network.status_changed.connect(func(message: String): network_status = message)
-	network.synchronized.connect(_sync_network)
-	network.result_received.connect(func(result: Dictionary):
-		runner = network.runner
+	var source = network
+	add_child(source)
+	source.status_changed.connect(func(message: String):
+		if network != source or not remote_mode:
+			return
+		network_status = message
+		if lobby_panel != null:
+			lobby_panel.feedback.text = message
+			_present_lobby()
+	)
+	source.synchronized.connect(func():
+		if network == source and remote_mode:
+			_sync_network()
+	)
+	source.lobby_changed.connect(func():
+		if network == source and remote_mode:
+			_on_lobby_changed()
+	)
+	source.result_received.connect(func(result: Dictionary):
+		if network != source or not remote_mode:
+			return
+		runner = source.runner
 		players = runner.state.players
 		turn_controller = runner.state
 		_play_result(result)
 	)
-	network.connect_to_server(host, int(GameConfig.argument("--port", "19170")))
+	source.connect_to_server(host, int(GameConfig.argument("--port", "19170")) if port < 0 else port)
 
 func _sync_network() -> void:
+	if not remote_mode or network == null:
+		return
 	var replaced: bool = runner != network.runner
 	var previous_turn: int = turn_controller.turn_id
 	runner = network.runner
@@ -651,10 +671,12 @@ func _sync_network() -> void:
 		_cancel_aim()
 		_face_camera_toward_enemy()
 
+	_on_lobby_changed()
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_node_ready():
 		scoreboard.hide()
-		if not remote_mode and session != null and session.playback == null:
+		if not remote_mode and session != null and session.playback == null and not menu_open:
 			match_panels.pause_panel.show()
 			_refresh_menu_state()
 		_cancel_aim()
@@ -680,6 +702,19 @@ func _sync_selected_weapon() -> void:
 		_cancel_aim()
 
 func _setup_client_panels() -> void:
+	lobby_panel = preload("res://scripts/client/ui/lobby_panel.gd").new()
+	$Hud.add_child(lobby_panel)
+	lobby_panel.close_requested.connect(_close_overlays)
+	lobby_panel.disconnect_requested.connect(_disconnect_to_local)
+	lobby_panel.ready_requested.connect(func(value: bool):
+		if remote_mode and network != null: network.set_ready(value)
+	)
+	lobby_panel.name_requested.connect(func(value: String):
+		if remote_mode and network != null: network.set_display_name(value)
+	)
+	lobby_panel.rematch_requested.connect(func(value: bool):
+		if remote_mode and network != null: network.vote_rematch(value)
+	)
 	settings_panel = preload("res://scripts/client/ui/settings_panel.gd").new()
 	$Hud.add_child(settings_panel)
 	settings_panel.setup(preferences)
@@ -778,7 +813,7 @@ func _sync_rule_controls() -> void:
 	max_charge_time = rules.max_charge_time
 
 func _refresh_menu_state() -> void:
-	menu_open = settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
+	menu_open = lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
 	local_paused = menu_open and not remote_mode
 	if menu_open:
 		turn_banner.hide()
@@ -789,6 +824,7 @@ func _refresh_menu_state() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if menu_open else Input.MOUSE_MODE_CAPTURED)
 
 func _close_overlays() -> void:
+	lobby_panel.hide()
 	settings_panel.hide()
 	match_panels.hide_panels()
 	if backend_menu != null:
@@ -899,7 +935,14 @@ func _update_match_panels(delta: float) -> void:
 			_refresh_menu_state()
 		_update_scoreboard()
 		match_panels.end_label.text = _winner_status_text() + "\n" + scoreboard.text
-		match_panels.restart_button.disabled = remote_mode and (network == null or network.player_id != "blue_1")
+		if _uses_ready_lobby():
+			var own: Dictionary = _own_lobby_slot()
+			match_panels.restart_button.text = "Cancel rematch vote" if own.get("rematch",false) else "Vote rematch"
+			match_panels.restart_button.disabled = not network.ready_for_match
+			match_panels.end_label.text += "\n" + _rematch_status()
+		else:
+			match_panels.restart_button.text = "Restart"
+			match_panels.restart_button.disabled = remote_mode and (network == null or network.player_id != "blue_1")
 
 func _apply_client_preferences() -> void:
 	var text_size := roundi(20 * preferences.hud_scale)
@@ -907,7 +950,7 @@ func _apply_client_preferences() -> void:
 	scoreboard.add_theme_font_size_override("font_size", roundi(15 * preferences.hud_scale))
 	turn_banner.add_theme_font_size_override("font_size", text_size)
 	last_shot_label.add_theme_font_size_override("font_size", roundi(16 * preferences.hud_scale))
-	for panel in [settings_panel, match_panels]:
+	for panel in [settings_panel, match_panels, lobby_panel]:
 		_scale_panel(panel, roundi(16 * preferences.hud_scale))
 	var contrast: bool = preferences.high_contrast
 	if not $Hud/Crosshair.has_node("OutlineHorizontal"):
@@ -1046,3 +1089,98 @@ func _replace_local_runner(replacement: RefCounted) -> void:
 	_bind_players()
 	_update_hud()
 	_update_scoreboard()
+
+func _begin_network_connection(host: String, port: int) -> void:
+	if session.playback != null or port < 1 or port > 65535 or host.strip_edges().is_empty():
+		return
+	var previous = network
+	network = null
+	if is_instance_valid(previous):
+		previous.set_process(false)
+		previous.close()
+		previous.resume_token = ""
+		previous.queue_free()
+	if is_instance_valid(active_projectile):
+		active_projectile.queue_free()
+	active_projectile = null
+	projectile_in_flight = false
+	pending_result = {}
+	effects.clear()
+	session.bot = null
+	shown_lobby_generation = -1
+	last_lobby_started = false
+	remote_mode = true
+	_close_overlays()
+	_connect_network(host.strip_edges(), port)
+
+func _disconnect_to_local() -> void:
+	var previous = network
+	network = null
+	remote_mode = false
+	if is_instance_valid(previous):
+		previous.set_process(false)
+		previous.close()
+		previous.resume_token = ""
+		previous.queue_free()
+	network_status = ""
+	lobby_panel.feedback.text = ""
+	shown_lobby_generation = -1
+	last_lobby_started = false
+	session.playback = null
+	session.live_runner = null
+	session.live_velocities = {}
+	session.options = {"mode":"hotseat","difficulty":"normal","human_team":1}
+	_replace_local_runner(MatchFactory.create_match(10))
+	session.new_recording()
+	_close_overlays()
+
+func _uses_ready_lobby() -> bool:
+	return remote_mode and network != null and network.lobby_state.get("require_ready",false)
+
+func _own_lobby_slot() -> Dictionary:
+	if network != null:
+		for row in network.lobby_state.get("roster",[]):
+			if row.id == network.player_id:
+				return row
+	return {}
+
+func _rematch_status() -> String:
+	var votes := 0
+	for row in network.lobby_state.get("roster",[]):
+		votes += int(row.rematch)
+	return "Rematch votes: %d / %d — full connected roster required" % [votes,network.lobby_state.get("capacity",0)]
+
+func _vote_rematch() -> void:
+	if _uses_ready_lobby() and network.ready_for_match and network.match_phase == "ended":
+		network.vote_rematch(not _own_lobby_slot().get("rematch",false))
+
+func _present_lobby() -> void:
+	if lobby_panel != null and network != null:
+		lobby_panel.present(network.lobby_state,network.player_id,network.match_phase,network.ready_for_match)
+
+func _on_lobby_changed() -> void:
+	if lobby_panel == null or network == null or not remote_mode:
+		return
+	_present_lobby()
+	var state: Dictionary = network.lobby_state
+	if state.is_empty() or not network.ready_for_match or state.generation != runner.state.generation:
+		return
+	var started: bool = state.started
+	if not started and shown_lobby_generation != int(state.generation):
+		shown_lobby_generation = int(state.generation)
+		end_presented_key = ""
+		_close_overlays()
+		lobby_panel.show()
+		_refresh_menu_state()
+	elif started and not last_lobby_started and lobby_panel.visible:
+		_close_overlays()
+	last_lobby_started = started
+
+func _toggle_lobby() -> void:
+	if not remote_mode or network == null or session.playback != null:
+		return
+	var open := not lobby_panel.visible
+	_close_overlays()
+	_present_lobby()
+	lobby_panel.visible = open
+	_refresh_menu_state()

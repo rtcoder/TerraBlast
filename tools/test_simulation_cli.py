@@ -1,4 +1,4 @@
-"""Exercise public CLI including deterministic scenarios on both arenas."""
+"""Exercise public CLI including deterministic scenarios on all three arenas."""
 import json
 import os
 import subprocess
@@ -11,7 +11,7 @@ GODOT = godot_binary()
 def run(*args):
     return subprocess.run([GODOT, '--headless', '--path', str(ROOT / 'game'), '--log-file', '/tmp/terrablast-cli.log', '--', *args], capture_output=True, text=True, timeout=30)
 
-for arena in ('twin_forts', 'two_islands'):
+for arena in ('twin_forts', 'two_islands', 'canyon_bridge'):
     results = []
     for _ in range(2):
         result = run('--mode', 'simulate', '--map', arena, '--shots', '6', '--seed', '123')
@@ -23,4 +23,4 @@ for arena in ('twin_forts', 'two_islands'):
 for args in (('--mode', 'typo'), ('--port', '99999'), ('--map', 'missing'), ('--players', '0')):
     result = run(*args)
     assert result.returncode == 2, result.stdout + result.stderr
-print('CLI: deterministic scenarios on both arenas and invalid-argument exits passed')
+print('CLI: deterministic scenarios on all three arenas and invalid-argument exits passed')

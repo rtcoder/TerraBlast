@@ -22,7 +22,7 @@ def run(directory, *args, code=0):
 def main():
     with tempfile.TemporaryDirectory(prefix='terrablast-bot-cli-') as temporary:
         directory = Path(temporary)
-        for arena in ('twin_forts', 'two_islands'):
+        for arena in ('twin_forts', 'two_islands', 'canyon_bridge'):
             summaries = []
             for attempt in range(2):
                 archive = directory / f'{arena} replay {attempt}.json'
@@ -60,7 +60,7 @@ def main():
             ('simulate', '--shots', '1', '--record', str(directory / 'missing/replay.json')),
         ):
             run(directory, *args, code=2)
-    print('Bot CLI: both arenas deterministic, normal/default, replay verification and invalid outputs passed')
+    print('Bot CLI: all three arenas deterministic, normal/default, replay verification and invalid outputs passed')
 
 
 if __name__ == '__main__':

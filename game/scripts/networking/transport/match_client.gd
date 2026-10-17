@@ -1,6 +1,8 @@
 class_name MatchClient
 extends Node
 signal snapshot_progress_changed(completed: int, total: int)
+signal lobby_changed
+var lobby_state: Dictionary = {}
 signal synchronized
 signal result_received(result: Dictionary)
 signal status_changed(message: String)
@@ -100,6 +102,8 @@ func _process(delta: float) -> void:
 
 func _handle(data: Dictionary) -> void:
 	match data.get("type", ""):
+		"lobby_state":
+			_accept_lobby(data.get("lobby"))
 		"server_shutdown":
 			_fail("server_shutdown")
 		"pong":
@@ -111,6 +115,10 @@ func _handle(data: Dictionary) -> void:
 		"snapshot_begin":
 			if not Protocol.valid_snapshot_metadata(data):
 				request_snapshot()
+				return
+			if data.has("lobby") and (not Protocol.valid_lobby(data.lobby) or data.lobby.generation != data.generation):
+				return
+			if not lobby_state.is_empty() and data.generation < lobby_state.generation:
 				return
 			var configuration := Protocol.decode_configuration(data.configuration)
 			if configuration.is_empty():
@@ -150,6 +158,9 @@ func _handle(data: Dictionary) -> void:
 			staging.initial_materials = staging.world.material_ids.duplicate()
 			staging.initial_health = staging.world.health_values.duplicate()
 			staging.state = state
+			if snapshot_metadata.has("lobby"):
+				_accept_lobby(snapshot_metadata.lobby)
+			last_result.clear()
 			runner = staging
 			_summary(data.state)
 			_set_phase(snapshot_metadata.get("phase", "playing"))
@@ -163,6 +174,8 @@ func _handle(data: Dictionary) -> void:
 		"state":
 			var state = Protocol.decode_state(data.get("state"))
 			if not ready_for_match or state == null:
+				return
+			if state.generation < runner.state.generation:
 				return
 			if state.generation != runner.state.generation or state.revision > runner.state.revision + 1 or data.get("terrain_revision", 0) != terrain_revision:
 				request_snapshot()
@@ -183,6 +196,8 @@ func _handle(data: Dictionary) -> void:
 				request_snapshot()
 				return
 			var state = Protocol.decode_state(result.state)
+			if state.generation < runner.state.generation:
+				return
 			if state.generation == runner.state.generation and int(data.get("terrain_revision", -1)) <= terrain_revision:
 				return
 			if state.generation != runner.state.generation or state.revision > runner.state.revision + 1 or data.get("base_terrain_revision") != terrain_revision or data.get("terrain_revision") != terrain_revision + 1:
@@ -242,6 +257,8 @@ func close() -> void:
 		peer.close()
 		peer = null
 	ready_for_match = false
+	lobby_state.clear()
+	lobby_changed.emit()
 	staging = null
 	recovery_wait = 0.0
 	connection_state = "disconnected"
@@ -280,3 +297,20 @@ func _summary(data: Dictionary) -> void:
 func surrender() -> void:
 	if ready_for_match and match_phase in ["playing", "waiting"]:
 		_send({"type": "surrender"})
+
+func _accept_lobby(value: Variant) -> void:
+	if not Protocol.valid_lobby(value):
+		return
+	if not lobby_state.is_empty() and value.generation < lobby_state.generation:
+		return
+	lobby_state = value.duplicate(true)
+	lobby_changed.emit()
+
+func set_ready(value: bool) -> void:
+	_send({"type": "ready", "ready": value, "generation": lobby_state.get("generation", -1)})
+
+func set_display_name(value: String) -> void:
+	_send({"type": "display_name", "name": value, "generation": lobby_state.get("generation", -1)})
+
+func vote_rematch(value: bool) -> void:
+	_send({"type": "rematch", "vote": value, "generation": lobby_state.get("generation", -1)})

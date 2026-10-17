@@ -16,7 +16,7 @@ python3 tools/launch.py test --timeout 90 --log-dir /tmp/terrablast-results
 python3 tools/run_network_process_test.py --port 19389 --timeout 30
 ```
 
-Map audit uses the production TOML parser, structural validator, builder and spawn-ground validator. `--list-maps` audits every `.toml` in `res://maps`, returning name, dimensions, spawn count and errors. For fixtures or another directory, pass `--maps-dir /absolute/directory`. `--mode audit-maps` is an equivalent explicit mode. Invalid maps, missing/empty directories and invalid CLI arguments exit 2.
+Map audit uses the production TOML parser, structural validator, builder and spawn-ground validator. `--list-maps` audits every `.toml` in `res://maps`, returning id, name, dimensions, theme, sorted team IDs, capacity (up to 10), spawn count and errors. For fixtures or another directory, pass `--maps-dir /absolute/directory`. `--mode audit-maps` is an equivalent explicit mode. Invalid maps, missing/empty directories and invalid CLI arguments exit 2.
 
 Simulation summary files use a temporary sibling and atomic rename. Replay mode verifies the bounded versioned archive and final state hash before reporting success. Utility modes run no gameplay scene or network listener.
 
@@ -37,6 +37,21 @@ python3 tools/test_bot_cli.py
 
 `--record PATH` captures all accepted shots from the simulation's initial state and writes a versioned ReplayArchive. Use a different path for `--output`: identical normalized paths are rejected. Replay mode runs in a separate process and returns `ok: true, reason: verified` only after checking the final state hash. Archives are bounded; a recording that exceeds the recorder's limit fails export rather than silently saving a truncated replay.
 
-Unknown difficulty, missing values, duplicate flags, `--bots`/`--record` outside simulation, or an unwritable output path return exit code 2. Parent directories must already exist. The launcher forwards each argument independently, including paths with spaces, and works from any current directory. The suite automatically discovers unit `*tests.gd` and integration `*next_tests.gd` once, and includes `test_bot_cli.py` with the usual logs and report.
+Unknown difficulty, missing values, duplicate flags, `--bots`/`--record` outside simulation, or an unwritable output path return exit code 2. Parent directories must already exist. The launcher forwards each argument independently, including paths with spaces, and works from any current directory. The suite automatically discovers unit `*tests.gd` and integration `*next_tests.gd` once, and includes `test_bot_cli.py` and `test_lobby_cli.py` with the usual logs and report.
 
 Graphical solo, checkpoint (`user://last_session.json`) and action replay (`user://last_replay.json`) controls are described in the [main README](../README.md#solo-saves-and-replay). They are local-only; they cannot save or replace an authoritative online match.
+
+## Dedicated match lobby
+
+```sh
+python3 tools/launch.py server --map canyon_bridge --players 4 --lobby --port 19170
+python3 tools/launch.py server --map canyon_bridge --players 10 --lobby --port 19171
+python3 tools/launch.py server --map canyon_bridge --players 10 --lobby --smoke
+python3 tools/test_lobby_cli.py
+```
+
+All modes accept the registered arenas `twin_forts`, `two_islands`, and `canyon_bridge`. The server defaults to 2 players; `--players 2..10` sets its required capacity. Startup prints the map, preset, actual player count, capacity and `lobby`/`auto` mode. Insufficient spawns fail before binding a port. `--lobby` is a server-only boolean flag with no value; duplicate flags and invalid contexts exit 2.
+
+F2 selects the host and port. F7 shows the match roster, edits your name before start and toggles Ready. Lobby mode waits for the full connected and ready roster. Any disconnect pauses gameplay until full capacity reconnects; F4 retries a reserved slot. After match end the full roster must vote for rematch, then select Ready again. Without `--lobby`, a full roster starts automatically. The default 2-player auto mode remains compatible.
+
+These are manually allocated Godot match servers. Nakama authentication, lobbies and matchmaking remain separate metagame services; no automatic server provisioning is implemented.

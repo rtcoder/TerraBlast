@@ -42,5 +42,6 @@ static func from_definition(definition: RefCounted, chunk_size: int = 16) -> Dic
 		var slot: int = int(spawn.get("slot", slots.get(team, 0)))
 		slots[team] = slot + 1
 		spawns.append(Spawn.new(Vector3i(spawn.position[0], spawn.position[1], spawn.position[2]), team, slot, float(spawn.get("yaw", 0))))
+	spawns.sort_custom(func(a, b): return a.slot < b.slot if a.slot != b.slot else a.team < b.team)
 	result.world = world
 	return result

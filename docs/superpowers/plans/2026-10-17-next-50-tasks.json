@@ -1,0 +1,302 @@
+[
+  {
+    "group": "network",
+    "title": "Server: Mecze sieciowe od 2 do 10 graczy",
+    "description": "start(port,map,preset,player_count=2,require_ready=false); odrzuca niedostępną liczbę spawnów przed bind; domyślne auto 1v1 zachowane.",
+    "id": "TB-182"
+  },
+  {
+    "group": "network",
+    "title": "Server: Przydział wszystkich slotów drużyn",
+    "description": "Każdy przyjęty klient ma unikalny slot; capacity+1 jest odrzucony; brak podwójnego przypisania.",
+    "id": "TB-183"
+  },
+  {
+    "group": "network",
+    "title": "Server: Reconnect dowolnego slotu w większym meczu",
+    "description": "Token odzyskuje tożsamość i stan dla każdego z maks10 slotów; rezerwacja nadal wygasa.",
+    "id": "TB-184"
+  },
+  {
+    "group": "network",
+    "title": "Protocol: Walidowany stan lobby",
+    "description": "lobby_state zawiera capacity,require_ready,started,generation oraz roster id/name/team/connected/ready/rematch; ścisłe typy, limity i unikalność.",
+    "id": "TB-185"
+  },
+  {
+    "group": "network",
+    "title": "Client: Synchronizacja stanu lobby",
+    "description": "lobby_state Dictionary i lobby_changed signal; snapshot/reconnect dostarcza pełną aktualną listę; invalid wiadomość nie mutuje.",
+    "id": "TB-186"
+  },
+  {
+    "group": "network",
+    "title": "Server: Gotowość przypisana do peera",
+    "description": "ready bool tylko własnego slotu; odrzuca niepoprawne typy i spoofing, brak wpływu na terrain revision.",
+    "id": "TB-187"
+  },
+  {
+    "group": "network",
+    "title": "Server: Start po gotowości pełnego składu",
+    "description": "W trybie require_ready timer i komendy stoją aż capacity klientów gotowych; bez countdown; auto mode startuje po pełnym składzie.",
+    "id": "TB-188"
+  },
+  {
+    "group": "network",
+    "title": "Server: Odwołanie gotowości przed startem",
+    "description": "Klient może wycofać ready; disconnect kasuje ready; zmiana nazwy również wymaga ponownego ready.",
+    "id": "TB-189"
+  },
+  {
+    "group": "network",
+    "title": "Server: Pauza po utracie klienta",
+    "description": "Po rozpoczęciu brak dowolnego slotu wstrzymuje czas/ruch/strzały; reconnect pełnego składu wznawia bez powtórnego ready.",
+    "id": "TB-190"
+  },
+  {
+    "group": "network",
+    "title": "Server: Walidacja nazw graczy",
+    "description": "set_display_name(name) przed startem; trim1..24 znaki, bez znaków sterujących, bounded UTF8; zmienia tylko własny player.",
+    "id": "TB-191"
+  },
+  {
+    "group": "network",
+    "title": "Network: Nazwy w snapshotach i reconnect",
+    "description": "Zaakceptowane nazwy są widoczne wszystkim i zachowane przez reconnect oraz rematch.",
+    "id": "TB-192"
+  },
+  {
+    "group": "network",
+    "title": "Server: Głos na rewanż po zakończeniu",
+    "description": "vote_rematch(bool) tylko ended, w trybie lobby; wszystkie połączone sloty muszą głosować, vote false odwołuje.",
+    "id": "TB-193"
+  },
+  {
+    "group": "network",
+    "title": "Server: Reset rewanżu i ponowna gotowość",
+    "description": "Pełny quorum resetuje mecz raz, generation++, terrain/revision i votes czyste, lobby czeka na ponowne ready; nazwy zostają.",
+    "id": "TB-194"
+  },
+  {
+    "group": "network",
+    "title": "Server: Czyszczenie głosów po disconnect",
+    "description": "Disconnect unieważnia votes i gotowość; nie może wywołać rewanżu przez zmniejszenie quorum.",
+    "id": "TB-195"
+  },
+  {
+    "group": "network",
+    "title": "Server: Ograniczenie wiadomości lobby",
+    "description": "Rate limit ready/name/rematch oraz walidacja fazy; legacy restart nie omija quorum w trybie lobby.",
+    "id": "TB-196"
+  },
+  {
+    "group": "network",
+    "title": "Network: Regresje real ENet dla 4 klientów",
+    "description": "Nowy network_oct17_next_tests: 4klientów, ready gating, spoof/names, disconnect/reconnect, rematch, invalid lobby i capacity; dotychczasowe2klientowe testy nadal przechodzą.",
+    "id": "TB-197"
+  },
+  {
+    "group": "arena",
+    "title": "Maps: Wspólny rejestr aren",
+    "description": "MapRegistry.PATHS identyfikator->res path: twin_forts,two_islands,canyon_bridge; niezależny od autoload/UI.",
+    "id": "TB-198"
+  },
+  {
+    "group": "arena",
+    "title": "Maps: Metadane wyboru areny",
+    "description": "MapRegistry.describe(id)->Dictionary z id/name/description/player_capacity,size; kopia bez mutacji globalnych danych; nieznaneid pustywynik.",
+    "id": "TB-199"
+  },
+  {
+    "group": "arena",
+    "title": "Arena: Canyon Bridge — teren i przejścia",
+    "description": "Nowa odmienna arena TOML80x24x64 z dwiema stronami kanionu, mostem i osłonami; tylko istniejące materiały, bez node-per-voxel.",
+    "id": "TB-200"
+  },
+  {
+    "group": "arena",
+    "title": "Arena: Canyon Bridge — 10 bezpiecznych spawnów",
+    "description": "Symetryczne5+5 spawnów, headroom/support, poprawne kierunki; pierwsze2 toprzeciwne drużyny.",
+    "id": "TB-201"
+  },
+  {
+    "group": "arena",
+    "title": "Factory: Jawne odrzucanie braku spawnów",
+    "description": "create_match odrzuca player_limit poza2..10 lub większy od liczby spawnów; nie zwraca cicho mniejszego meczu.",
+    "id": "TB-202"
+  },
+  {
+    "group": "arena",
+    "title": "Factory: Stabilna kolejność składów",
+    "description": "Spawner sortuje według slotu i team, niezależnie od kolejności TOML; wybór2/4/10 zachowuje obie drużyny.",
+    "id": "TB-203"
+  },
+  {
+    "group": "arena",
+    "title": "Maps: Limit objętości zgodny z zapisem i siecią",
+    "description": "MapValidator odrzuca volume>2097152 przed alokacją; zgodność replay/network bounds.",
+    "id": "TB-204"
+  },
+  {
+    "group": "arena",
+    "title": "Maps: Ograniczenie liczby operacji budowy",
+    "description": "Maksymalnie4096 boxes/carves łącznie i32spawns; przekroczenie kontrolowany błąd przed generowaniem.",
+    "id": "TB-205"
+  },
+  {
+    "group": "arena",
+    "title": "Arena: Deterministyczna destrukcja nowej mapy",
+    "description": "Test hash identycznej generacji, eksplozja zmienia tylko dozwolony teren, wszystkie10 spawnów valid.",
+    "id": "TB-206"
+  },
+  {
+    "group": "arena",
+    "title": "Arena: Test bota i replay na Canyon Bridge",
+    "description": "Factory2/4/10, BotPlanner legalnystrzał, ReplayArchive roundtrip; osobny unit arena_oct17_tests.",
+    "id": "TB-207"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: --players steruje pojemnością serwera",
+    "description": "server_main przekazuje count domyślnie2 do transport.start; smoke potwierdza count2/4/10.",
+    "id": "TB-208"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Flaga --lobby dla gotowości i rewanżu",
+    "description": "Boolean --lobby tylko server; start require_ready=true; defaultauto pozostaje kompatybilny.",
+    "id": "TB-209"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Rejestr trzech aren we wszystkich trybach",
+    "description": "GameConfig.MAPS=MapRegistry.PATHS; help/list-maps/simulate/server przyjmują canyon_bridge.",
+    "id": "TB-210"
+  },
+  {
+    "group": "tools",
+    "title": "CLI: Opis konfiguracji startującego serwera",
+    "description": "Startup print zawiera map,preset,capacity,lobby/auto; błędna konfiguracja nie bindujeportu.",
+    "id": "TB-211"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Regresja konfiguracji większego serwera",
+    "description": "Python test_lobby_cli.py smoke count2/4/10, invalid counts/--lobby context, uruchamianie z obcego cwd.",
+    "id": "TB-212"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Audyt metadanych i pojemności map",
+    "description": "audit/list-maps JSON zawiera theme, teams i capacity; sprawdza nowe dane na3arenach oraz invalid fixtures.",
+    "id": "TB-213"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Symulacja botów i zapis na trzeciej arenie",
+    "description": "test_bot_cli.py obejmuje canyon_bridge, determinism i archiveverify.",
+    "id": "TB-214"
+  },
+  {
+    "group": "tools",
+    "title": "Tools: Aktualizacja oczekiwań istniejących testów map",
+    "description": "Testy nie hardkodują2map; runner automatycznie uruchamia lobbyCLI i zachowuje pozostałechecks.",
+    "id": "TB-215"
+  },
+  {
+    "group": "tools",
+    "title": "Docs: Instrukcja uruchomienia lobby 2v2 i 5v5",
+    "description": "README/tools opisuje --players4/10 --lobby, ready, nazwy,reconnect,rematch; Nakama pozostaje osobnym metagame.",
+    "id": "TB-216"
+  },
+  {
+    "group": "tools",
+    "title": "Docs: Protokół i ograniczenia nowego lobby",
+    "description": "docs/networking opisuje roster/ready/quorum, auto legacy, tokenreservation,pełnyskład; bez obietnic matchserver allocation.",
+    "id": "TB-217"
+  },
+  {
+    "group": "client",
+    "title": "UI: Panel sieciowego lobby",
+    "description": "Osobny panel pokazuje autorytatywny roster i pojemność; aktualizowany sygnałem client.lobby_changed.",
+    "id": "TB-218"
+  },
+  {
+    "group": "client",
+    "title": "UI: Rozróżnienie connected, ready i vacant",
+    "description": "Każdy slot nazwa/drużyna/status; własny slot wyróżniony bez polegania wyłącznie na kolorze.",
+    "id": "TB-219"
+  },
+  {
+    "group": "client",
+    "title": "UI: Przycisk gotowości",
+    "description": "Ready/Not ready wysyła intencję tylko w lobby przedstartem; czeka na odpowiedźserwera zamiast lokalnego udawania.",
+    "id": "TB-220"
+  },
+  {
+    "group": "client",
+    "title": "UI: Edycja własnej nazwy przed meczem",
+    "description": "Pole nazwy + Apply, limit24, obsługa odrzucenia, disabled podczasgry.",
+    "id": "TB-221"
+  },
+  {
+    "group": "client",
+    "title": "HUD: Powód oczekiwania w lobby",
+    "description": "HUD rozróżnia brakslotów, brakgotowości, utratępołączenia; liczby z serwera.",
+    "id": "TB-222"
+  },
+  {
+    "group": "client",
+    "title": "UI: Otwarcie lobby klawiszem F7",
+    "description": "F7 przełącza panel tylko online; graonline niepauzujeautorytetu, charge anulowany, myszwidoczna.",
+    "id": "TB-223"
+  },
+  {
+    "group": "client",
+    "title": "UI: Przycisk rewanżu po meczu",
+    "description": "Endpanel w lobby pokazuje vote/cancel zamiastlegacyrestart; status głosów i wymaganypełnyskład.",
+    "id": "TB-224"
+  },
+  {
+    "group": "client",
+    "title": "UI: Przejście do lobby po rewanżu",
+    "description": "Po nowejgeneration i startedfalse panelready dostępny, brakstarego endpanel/projectile/charge.",
+    "id": "TB-225"
+  },
+  {
+    "group": "client",
+    "title": "UI: Rozłączenie i powrót do gry lokalnej",
+    "description": "Przycisk Disconnect to local zamykaENet, kasujetoken/resume i stanoverlay, tworzy nowyhotseat; starecallbacksniepodmieniająrunnera.",
+    "id": "TB-226"
+  },
+  {
+    "group": "client",
+    "title": "UI: Wybór portu połączenia",
+    "description": "MenuF2 poleport1..65535; przekazuje wybranyport do connect bez zmiany istniejącego connect_game(host) API.",
+    "id": "TB-227"
+  },
+  {
+    "group": "client",
+    "title": "UI: Nazwy i opis aren przy wyborze",
+    "description": "F5 pokazuje display_name i opis+capacity zrejestru; zachowujeid osobno i kompatybilny start_local_match.",
+    "id": "TB-228"
+  },
+  {
+    "group": "client",
+    "title": "UI: Help dla lobby i rewanżu",
+    "description": "F6 opisujeF7,ready,rematch oraz lokalneograniczenia; panele mieszcząsię1280x720HUD125%.",
+    "id": "TB-229"
+  },
+  {
+    "group": "client",
+    "title": "Client: Regresje panelu lobby i powrotu lokalnego",
+    "description": "client_oct17_next_tests pokrywa stanprzycisków, poprawnyport, disconnectcleanup, mapselection, replay guard.",
+    "id": "TB-230"
+  },
+  {
+    "group": "client",
+    "title": "Acceptance: Pełny przebieg lobby i nowej areny",
+    "description": "RealENet4klientów, nativeUI1280x720, pełnysuiteNakamarenderCLI, niezależnereview; evidence przedcommit/Done.",
+    "id": "TB-231"
+  }
+]

@@ -21,6 +21,9 @@ static func handle(scene: Node, event: InputEvent) -> void:
 		if event.keycode == KEY_F6:
 			scene._toggle_help()
 			return
+		if event.keycode == KEY_F7:
+			scene._toggle_lobby()
+			return
 		if event.keycode == KEY_F3:
 			scene._toggle_settings()
 			return

@@ -4,7 +4,8 @@ const VERSION := "0.0.1"
 const DEFAULT_CHUNK_SIZE := 16
 const DEFAULT_ARENA_SIZE := Vector3i(128, 64, 128)
 const SIMULATION_TICK_RATE := 30
-const MAPS := {"twin_forts": "res://maps/twin_forts.toml", "two_islands": "res://maps/two_islands.toml"}
+const MapRegistry = preload("res://scripts/core/maps/map_registry.gd")
+const MAPS = MapRegistry.PATHS
 var mode := "local-dev"
 var errors: Array[String] = []
 func _ready() -> void:
@@ -24,7 +25,10 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 	var index := 0
 	while index < args.size():
 		var flag := args[index]
-		if flag in ["--smoke", "--help", "--version", "--list-maps"]:
+		if flag in ["--smoke", "--help", "--version", "--list-maps", "--lobby"]:
+			if seen.has(flag):
+				result.append("Duplicate argument: " + flag)
+			seen[flag] = true
 			index += 1
 			continue
 		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record"]:
@@ -61,7 +65,9 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 					result.append("Invalid value for " + flag)
 		index += 2
 	var mode_index := args.find("--mode")
-	var selected_mode := args[mode_index + 1] if mode_index >= 0 and mode_index + 1 < args.size() else "local-dev"
+	var selected_mode := args[mode_index + 1] if mode_index >= 0 and mode_index + 1 < args.size() else ("server" if OS.has_feature("dedicated_server") else "local-dev")
+	if seen.has("--lobby") and selected_mode != "server":
+		result.append("--lobby requires --mode server")
 	for flag in ["--bots", "--record"]:
 		if seen.has(flag) and selected_mode != "simulate":
 			result.append(flag + " requires --mode simulate")
