@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cwd-independent launcher: launch.py client|local-dev|server|simulate|replay|test|doctor [arguments].
+"""Cwd-independent launcher: launch.py client|local-dev|server|simulate|replay|library|test|doctor [arguments].
 Simulation: --bots easy|normal --record PATH --output PATH --map MAP --shots N.
 Arguments are forwarded separately; quote paths containing spaces.
 """
@@ -18,7 +18,7 @@ def main():
     if mode in ('test', 'doctor'):
         script = 'run_tests.py' if mode == 'test' else 'doctor.py'
         return subprocess.call([sys.executable, str(ROOT / 'tools' / script), *args], cwd=ROOT)
-    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay'):
+    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay', 'library'):
         print('Unknown launcher mode: ' + mode, file=sys.stderr)
         return 2
     try:
@@ -26,7 +26,7 @@ def main():
     except FileNotFoundError as error:
         print(error, file=sys.stderr)
         return 2
-    if mode in ('server', 'simulate', 'replay'):
+    if mode in ('server', 'simulate', 'replay', 'library'):
         command.append('--headless')
     return subprocess.call(command + ['--', '--mode', mode, *args], cwd=ROOT)
 

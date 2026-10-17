@@ -1,0 +1,302 @@
+[
+  {
+    "group": "library",
+    "title": "Wspólny kodek archiwum powtórki",
+    "description": "Udostępnić encode/decode Dictionary; zachować dokładność f64 i odczyt v1/v2.",
+    "id": "TB-232"
+  },
+  {
+    "group": "library",
+    "title": "Wspólny kodek checkpointu",
+    "description": "Udostępnić encode/decode Dictionary z opcjami i prędkościami; zgodność istniejących API.",
+    "id": "TB-233"
+  },
+  {
+    "group": "library",
+    "title": "Format biblioteki lokalnej",
+    "description": "Jednoplikowa koperta metadata+payload, wersja, rodzaj, ID, tytuł, timestamp; limit 32 MiB.",
+    "id": "TB-234"
+  },
+  {
+    "group": "library",
+    "title": "Bezpieczne identyfikatory wpisów",
+    "description": "ID generowane losowo; ścisła walidacja zapobiega traversal i nadpisywaniu obcych plików.",
+    "id": "TB-235"
+  },
+  {
+    "group": "library",
+    "title": "Nazwane checkpointy",
+    "description": "save_session zapisuje runner, options i velocities atomowo pod unikalnym ID.",
+    "id": "TB-236"
+  },
+  {
+    "group": "library",
+    "title": "Nazwane powtórki",
+    "description": "save_replay zapisuje zweryfikowane nagranie z dokładnym hashem.",
+    "id": "TB-237"
+  },
+  {
+    "group": "library",
+    "title": "Lista i filtrowanie biblioteki",
+    "description": "list_entries(kind) zwraca metadata posortowane; limit 100 wpisów; błędy uszkodzonych wpisów widoczne.",
+    "id": "TB-238"
+  },
+  {
+    "group": "library",
+    "title": "Odczyt wpisu biblioteki",
+    "description": "load_entry waliduje kopertę i payload przed zwróceniem stanu; błąd bez mutacji.",
+    "id": "TB-239"
+  },
+  {
+    "group": "library",
+    "title": "Zmiana nazwy wpisu",
+    "description": "rename_entry waliduje tytuł 1–48 znaków bez kontroli; atomic write zachowuje ID i payload.",
+    "id": "TB-240"
+  },
+  {
+    "group": "library",
+    "title": "Usuwanie wpisu",
+    "description": "delete_entry działa wyłącznie na walidowanym ID w katalogu biblioteki; jawny wynik błędu.",
+    "id": "TB-241"
+  },
+  {
+    "group": "library",
+    "title": "Import istniejących plików",
+    "description": "import_file(kind,path,title) weryfikuje istniejący checkpoint/replay i tworzy osobny wpis.",
+    "id": "TB-242"
+  },
+  {
+    "group": "library",
+    "title": "Regresje biblioteki",
+    "description": "Testy roundtrip float64, prędkości, malformed, traversal, limitów, rename/delete/import w katalogach tymczasowych.",
+    "id": "TB-243"
+  },
+  {
+    "group": "playback",
+    "title": "Indeks czasu nagrania",
+    "description": "Wyliczyć czas wyłącznie z tick.delta; ruch nie podwaja czasu.",
+    "id": "TB-244"
+  },
+  {
+    "group": "playback",
+    "title": "Play i pause powtórki",
+    "description": "Jawny stan playing i sterowanie bez zmiany stanu nagrania.",
+    "id": "TB-245"
+  },
+  {
+    "group": "playback",
+    "title": "Prędkość odtwarzania",
+    "description": "Zakres 0.25–4, odrzucenie NaN/Inf/out of range.",
+    "id": "TB-246"
+  },
+  {
+    "group": "playback",
+    "title": "Odtwarzanie według czasu",
+    "description": "advance(delta,max_actions) respektuje nagrane ticki bez dzielenia symulacji.",
+    "id": "TB-247"
+  },
+  {
+    "group": "playback",
+    "title": "Budżet pracy odtwarzacza",
+    "description": "Limit liczby akcji na wywołanie i bezpieczny limit akumulacji czasu.",
+    "id": "TB-248"
+  },
+  {
+    "group": "playback",
+    "title": "Agregacja zmian przy odtwarzaniu",
+    "description": "advance zwraca wyniki wykonanych akcji do aktualizacji renderera.",
+    "id": "TB-249"
+  },
+  {
+    "group": "playback",
+    "title": "Przewijanie według czasu",
+    "description": "seek_time waliduje zakres i zachowuje dokładny stan z granicy akcji.",
+    "id": "TB-250"
+  },
+  {
+    "group": "playback",
+    "title": "Przejście do kolejnego strzału",
+    "description": "Indeks strzałów umożliwia deterministyczny skok do kolejnego shot.",
+    "id": "TB-251"
+  },
+  {
+    "group": "playback",
+    "title": "Koniec odtwarzania i błędy",
+    "description": "EOF zatrzymuje playing; błąd zatrzymuje bez zapętlenia; manual step zachowany.",
+    "id": "TB-252"
+  },
+  {
+    "group": "playback",
+    "title": "Regresje osi czasu",
+    "description": "Testy różnego delta i speed kończą na tym samym hashu; seek/rewind/zero-time/budżet.",
+    "id": "TB-253"
+  },
+  {
+    "group": "input",
+    "title": "Model przypisań klawiszy",
+    "description": "11 akcji: 4 ruchu, jump, 3 broni, restart, scoreboard, pause; stare defaulty.",
+    "id": "TB-254"
+  },
+  {
+    "group": "input",
+    "title": "Walidacja konfliktów klawiszy",
+    "description": "Odrzuca duplikaty i zarezerwowane Escape/F1–F12/brackets/strzałki; atomowa zmiana.",
+    "id": "TB-255"
+  },
+  {
+    "group": "input",
+    "title": "Trwałe przypisania",
+    "description": "Wersjonowany user://bindings.cfg; walidacja całego pliku i atomowy zapis.",
+    "id": "TB-256"
+  },
+  {
+    "group": "input",
+    "title": "Odczyt fizycznych klawiszy",
+    "description": "Event physical_keycode z fallback keycode; polling fizycznych klawiszy ruchu.",
+    "id": "TB-257"
+  },
+  {
+    "group": "input",
+    "title": "Konfigurowalny ruch",
+    "description": "DesktopInput.move_axis(bindings=null), zachowane aliasy strzałek.",
+    "id": "TB-258"
+  },
+  {
+    "group": "input",
+    "title": "Konfigurowalne akcje gry",
+    "description": "DesktopInput obsługuje nowe przypisania jump/weapon/restart z istniejącymi guardami.",
+    "id": "TB-259"
+  },
+  {
+    "group": "input",
+    "title": "Konfigurowalne pause i scoreboard",
+    "description": "Obsługa pressed/released bez utknięcia scoreboard, respektuje przechwytywanie.",
+    "id": "TB-260"
+  },
+  {
+    "group": "input",
+    "title": "Lista klawiszy w ustawieniach",
+    "description": "SettingsPanel.setup(preferences,bindings=null), etykiety aktualnych przypisań.",
+    "id": "TB-261"
+  },
+  {
+    "group": "input",
+    "title": "Przechwytywanie nowego klawisza",
+    "description": "Najpierw obsługa capture, blokada gameplay, Escape anuluje, brak echo.",
+    "id": "TB-262"
+  },
+  {
+    "group": "input",
+    "title": "Komunikaty konfliktów i zapisu",
+    "description": "UI pokazuje błędy reserved/conflict/save bez pozornego sukcesu.",
+    "id": "TB-263"
+  },
+  {
+    "group": "input",
+    "title": "Reset i anulowanie konfiguracji",
+    "description": "Reset klawiszy, cancel przy zamknięciu/focus-out; persist=false nie zapisuje plików.",
+    "id": "TB-264"
+  },
+  {
+    "group": "input",
+    "title": "Regresje konfiguracji sterowania",
+    "description": "Testy persistence/conflicts/capture/default compatibility oraz brak przecieku do gameplay.",
+    "id": "TB-265"
+  },
+  {
+    "group": "client",
+    "title": "Panel biblioteki F8",
+    "description": "Osobny przewijany panel, dostępny wyłącznie lokalnie, pauzuje mecz.",
+    "id": "TB-266"
+  },
+  {
+    "group": "client",
+    "title": "Lista zapisów w UI",
+    "description": "Filtr rodzaju, tytuł/data/typ, wybór po ID, komunikat pustej lub uszkodzonej biblioteki.",
+    "id": "TB-267"
+  },
+  {
+    "group": "client",
+    "title": "Zapisywanie nazwanych pozycji z UI",
+    "description": "Pole tytułu, osobne checkpoint i replay, refresh po sukcesie.",
+    "id": "TB-268"
+  },
+  {
+    "group": "client",
+    "title": "Ładowanie checkpointu z biblioteki",
+    "description": "Przywraca runner/options/velocities dopiero po pełnej walidacji.",
+    "id": "TB-269"
+  },
+  {
+    "group": "client",
+    "title": "Otwieranie powtórki z biblioteki",
+    "description": "Zweryfikowany wpis trafia do inspectora, zachowuje bieżący mecz do powrotu.",
+    "id": "TB-270"
+  },
+  {
+    "group": "client",
+    "title": "Zmiana nazwy i usunięcie z UI",
+    "description": "Rename oraz delete z potwierdzeniem konkretnego wpisu; błędy widoczne.",
+    "id": "TB-271"
+  },
+  {
+    "group": "client",
+    "title": "Import szybkich zapisów w UI",
+    "description": "Przyciski importu last_session i last_replay; stara szybka ścieżka pozostaje.",
+    "id": "TB-272"
+  },
+  {
+    "group": "client",
+    "title": "Przyciski play pause speed",
+    "description": "Inspector odtwarza w physics_process także przy overlay; nie tyka live meczu.",
+    "id": "TB-273"
+  },
+  {
+    "group": "client",
+    "title": "Oś czasu i next shot w UI",
+    "description": "Czas, slider seek, next shot, rewind; poprawne aktualizowanie po zmianie kursora.",
+    "id": "TB-274"
+  },
+  {
+    "group": "client",
+    "title": "Bezpieczny powrót i overlay powtórki",
+    "description": "Wyjście przywraca live runner i prędkości; ukrycie inspectora pauzuje playback.",
+    "id": "TB-275"
+  },
+  {
+    "group": "client",
+    "title": "Integracja konfiguracji klawiszy",
+    "description": "Wczytać bindings przy starcie, przekazać UI/input; pomoc pokazuje przypisania.",
+    "id": "TB-276"
+  },
+  {
+    "group": "client",
+    "title": "Narzędzie odczytu biblioteki",
+    "description": "CLI tylko do listowania/weryfikacji biblioteki; jawny katalog i raport JSON, bez UI.",
+    "id": "TB-277"
+  },
+  {
+    "group": "client",
+    "title": "Testy CLI biblioteki",
+    "description": "Fixture temporary, poprawny i uszkodzony wpis, exit status i JSON; wpięcie do runnera.",
+    "id": "TB-278"
+  },
+  {
+    "group": "client",
+    "title": "Testy przepływu klienta",
+    "description": "Integracja library/save/load/replay/return i remap w rzeczywistej scenie.",
+    "id": "TB-279"
+  },
+  {
+    "group": "client",
+    "title": "Dokumentacja biblioteki i sterowania",
+    "description": "README/techniczne docs opisują format, limity, F8 i remap oraz ograniczenia timeline.",
+    "id": "TB-280"
+  },
+  {
+    "group": "client",
+    "title": "Akceptacja paczki i review",
+    "description": "Pełny suite Nakama/render, native UI, niezależne review, raport 50 zadań i lokalny commit/merge.",
+    "id": "TB-281"
+  }
+]

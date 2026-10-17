@@ -25,13 +25,13 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 	var index := 0
 	while index < args.size():
 		var flag := args[index]
-		if flag in ["--smoke", "--help", "--version", "--list-maps", "--lobby"]:
+		if flag in ["--smoke", "--help", "--version", "--list-maps", "--lobby", "--verify-library"]:
 			if seen.has(flag):
 				result.append("Duplicate argument: " + flag)
 			seen[flag] = true
 			index += 1
 			continue
-		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record"]:
+		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record", "--library-dir"]:
 			result.append("Unknown argument: " + flag)
 			index += 1
 			continue
@@ -45,7 +45,7 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 		var value := args[index + 1]
 		match flag:
 			"--mode":
-				if value not in ["local-dev", "client", "server", "simulate", "replay", "audit-maps"]:
+				if value not in ["local-dev", "client", "server", "simulate", "replay", "audit-maps", "library"]:
 					result.append("Invalid mode: " + value)
 			"--map":
 				if not MAPS.has(value):
@@ -60,7 +60,7 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 			"--bots":
 				if value not in ["easy", "normal"]:
 					result.append("Unknown bot difficulty: " + value)
-			"--host", "--guest-id", "--output", "--replay", "--maps-dir", "--record":
+			"--host", "--guest-id", "--output", "--replay", "--maps-dir", "--record", "--library-dir":
 				if value.strip_edges().is_empty() or value.length() > 255:
 					result.append("Invalid value for " + flag)
 		index += 2
@@ -71,6 +71,8 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 	for flag in ["--bots", "--record"]:
 		if seen.has(flag) and selected_mode != "simulate":
 			result.append(flag + " requires --mode simulate")
+	for flag in ["--library-dir", "--verify-library"]:
+		if seen.has(flag) and selected_mode != "library": result.append(flag + " requires --mode library")
 	var record_index := args.find("--record")
 	var output_index := args.find("--output")
 	if record_index >= 0 and output_index >= 0 and record_index + 1 < args.size() and output_index + 1 < args.size():

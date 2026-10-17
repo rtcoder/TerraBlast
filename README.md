@@ -108,3 +108,22 @@ Use F2 to connect each client to the server host and port. F7 opens the authorit
 Losing any player pauses match time and gameplay until the full configured roster reconnects. F4 retries using the in-memory resume token while its reservation is valid. After a lobby match ends, every connected player must vote for a rematch; votes can be cancelled. A successful vote resets the match and returns everyone to readiness selection. Disconnect clears readiness and rematch votes. The lobby offers **Disconnect to local** to start a fresh local match.
 
 Omit `--lobby` for legacy auto start once all configured slots connect; the default remains 1v1. Nakama provides separate metagame services. Start and allocate gameplay servers manually; matchmaking does not provision these processes.
+
+### Local library, playback and key bindings
+
+**F8** opens the local library (also available from the match menu). Enter a name to save a checkpoint or replay. Select an entry to open, rename, or delete it; deletion asks for confirmation. The two import buttons copy the previous quick save / last replay into the library. Quick save and export remain available from the match menu. Saving and loading require a local match between shots.
+
+The replay inspector supports Play/Pause, 0.25×–4× speed, time seeking, Next action, Next shot and Beginning. With the timeline focused, Left/Right step through actions and Home/End seek to the bounds. Return to match restores the live match and airborne velocities. Opening another overlay pauses playback. Recorded time measures simulation ticks; projectile presentation time is not part of this timeline. Seeking reconstructs state from the initial snapshot, so long recordings can take longer to seek.
+
+**F3** includes editable bindings for movement, jump, weapons, restart, scoreboard and the match menu. Select an action and press its new key; Escape cancels. Conflicts are rejected. Arrow movement, Escape, F1–F12 and debug brackets are reserved. Bindings use physical keys and are saved separately in `user://bindings.cfg`; defaults restore the original WASD/Space/1–3/R/Tab/P layout.
+
+Library files live in `user://archive_library`: up to 100 entries, each at most 32 MiB, with an independent generated ID. Names are 1–48 characters. Existing v1/v2 quick saves and exact float64 replay archives remain readable. Corrupt entries are reported without replacing the current match.
+
+Read-only CLI checks (paths containing spaces must be quoted):
+
+```sh
+python3 tools/launch.py library --library-dir /absolute/path/to/archive_library
+python3 tools/launch.py library --library-dir /absolute/path/to/archive_library --verify-library
+```
+
+Listing validates envelopes and reports metadata; `--verify-library` also decodes checkpoints and re-simulates replays to verify their hashes. Both return JSON and exit 2 on invalid entries. Library paths must have no symlink components; on macOS use `/private/tmp`, rather than the `/tmp` alias, for temporary fixtures.

@@ -14,6 +14,9 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var bindings: RefCounted
+var library: RefCounted
+var library_panel: PanelContainer
 var lobby_panel: PanelContainer
 var shown_lobby_generation := -1
 var last_lobby_started := false
@@ -83,6 +86,9 @@ func _ready() -> void:
 	preferences = preload("res://scripts/client/settings/client_settings.gd").new()
 	preferences.load_from()
 	preferences.apply()
+	bindings = preload("res://scripts/client/input/input_bindings.gd").new()
+	bindings.load_settings()
+	library = preload("res://scripts/core/storage/local_archive_library.gd").new()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	remote_mode = GameConfig.mode == "client"
 	_setup_players()
@@ -106,6 +112,7 @@ func _ready() -> void:
 	)
 
 func _physics_process(delta: float) -> void:
+	_advance_replay(delta)
 	if not remote_mode and not projectile_in_flight and not local_paused and session.playback == null and runner.state.status == "playing":
 		var events: Array = session.recorder.tick(runner, delta)
 		if not events.is_empty():
@@ -396,7 +403,7 @@ func _update_hud() -> void:
 	var ammo: int = runner.state.inventory[active_player.player_id][selected_weapon_id] if active_player != null else 0
 	status += "\n%s | Ammo: %s | %.0fs | 1–3 weapon | R restart | P menu | F6 help" % [weapon.display_name, "unlimited" if ammo < 0 else str(ammo), runner.state.time_remaining]
 	status += "\n%s" % ("Projectile in flight" if projectile_in_flight else ("Aiming" if is_aiming else "Camera mode"))
-	status += "\nHold RMB aim + LMB charge / release fire   WASD move   Esc cancel"
+	status += "\nHold RMB aim + LMB charge / release fire   %s%s%s%s move   Esc cancel" % [bindings.label("move_forward"),bindings.label("move_left"),bindings.label("move_back"),bindings.label("move_right")]
 	if remote_mode:
 		status += "\n" + network_status + " | F4 retry | F7 lobby"
 		if network != null:
@@ -478,7 +485,7 @@ func _try_jump_active_player() -> void:
 	player_velocities[active_player.player_id] = velocity
 
 func _get_move_input() -> Vector2:
-	return preload("res://scripts/client/input/desktop_input.gd").move_axis()
+	return preload("res://scripts/client/input/desktop_input.gd").move_axis(bindings)
 
 func _face_camera_toward_enemy() -> void:
 	var active_player: Variant = turn_controller.get_active_player()
@@ -717,7 +724,7 @@ func _setup_client_panels() -> void:
 	)
 	settings_panel = preload("res://scripts/client/ui/settings_panel.gd").new()
 	$Hud.add_child(settings_panel)
-	settings_panel.setup(preferences)
+	settings_panel.setup(preferences, bindings)
 	settings_panel.closed.connect(_toggle_settings)
 	settings_panel.preferences_changed.connect(_apply_client_preferences)
 	match_panels = preload("res://scripts/client/ui/match_panels.gd").new()
@@ -737,6 +744,23 @@ func _setup_client_panels() -> void:
 	match_panels.step_requested.connect(_step_replay)
 	match_panels.rewind_requested.connect(_rewind_replay)
 	match_panels.return_requested.connect(_return_from_replay)
+	match_panels.library_requested.connect(_toggle_library)
+	match_panels.play_requested.connect(_toggle_replay_playing)
+	match_panels.speed_requested.connect(func(value):
+		if session.playback != null: session.playback.set_speed(value)
+	)
+	match_panels.seek_requested.connect(_seek_replay_time)
+	match_panels.next_shot_requested.connect(_next_replay_shot)
+	match_panels.scrub_requested.connect(_scrub_replay)
+	library_panel = preload("res://scripts/client/ui/library_panel.gd").new()
+	$Hud.add_child(library_panel)
+	library_panel.close_requested.connect(_close_overlays)
+	library_panel.refresh_requested.connect(_refresh_library)
+	library_panel.save_requested.connect(_library_save)
+	library_panel.load_requested.connect(_library_load)
+	library_panel.rename_requested.connect(_library_rename)
+	library_panel.delete_requested.connect(_library_delete)
+	library_panel.import_requested.connect(_library_import)
 	turn_banner = Label.new()
 	turn_banner.position = Vector2(30, 160)
 	turn_banner.add_theme_color_override("font_color", Color(1,0.9,0.4))
@@ -813,7 +837,7 @@ func _sync_rule_controls() -> void:
 	max_charge_time = rules.max_charge_time
 
 func _refresh_menu_state() -> void:
-	menu_open = lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
+	menu_open = library_panel.visible or lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
 	local_paused = menu_open and not remote_mode
 	if menu_open:
 		turn_banner.hide()
@@ -824,6 +848,8 @@ func _refresh_menu_state() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if menu_open else Input.MOUSE_MODE_CAPTURED)
 
 func _close_overlays() -> void:
+	if session.playback != null: session.playback.set_playing(false)
+	library_panel.hide()
 	lobby_panel.hide()
 	settings_panel.hide()
 	match_panels.hide_panels()
@@ -833,6 +859,7 @@ func _close_overlays() -> void:
 
 func _toggle_pause() -> void:
 	if session.playback != null:
+		_close_overlays()
 		match_panels.replay_panel.show()
 		_refresh_menu_state()
 		return
@@ -950,7 +977,8 @@ func _apply_client_preferences() -> void:
 	scoreboard.add_theme_font_size_override("font_size", roundi(15 * preferences.hud_scale))
 	turn_banner.add_theme_font_size_override("font_size", text_size)
 	last_shot_label.add_theme_font_size_override("font_size", roundi(16 * preferences.hud_scale))
-	for panel in [settings_panel, match_panels, lobby_panel]:
+	match_panels.update_bindings(bindings)
+	for panel in [settings_panel, match_panels, lobby_panel, library_panel]:
 		_scale_panel(panel, roundi(16 * preferences.hud_scale))
 	var contrast: bool = preferences.high_contrast
 	if not $Hud/Crosshair.has_node("OutlineHorizontal"):
@@ -1016,8 +1044,11 @@ func _open_replay(path := "user://last_replay.json") -> bool:
 	if not loaded.ok:
 		_session_message("Replay failed: " + loaded.reason)
 		return false
+	return _inspect_recording(loaded.recorder)
+
+func _inspect_recording(recorder: RefCounted) -> bool:
 	var playback = preload("res://scripts/core/replay/replay_playback.gd").new()
-	if not playback.load_recording(loaded.recorder):
+	if not playback.load_recording(recorder):
 		_session_message("Replay could not be initialized.")
 		return false
 	session.live_runner = runner
@@ -1027,6 +1058,7 @@ func _open_replay(path := "user://last_replay.json") -> bool:
 	_replace_local_runner(playback.runner)
 	_close_overlays()
 	match_panels.replay_panel.show()
+	match_panels.replay_speed.select(2)
 	_refresh_menu_state()
 	_update_replay_status()
 	return true
@@ -1034,6 +1066,7 @@ func _open_replay(path := "user://last_replay.json") -> bool:
 func _step_replay() -> void:
 	if session.playback == null or session.playback.finished:
 		return
+	session.playback.set_playing(false)
 	var result: Dictionary = session.playback.step()
 	if not result.ok:
 		match_panels.replay_status.text = "Invalid replay action"
@@ -1053,7 +1086,12 @@ func _rewind_replay() -> void:
 
 func _update_replay_status() -> void:
 	var playback = session.playback
-	match_panels.replay_status.text = "Action %d / %d — %s%s" % [playback.index, playback.action_count, playback.current_action_type, " — Finished" if playback.finished else ""]
+	match_panels.replay_status.text = "Action %d / %d — %.2f / %.2f s%s" % [playback.index, playback.action_count, playback.elapsed_time, playback.duration, " — Finished" if playback.finished else ""]
+	match_panels.play_button.text = "Pause" if playback.playing else "Play"
+	match_panels.play_button.disabled = playback.finished
+	match_panels.replay_seek.max_value = maxf(0.01,playback.duration)
+	if not match_panels.replay_dragging:
+		match_panels.replay_seek.set_value_no_signal(playback.elapsed_time)
 
 func _return_from_replay() -> void:
 	if session.playback == null:
@@ -1184,3 +1222,91 @@ func _toggle_lobby() -> void:
 	_present_lobby()
 	lobby_panel.visible = open
 	_refresh_menu_state()
+
+func _toggle_library() -> void:
+	if remote_mode or session.playback != null: return
+	var opening := not library_panel.visible
+	_close_overlays()
+	library_panel.visible = opening
+	if opening: _refresh_library()
+	_refresh_menu_state()
+
+func _refresh_library() -> void:
+	library_panel.present(library.list_entries(library_panel.selected_kind()))
+
+func _library_feedback(result: Dictionary, message: String) -> void:
+	if result.ok: _refresh_library()
+	library_panel.status.text = message if result.ok else str(result.get("reason","Operation failed"))
+
+func _library_save(kind: String, title: String) -> void:
+	if not session.can_archive():
+		library_panel.status.text = "Available locally between shots."
+		return
+	var result: Dictionary = library.save_session(title,runner,session.options,player_velocities) if kind == "session" else library.save_replay(title,session.recorder,runner)
+	_library_feedback(result,"Saved: " + title)
+
+func _library_load(id: String) -> bool:
+	if not session.can_archive(): return false
+	var result: Dictionary = library.load_entry(id)
+	if not result.ok:
+		_library_feedback(result,"")
+		return false
+	if result.kind == "replay": return _inspect_recording(result.recorder)
+	session.options = result.options
+	_replace_local_runner(result.runner)
+	player_velocities = result.velocities
+	session.new_recording()
+	_close_overlays()
+	return true
+
+func _library_rename(id: String, title: String) -> void:
+	if not session.can_archive(): return
+	_library_feedback(library.rename_entry(id,title),"Renamed: " + title)
+
+func _library_delete(id: String) -> void:
+	if not session.can_archive(): return
+	_library_feedback(library.delete_entry(id),"Entry deleted.")
+
+func _library_import(kind: String, title: String) -> void:
+	if not session.can_archive(): return
+	var path := "user://last_session.json" if kind == "session" else "user://last_replay.json"
+	_library_feedback(library.import_file(kind,path,title),"Imported: " + title)
+
+func _toggle_replay_playing() -> void:
+	if session.playback == null: return
+	session.playback.set_playing(not session.playback.playing)
+	_update_replay_status()
+
+func _advance_replay(delta: float) -> void:
+	if session == null or session.playback == null: return
+	if not match_panels.replay_panel.visible:
+		session.playback.set_playing(false)
+		return
+	if not session.playback.playing: return
+	var result: Dictionary = session.playback.advance(delta)
+	if not result.ok:
+		match_panels.replay_status.text = str(result.get("reason","Playback failed"))
+		return
+	for action in result.results:
+		if action.has("result"): voxel_world.refresh_deltas(action.result.get("deltas",[]))
+	if result.changed:
+		_update_player_nodes()
+		_update_scoreboard()
+	_update_replay_status()
+
+func _seek_replay_time(value: float) -> void:
+	if session.playback != null and session.playback.seek_time(value):
+		_replace_local_runner(session.playback.runner)
+		_update_replay_status()
+
+func _next_replay_shot() -> void:
+	if session.playback != null and session.playback.next_shot():
+		_replace_local_runner(session.playback.runner)
+		_update_replay_status()
+
+func _scrub_replay(direction: int) -> void:
+	if session.playback == null: return
+	var target := clampi(session.playback.index + direction,0,session.playback.action_count)
+	if session.playback.seek(target):
+		_replace_local_runner(session.playback.runner)
+		_update_replay_status()

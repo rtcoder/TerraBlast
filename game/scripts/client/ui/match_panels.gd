@@ -6,6 +6,17 @@ signal export_requested
 signal replay_requested
 signal step_requested
 signal rewind_requested
+signal library_requested
+signal play_requested
+signal speed_requested(value: float)
+signal seek_requested(value: float)
+signal scrub_requested(direction: int)
+signal next_shot_requested
+var play_button: Button
+var replay_speed: OptionButton
+var replay_dragging := false
+var replay_seek: HSlider
+var help_label: Label
 signal return_requested
 var map_select: OptionButton
 var map_description: Label
@@ -30,6 +41,7 @@ var panels: Array[Control] = []
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pause_panel = _panel("Match menu — P to close")
+	_button(pause_panel, "Library — F8", func(): library_requested.emit())
 	_button(pause_panel, "Resume", func(): resume_requested.emit())
 	_button(pause_panel, "Surrender current player", func(): surrender_requested.emit())
 	_button(pause_panel, "Save local game", func(): save_requested.emit())
@@ -42,6 +54,32 @@ func _ready() -> void:
 	replay_panel = _panel("Replay — action inspector")
 	replay_status = Label.new()
 	_box(replay_panel).add_child(replay_status)
+	play_button = _button(replay_panel, "Play", func(): play_requested.emit())
+	replay_speed = OptionButton.new()
+	for speed in [0.25,0.5,1.0,2.0,4.0]:
+		replay_speed.add_item(str(speed) + "×")
+		replay_speed.set_item_metadata(replay_speed.item_count-1,speed)
+	replay_speed.select(2)
+	replay_speed.item_selected.connect(func(index): speed_requested.emit(float(replay_speed.get_item_metadata(index))))
+	_box(replay_panel).add_child(replay_speed)
+	replay_seek = HSlider.new()
+	replay_seek.step = 0.0
+	replay_seek.tooltip_text = "Drag to seek time. Left/Right: previous/next action. Home/End: start/end."
+	replay_seek.drag_started.connect(func(): replay_dragging = true)
+	replay_seek.drag_ended.connect(func(changed):
+		replay_dragging = false
+		if changed: seek_requested.emit(replay_seek.value)
+	)
+	replay_seek.gui_input.connect(func(event):
+		if event is InputEventKey and event.pressed:
+			if event.keycode in [KEY_LEFT,KEY_RIGHT]:
+				replay_seek.accept_event()
+				scrub_requested.emit(-1 if event.keycode == KEY_LEFT else 1)
+			elif event.keycode in [KEY_HOME,KEY_END]:
+				_seek_after_keyboard.call_deferred()
+	)
+	_box(replay_panel).add_child(replay_seek)
+	_button(replay_panel, "Next shot", func(): next_shot_requested.emit())
 	_button(replay_panel, "Next action", func(): step_requested.emit())
 	_button(replay_panel, "Beginning", func(): rewind_requested.emit())
 	_button(replay_panel, "Return to match", func(): return_requested.emit())
@@ -84,7 +122,8 @@ func _ready() -> void:
 	_button(setup_panel, "Start new match", func(): setup_requested.emit(str(map_select.get_item_metadata(map_select.selected)), int(count.value), preset.get_item_text(preset.selected)))
 	_button(setup_panel, "Cancel", func(): close_requested.emit())
 	help_panel = _panel("Controls — F6 to close")
-	var help := Label.new()
+	help_label = Label.new()
+	var help := help_label
 	help.text = "Mouse: look | Wheel: zoom\nWASD / arrows: move | Space: jump\nHold RMB: aim\nHold LMB while aiming: charge; release: fire\nRelease RMB / Esc: cancel\n1 / 2 / 3: weapon | R: restart\nP: match menu (pauses local game)\nTab: scoreboard | F1: local diagnostics\nF2: multiplayer | F3: settings | F4: retry\nF5: new local match | F6: controls | F7: lobby\nOnline lobby: name + Ready before play\nRematch: all players vote after the match\nSolo: blue team human, red stationary bots\nP menu: save/load game, export/inspect replay"
 	_box(help_panel).add_child(help)
 	_button(help_panel, "Close", func(): close_requested.emit())
@@ -148,3 +187,10 @@ func _process(_delta: float) -> void:
 func _describe_map(index: int) -> void:
 	var info: Dictionary = preload("res://scripts/core/maps/map_registry.gd").describe(str(map_select.get_item_metadata(index)))
 	map_description.text = "%s\nCapacity: %d players" % [info.get("description", ""),info.get("player_capacity",0)]
+
+func update_bindings(bindings: RefCounted) -> void:
+	help_label.text = "Mouse: look | Wheel: zoom\n%s / %s / %s / %s or arrows: move\n%s: jump | Hold RMB: aim\nHold LMB while aiming: charge; release: fire\nRelease RMB / Esc: cancel\n%s / %s / %s: weapons | %s: restart\n%s: match menu | %s: scoreboard\nF1: local diagnostics | F2: multiplayer\nF3: settings / key bindings | F4: retry\nF5: new match | F6: controls | F7: lobby\nF8: local library of saves and replays\nReplay time includes recorded simulation ticks.\nOnline: all players Ready; unanimous rematch vote." % [bindings.label("move_forward"),bindings.label("move_left"),bindings.label("move_back"),bindings.label("move_right"),bindings.label("jump"),bindings.label("weapon_1"),bindings.label("weapon_2"),bindings.label("weapon_3"),bindings.label("restart"),bindings.label("pause"),bindings.label("scoreboard")]
+	_box(pause_panel).get_child(0).text = "Match menu — %s to close" % bindings.label("pause")
+
+func _seek_after_keyboard() -> void:
+	seek_requested.emit(replay_seek.value)

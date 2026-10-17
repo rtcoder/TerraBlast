@@ -8,29 +8,36 @@ const MAX_BYTES := 32 * 1024 * 1024
 static func valid_options(options: Variant) -> bool:
 	return options is Dictionary and options.size() == 3 and options.get("mode") in ["hotseat", "solo"] and options.get("difficulty") in ["easy", "normal"] and Replay.number(options.get("human_team"), 1, 2, true)
 
-static func save(path: String, runner: RefCounted, options: Dictionary, velocities: Dictionary = {}) -> Error:
+static func encode(runner: RefCounted, options: Dictionary, velocities: Dictionary = {}) -> Dictionary:
 	if runner == null or not valid_options(options):
-		return ERR_INVALID_DATA
+		return {"ok": false, "reason": "invalid_data"}
 	var recorder := Replay.new()
 	recorder.capture(runner)
 	if not recorder.valid_data():
-		return ERR_INVALID_DATA
+		return {"ok": false, "reason": "invalid_data"}
 	var encoded := {}
 	if not velocities.is_empty() and velocities.size() != runner.state.players.size():
-		return ERR_INVALID_DATA
+		return {"ok": false, "reason": "invalid_data"}
 	for player in runner.state.players:
 		if not velocities.is_empty() and not velocities.has(player.player_id):
-			return ERR_INVALID_DATA
+			return {"ok": false, "reason": "invalid_data"}
 		var velocity: Variant = velocities.get(player.player_id, Vector3.ZERO)
 		if not velocity is Vector3 or not velocity.is_finite():
-			return ERR_INVALID_DATA
+			return {"ok": false, "reason": "invalid_data"}
 		var components := [velocity.x, velocity.y, velocity.z]
 		if not Replay.numbers(components, 3, -1000, 1000):
-			return ERR_INVALID_DATA
+			return {"ok": false, "reason": "invalid_data"}
 		encoded[player.player_id] = components
 	var payload: Variant = Exact.encode({"format": "terrablast_session", "version": 2, "recording": recorder.data, "options": options, "velocities": encoded, "expected_hash": session_hash(runner, options, encoded)})
 	if payload == null:
+		return {"ok": false, "reason": "invalid_data"}
+	return {"ok": true, "payload": payload}
+
+static func save(path: String, runner: RefCounted, options: Dictionary, velocities: Dictionary = {}) -> Error:
+	var result := encode(runner, options, velocities)
+	if not result.ok:
 		return ERR_INVALID_DATA
+	var payload: Dictionary = result.payload
 	var content := JSON.stringify(payload, "", true, true)
 	if content.to_utf8_buffer().size() > MAX_BYTES:
 		return ERR_OUT_OF_MEMORY
@@ -63,7 +70,10 @@ static func load(path: String) -> Dictionary:
 	file.close()
 	if error != OK:
 		return failure("invalid_json")
-	var parsed: Variant = parser.data
+	return decode(parser.data)
+
+static func decode(payload: Variant) -> Dictionary:
+	var parsed: Variant = payload
 	if parsed is Dictionary and parsed.get("version") == 2:
 		parsed = Exact.decode(parsed)
 	if not parsed is Dictionary or parsed.get("format") != "terrablast_session" or not Replay.number(parsed.get("version"), 1, 2, true) or not parsed.get("recording") is Dictionary or not parsed.get("expected_hash") is String or parsed.expected_hash.length() != 64 or not valid_options(parsed.get("options")):

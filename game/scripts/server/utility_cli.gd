@@ -3,13 +3,15 @@ extends Node
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.has("--help"):
-		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps\n--map twin_forts|two_islands|canyon_bridge --preset classic|quick|training\n--players 2..10 --lobby (server only; server defaults to 2 players)\n--host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke")
+		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps|library\n--map twin_forts|two_islands|canyon_bridge --preset classic|quick|training\n--players 2..10 --lobby (server only; server defaults to 2 players)\n--host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke\n--mode library --library-dir DIRECTORY [--verify-library]")
 		get_tree().quit(0)
 	elif args.has("--version"):
 		print("%s %s / Godot %s" % [GameConfig.GAME_NAME, GameConfig.VERSION, Engine.get_version_info().string])
 		get_tree().quit(0)
 	elif args.has("--list-maps") or GameConfig.mode == "audit-maps":
 		_list_maps()
+	elif GameConfig.mode == "library":
+		_list_library(args.has("--verify-library"))
 	else:
 		var path: String = GameConfig.argument("--replay", "")
 		if path.is_empty():
@@ -65,3 +67,19 @@ static func write_atomic(path: String, content: String) -> Error:
 	if error != OK:
 		DirAccess.remove_absolute(temporary)
 	return error
+
+func _list_library(verify: bool) -> void:
+	var path: String = GameConfig.argument("--library-dir", "user://archive_library")
+	var library = load("res://scripts/core/storage/local_archive_library.gd").new(path)
+	var listing: Dictionary = library.list_entries()
+	var summary := {"ok":listing.ok, "entries":listing.get("entries",[]), "errors":listing.get("errors",[]), "reason":listing.get("reason", ""), "verified":verify}
+	if not summary.errors.is_empty(): summary.ok = false
+	if verify and listing.ok:
+		for entry in summary.entries:
+			var loaded: Dictionary = library.load_entry(entry.id)
+			entry["verified"] = loaded.ok
+			if not loaded.ok:
+				summary.ok = false
+				summary.errors.append({"id":entry.id,"reason":loaded.get("reason","Invalid entry")})
+	print(JSON.stringify(summary))
+	get_tree().quit(0 if summary.ok else 2)

@@ -5,12 +5,19 @@ const Replay = preload("res://scripts/core/replay/match_replay.gd")
 const Exact = preload("res://scripts/core/replay/exact_json.gd")
 const MAX_BYTES := 32 * 1024 * 1024
 
-static func save(path: String, recorder: RefCounted, runner: RefCounted) -> Error:
+static func encode(recorder: RefCounted, runner: RefCounted) -> Dictionary:
 	if recorder == null or runner == null or not recorder.recording_error.is_empty() or not recorder.valid_data():
-		return ERR_INVALID_DATA
+		return {"ok": false, "reason": "invalid_data"}
 	var encoded: Variant = Exact.encode({"version": 2, "recording": recorder.data, "expected_hash": Replay.state_hash(runner), "hash_precision": "full"})
 	if encoded == null:
+		return {"ok": false, "reason": "invalid_data"}
+	return {"ok": true, "payload": encoded}
+
+static func save(path: String, recorder: RefCounted, runner: RefCounted) -> Error:
+	var result := encode(recorder, runner)
+	if not result.ok:
 		return ERR_INVALID_DATA
+	var encoded: Dictionary = result.payload
 	var content := JSON.stringify(encoded, "", true, true)
 	if content.to_utf8_buffer().size() > MAX_BYTES:
 		return ERR_OUT_OF_MEMORY
@@ -40,7 +47,10 @@ static func load_verified(path: String) -> Dictionary:
 	file.close()
 	if error != OK:
 		return {"ok": false, "reason": "invalid_json", "runner": null}
-	var parsed: Variant = parser.data
+	return decode(parser.data)
+
+static func decode(payload: Variant) -> Dictionary:
+	var parsed: Variant = payload
 	if parsed is Dictionary and parsed.get("version") == 2:
 		parsed = Exact.decode(parsed)
 	if not parsed is Dictionary or not Replay.number(parsed.get("version"), 1, 2, true) or not parsed.get("recording") is Dictionary or not parsed.get("expected_hash") is String or parsed.expected_hash.length() != 64:
