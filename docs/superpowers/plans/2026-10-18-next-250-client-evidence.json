@@ -1,0 +1,1007 @@
+[
+  {
+    "id": "TB-382",
+    "title": "Zapamiętanie ostatniej konfiguracji lokalnej",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-383",
+    "title": "Wybór drużyny człowieka",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/local_session.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-384",
+    "title": "Nazwane profile konfiguracji meczu",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-385",
+    "title": "Zapis i usunięcie profilu w formularzu",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-386",
+    "title": "Szybkie konfiguracje hotseat i solo",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-387",
+    "title": "Limit graczy według mapy",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-388",
+    "title": "Opis reguł presetu w konfiguracji",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-389",
+    "title": "Podsumowanie konfiguracji przed startem",
+    "implementation": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-390",
+    "title": "Potwierdzenie porzucenia lokalnego meczu",
+    "implementation": [
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-391",
+    "title": "Potwierdzenie restartu",
+    "implementation": [
+      "game/scripts/client/input/desktop_input.gd",
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-392",
+    "title": "Potwierdzenie poddania gracza",
+    "implementation": [
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-393",
+    "title": "Przekazanie sterowania hotseat",
+    "implementation": [
+      "game/scripts/client/session/local_session.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-394",
+    "title": "Rotacyjne autosave lokalne",
+    "implementation": [
+      "game/scripts/client/session/local_autosave.gd",
+      "game/scripts/client/session/local_session.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-395",
+    "title": "Wznowienie ostatniego autosave",
+    "implementation": [
+      "game/scripts/client/session/local_autosave.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-396",
+    "title": "Lokalna seria best-of",
+    "implementation": [
+      "game/scripts/client/session/match_series.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/integration/match_ui_tests.gd",
+      "game/tests/integration/client_oct16_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-397",
+    "title": "Kontroler prób treningowych",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-398",
+    "title": "Lekcja poruszania",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-399",
+    "title": "Lekcja skoku",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-400",
+    "title": "Lekcja anulowania celowania",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-401",
+    "title": "Ćwiczenie celności",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-402",
+    "title": "Ćwiczenie kontrolowania siły",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-403",
+    "title": "Ćwiczenie odczytywania wiatru",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-404",
+    "title": "Ćwiczenie dostępnych broni",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-405",
+    "title": "Ćwiczenie bezpiecznego ostrzału",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-406",
+    "title": "Powtórzenie ostatniej próby",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-407",
+    "title": "Historia prób i najlepszy wynik",
+    "implementation": [
+      "game/scripts/core/training/attempt_history.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-408",
+    "title": "Markery ostatnich trafień treningowych",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-409",
+    "title": "Wskazówka trenera",
+    "implementation": [
+      "game/scripts/core/training/training_coach.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-410",
+    "title": "Stopnie pomocy treningowej",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-411",
+    "title": "Trwały postęp lekcji",
+    "implementation": [
+      "game/scripts/core/training/training_progress.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-412",
+    "title": "Podsumowanie treningu",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-413",
+    "title": "Ćwiczenie walki bez trajektorii",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-414",
+    "title": "Ćwiczenie serii trafień",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-415",
+    "title": "Ćwiczenie gospodarowania amunicją",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-416",
+    "title": "Katalog i wybór lekcji",
+    "implementation": [
+      "game/scripts/core/training/training_lessons.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-417",
+    "title": "Przejście do następnej lekcji",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-418",
+    "title": "Obserwowanie wzorcowego strzału",
+    "implementation": [
+      "game/scripts/core/training/training_coach.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-419",
+    "title": "Pauza i pojedyncza próba treningu",
+    "implementation": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-420",
+    "title": "Ograniczenie animacji",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/vfx/match_effects.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-421",
+    "title": "Rozróżnialne schematy drużyn",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/ui/team_visual_scheme.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-422",
+    "title": "Konfigurowalny celownik",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/ui/crosshair.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-423",
+    "title": "Przełączane celowanie",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/input/desktop_input.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-424",
+    "title": "Ładowanie strzału dwoma kliknięciami",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/input/desktop_input.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-425",
+    "title": "Tekstowe podpisy zdarzeń",
+    "implementation": [
+      "game/scripts/client/ui/event_captions.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-426",
+    "title": "Kategorie głośności i próbka",
+    "implementation": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/vfx/match_effects.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-427",
+    "title": "Fokus klawiatury w panelach",
+    "implementation": [
+      "game/scripts/client/ui/panel_focus_controller.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-428",
+    "title": "Dopasowanie paneli do małych okien",
+    "implementation": [
+      "game/scripts/client/ui/panel_layout.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-429",
+    "title": "Kontekstowe przyczyny blokady sterowania",
+    "implementation": [
+      "game/scripts/client/ui/control_status.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-430",
+    "title": "Karta aktualnej broni",
+    "implementation": [
+      "game/scripts/client/ui/weapon_hud.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  },
+  {
+    "id": "TB-431",
+    "title": "Rozbudowane podsumowanie lokalnego meczu",
+    "implementation": [
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/match_series.gd",
+      "game/scripts/client/session/client_workflows.gd"
+    ],
+    "verification": [
+      "game/tests/unit/client250_next_tests.gd",
+      "game/tests/unit/input_bindings_tests.gd",
+      "game/tests/integration/client50_tests.gd"
+    ],
+    "native_review": [
+      "/tmp/tb250-setup.png",
+      "/tmp/tb250-training.png",
+      "/tmp/tb250-settings.png",
+      "/tmp/tb250-small-training.png"
+    ]
+  }
+]

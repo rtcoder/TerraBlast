@@ -352,3 +352,23 @@ static func valid_lobby(data: Variant) -> bool:
 			return false
 		ids[row.id] = true
 	return true
+
+static func valid_control(data: Dictionary) -> bool:
+	match data.get("type"):
+		"pong": return integer(data.get("nonce"),0,2147483647)
+		"phase": return data.get("phase") is String and data.phase in ["waiting","playing","playback","ended"]
+		"server_shutdown": return data.size()<=3
+		"rejected":
+			if not data.get("reason") is String or data.reason.is_empty() or data.reason.length()>256: return false
+			if data.has("fatal") and not data.fatal is bool: return false
+			for i in data.reason.length():
+				if data.reason.unicode_at(i)<32: return false
+			return true
+	return false
+static func valid_resume_token(value: Variant) -> bool:
+	if not value is String: return false
+	if value.is_empty(): return true
+	if value.length()!=64: return false
+	for c in value:
+		if c not in "0123456789abcdef": return false
+	return true

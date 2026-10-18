@@ -34,7 +34,7 @@ func _test_registry_and_arena() -> void:
 	var registry = load("res://scripts/core/maps/map_registry.gd")
 	if registry == null:
 		return
-	check(registry.PATHS.size() == 3 and registry.describe("unknown").is_empty(), "Registry has three known maps")
+	check(registry.PATHS.size() == 9 and registry.describe("unknown").is_empty(), "Registry has nine known maps")
 	for id in registry.PATHS:
 		var meta: Dictionary = registry.describe(id)
 		check(meta.id == id and not meta.name.is_empty() and not meta.description.is_empty() and meta.player_capacity == 10, "Complete metadata: " + id)

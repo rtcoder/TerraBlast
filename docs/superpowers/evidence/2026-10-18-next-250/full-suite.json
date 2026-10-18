@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "ok": false,
+  "status": "finished",
+  "started_at": "2026-10-18T20:19:24.289157+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "13a7621359f3713947a53358cb28713b99a1a641",
+  "optional_checks": {
+    "nakama": true,
+    "render": true
+  },
+  "tests": [
+    {
+      "name": "archive250_edges_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 6.221,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/archive250_edges_tests.out"
+    },
+    {
+      "name": "archive_analysis_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.111,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/archive_analysis_tests.out"
+    },
+    {
+      "name": "archive_review_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.657,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/archive_review_tests.out"
+    },
+    {
+      "name": "arena_oct17_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.78,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/arena_oct17_tests.out"
+    },
+    {
+      "name": "bot_oct16_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.398,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/bot_oct16_tests.out"
+    },
+    {
+      "name": "client250_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 22.42,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client250_next_tests.out"
+    },
+    {
+      "name": "client_review250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.299,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client_review250_tests.out"
+    },
+    {
+      "name": "config50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.203,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/config50_tests.out"
+    },
+    {
+      "name": "core250_edges_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.297,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core250_edges_tests.out"
+    },
+    {
+      "name": "core250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.178,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core250_tests.out"
+    },
+    {
+      "name": "core50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.235,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core50_tests.out"
+    },
+    {
+      "name": "core_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.351,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core_next_tests.out"
+    },
+    {
+      "name": "core_replay_oct16_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 14.188,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core_replay_oct16_tests.out"
+    },
+    {
+      "name": "core_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.297,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/core_tests.out"
+    },
+    {
+      "name": "devtools_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.292,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/devtools_next_tests.out"
+    },
+    {
+      "name": "input_bindings_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.295,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/input_bindings_tests.out"
+    },
+    {
+      "name": "library_oct17_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.285,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/library_oct17_tests.out"
+    },
+    {
+      "name": "mvp_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.296,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/mvp_tests.out"
+    },
+    {
+      "name": "network_backend250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.294,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_backend250_tests.out"
+    },
+    {
+      "name": "network_review250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.297,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_review250_tests.out"
+    },
+    {
+      "name": "replay_timeline_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 5.149,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/replay_timeline_tests.out"
+    },
+    {
+      "name": "terrain50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.298,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/terrain50_tests.out"
+    },
+    {
+      "name": "trajectory250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.296,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/trajectory250_tests.out"
+    },
+    {
+      "name": "debug_scene_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.071,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/debug_scene_smoke.out"
+    },
+    {
+      "name": "artillery_flow_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.076,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/artillery_flow_tests.out"
+    },
+    {
+      "name": "match_ui_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.382,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/match_ui_tests.out"
+    },
+    {
+      "name": "mvp_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.949,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/mvp_smoke.out"
+    },
+    {
+      "name": "review_regressions",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.08,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/review_regressions.out"
+    },
+    {
+      "name": "network_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.188,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_smoke.out"
+    },
+    {
+      "name": "client50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.653,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client50_tests.out"
+    },
+    {
+      "name": "network50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 8.541,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network50_tests.out"
+    },
+    {
+      "name": "archive_ui250_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 11.085,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/archive_ui250_next_tests.out"
+    },
+    {
+      "name": "backend_profiles_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.298,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/backend_profiles_next_tests.out"
+    },
+    {
+      "name": "client_library_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 8.445,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client_library_next_tests.out"
+    },
+    {
+      "name": "client_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.941,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client_next_tests.out"
+    },
+    {
+      "name": "client_oct16_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.32,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client_oct16_next_tests.out"
+    },
+    {
+      "name": "client_oct17_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 11.34,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/client_oct17_next_tests.out"
+    },
+    {
+      "name": "network_backend_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.454,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_backend_next_tests.out"
+    },
+    {
+      "name": "network_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 9.296,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_next_tests.out"
+    },
+    {
+      "name": "network_oct17_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 24.224,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/network_oct17_next_tests.out"
+    },
+    {
+      "name": "nakama_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.191,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/nakama_smoke.out"
+    },
+    {
+      "name": "nakama50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.422,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/nakama50_tests.out"
+    },
+    {
+      "name": "server",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.319,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/server.out"
+    },
+    {
+      "name": "render",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.225,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/render.out"
+    },
+    {
+      "name": "test_devtools",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.773,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_devtools.out"
+    },
+    {
+      "name": "run_network_process_test",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.236,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/run_network_process_test.out"
+    },
+    {
+      "name": "test_simulation_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.544,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_simulation_cli.out"
+    },
+    {
+      "name": "test_bot_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 11.471,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_bot_cli.out"
+    },
+    {
+      "name": "test_lobby_cli",
+      "status": "failed",
+      "reason": "nonzero_exit",
+      "exit_code": 1,
+      "duration_seconds": 4.741,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_lobby_cli.out"
+    },
+    {
+      "name": "test_library_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.301,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_library_cli.out"
+    },
+    {
+      "name": "test_delivery",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.106,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_delivery.out"
+    },
+    {
+      "name": "test_analysis_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 8.468,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_analysis_cli.out"
+    },
+    {
+      "name": "test_release_review",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.122,
+      "log_path": "/private/tmp/tb250-full-final/attempt-y769ubln/test_release_review.out"
+    }
+  ],
+  "finished_at": "2026-10-18T20:22:55.754560+00:00"
+}

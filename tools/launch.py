@@ -15,10 +15,10 @@ def main():
         print(__doc__)
         return 0
     mode = args.pop(0)
-    if mode in ('test', 'doctor'):
-        script = 'run_tests.py' if mode == 'test' else 'doctor.py'
+    if mode in ('test', 'doctor', 'release'):
+        script = {'test':'run_tests.py','doctor':'doctor.py','release':'release.py'}[mode]
         return subprocess.call([sys.executable, str(ROOT / 'tools' / script), *args], cwd=ROOT)
-    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay', 'library'):
+    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays'):
         print('Unknown launcher mode: ' + mode, file=sys.stderr)
         return 2
     try:
@@ -26,9 +26,14 @@ def main():
     except FileNotFoundError as error:
         print(error, file=sys.stderr)
         return 2
-    if mode in ('server', 'simulate', 'replay', 'library'):
+    if mode in ('server', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays'):
         command.append('--headless')
-    return subprocess.call(command + ['--', '--mode', mode, *args], cwd=ROOT)
+    command += ['--', '--mode', mode, *[arg for arg in args if arg != '--dry-run']]
+    if '--dry-run' in args:
+        import json
+        print(json.dumps({'command':command,'cwd':str(ROOT)}))
+        return 0
+    return subprocess.call(command, cwd=ROOT)
 
 if __name__ == '__main__':
     sys.exit(main())

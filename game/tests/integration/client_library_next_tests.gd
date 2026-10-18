@@ -16,6 +16,7 @@ func run() -> void:
 	var temporary_root := "/private/tmp" if OS.get_name() == "macOS" else "/tmp"
 	var directory := temporary_root.path_join("terrablast-library-ui-%d" % OS.get_process_id())
 	scene.library = Library.new(directory)
+	scene.archive_ui.preferences = load("res://scripts/client/session/library_preferences.gd").new(directory + "-preferences.json")
 	scene._toggle_library()
 	check(scene.library_panel.visible and scene.local_paused,"Library pauses local match")
 	var velocity := Vector3(0.125,2.5,-0.25)
@@ -92,6 +93,7 @@ func run() -> void:
 	check(scene.library.list_entries("session").entries.is_empty(),"Delete via UI")
 	scene._library_delete(replay_id)
 	DirAccess.remove_absolute(directory)
+	DirAccess.remove_absolute(directory + "-preferences.json")
 	check(scene.bindings.rebind("jump",KEY_J).ok,"Remap jump")
 	scene._apply_client_preferences()
 	check(scene.match_panels.help_label.text.contains("J: jump"),"Help reflects remap")

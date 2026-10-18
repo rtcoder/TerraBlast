@@ -5,6 +5,17 @@ signal name_requested(value: String)
 signal rematch_requested(value: bool)
 signal disconnect_requested
 signal close_requested
+signal retry_requested
+const Protocol=preload("res://scripts/networking/messages/match_protocol.gd")
+var pending_operations := {}
+var pending_generation := -1
+var _presented_state := {}
+var _presented_id := ""
+var _presented_phase := "waiting"
+var _presented_sync := false
+var disconnect_confirmation: ConfirmationDialog
+var connection_label: Label
+var retry_button: Button
 var summary: Label
 var roster_label: Label
 var name_input: LineEdit
@@ -39,11 +50,22 @@ func _ready() -> void:
 	name_input = LineEdit.new()
 	name_input.max_length = 24
 	box.add_child(name_input)
-	name_apply = _button("Apply name",func(): name_requested.emit(name_input.text))
-	ready_button = _button("Ready",func(): ready_requested.emit(not _own_ready))
-	rematch_button = _button("Vote rematch",func(): rematch_requested.emit(not _own_vote))
+	name_input.text_submitted.connect(func(_value): _request_name())
+	name_apply = _button("Apply name",_request_name)
+	ready_button = _button("Ready",_request_ready)
+	rematch_button = _button("Vote rematch",_request_rematch)
 	feedback = _label("")
-	_button("Disconnect to local",func(): disconnect_requested.emit())
+	connection_label=_label("")
+	retry_button=_button("Retry connection",func(): retry_requested.emit())
+	retry_button.disabled=true
+	_button("Disconnect to local",_confirm_disconnect)
+	disconnect_confirmation=ConfirmationDialog.new()
+	add_child(disconnect_confirmation)
+	disconnect_confirmation.dialog_text="Leave the online match and return to local play? Your slot may remain reserved briefly; deliberate departure forgets the resume token."
+	disconnect_confirmation.confirmed.connect(func(): disconnect_requested.emit())
+	visibility_changed.connect(func():
+		if not visible: disconnect_confirmation.hide()
+	)
 	_button("Close",func(): close_requested.emit())
 	hide()
 func _label(text: String) -> Label:
@@ -60,6 +82,14 @@ func _button(text: String, action: Callable) -> Button:
 	box.add_child(button)
 	return button
 func present(state: Dictionary, own_id: String, phase: String, synchronized: bool) -> void:
+	_presented_state=state.duplicate(true)
+	_presented_id=own_id
+	_presented_phase=phase
+	_presented_sync=synchronized
+	if state.get("generation",-1)!=pending_generation:
+		pending_operations.clear()
+		pending_generation=state.get("generation",-1)
+	if not synchronized: pending_operations.clear()
 	var own := {}
 	var connected := 0
 	var ready := 0
@@ -75,21 +105,24 @@ func present(state: Dictionary, own_id: String, phase: String, synchronized: boo
 		if not row.connected:
 			status = "Vacant / reserved"
 		lines.append("%s%s — %s — %s%s" % [row.name, " [you]" if row.id == own_id else "", "Blue" if row.team == 1 else "Red", status, " — rematch vote" if row.rematch else ""])
+	for operation in pending_operations.keys():
+		var field: String={"ready":"ready","name":"name","rematch":"rematch"}[operation]
+		if own.get(field)==pending_operations[operation].value: pending_operations.erase(operation)
 	var capacity: int = state.get("capacity",0)
 	summary.text = "%d / %d connected | %d ready | %d / %d rematch votes\n%s" % [connected,capacity,ready,votes,capacity,waiting_text(state,phase,synchronized)]
 	roster_label.text = "\n".join(lines)
 	_own_ready = own.get("ready",false)
 	_own_vote = own.get("rematch",false)
 	var pregame: bool = synchronized and not own.is_empty() and not state.get("started",false)
-	ready_button.disabled = not pregame or not state.get("require_ready",false)
+	ready_button.disabled = not pregame or not state.get("require_ready",false) or pending_operations.has("ready")
 	ready_button.text = "Not ready" if _own_ready else "Ready"
 	name_input.editable = pregame
-	name_apply.disabled = not pregame
+	name_apply.disabled = not pregame or pending_operations.has("name")
 	var name: String = own.get("name", "")
 	if name != _last_name and not name_input.has_focus():
 		name_input.text = name
 		_last_name = name
-	rematch_button.disabled = not synchronized or own.is_empty() or phase != "ended" or not state.get("require_ready",false)
+	rematch_button.disabled = not synchronized or own.is_empty() or phase != "ended" or not state.get("require_ready",false) or pending_operations.has("rematch")
 	rematch_button.text = "Cancel rematch vote" if _own_vote else "Vote rematch"
 static func waiting_text(state: Dictionary, phase: String, synchronized: bool) -> String:
 	if not synchronized:
@@ -108,5 +141,46 @@ static func waiting_text(state: Dictionary, phase: String, synchronized: bool) -
 	if state.require_ready and not state.started:
 		return "Waiting for ready (%d / %d)" % [ready,state.capacity]
 	return "Projectile in flight" if phase == "playback" else "Match in progress"
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	for operation in pending_operations.keys():
+		pending_operations[operation].age+=delta
+		if pending_operations[operation].age>=5.0:
+			pending_operations.erase(operation)
+			feedback.text="Server confirmation timed out; try again."
+			_refresh_presented()
 	scroll.custom_minimum_size.y = minf(box.get_combined_minimum_size().y, maxf(150,get_viewport_rect().size.y - 90))
+
+func _request_ready() -> void:
+	if ready_button.disabled or pending_operations.has("ready"): return
+	pending_operations.ready={"value":not _own_ready,"age":0.0}
+	ready_button.disabled=true
+	feedback.text="Waiting for server confirmation…"
+	ready_requested.emit(not _own_ready)
+func _request_name() -> void:
+	if name_apply.disabled or pending_operations.has("name"): return
+	var value:=name_input.text.strip_edges()
+	if not Protocol.valid_display_name(value): feedback.text="Name must contain 1–24 printable characters."; return
+	pending_operations.name={"value":value,"age":0.0}
+	name_apply.disabled=true
+	feedback.text="Waiting for name confirmation…"
+	name_requested.emit(value)
+func _request_rematch() -> void:
+	if rematch_button.disabled or pending_operations.has("rematch"): return
+	pending_operations.rematch={"value":not _own_vote,"age":0.0}
+	rematch_button.disabled=true
+	feedback.text="Waiting for vote confirmation…"
+	rematch_requested.emit(not _own_vote)
+func operation_rejected(reason: String) -> void:
+	pending_operations.clear()
+	feedback.text=reason.substr(0,256)
+	_refresh_presented()
+func _confirm_disconnect() -> void: disconnect_confirmation.popup_centered()
+func present_connection(value: Dictionary) -> void:
+	if connection_label==null: return
+	var progress: Dictionary=value.get("progress",{})
+	connection_label.text="%s · %d/%d chunks · RTT %s\n%s" % [value.get("state","disconnected"),progress.get("completed",0),progress.get("total",0),str(value.latency_ms)+" ms" if value.get("latency_ms",-1)>=0 else "unavailable",value.get("last_error","")]
+	retry_button.disabled=not value.get("can_retry",false)
+	if value.get("state") in ["error","disconnected"]: pending_operations.clear()
+
+func _refresh_presented() -> void:
+	present(_presented_state,_presented_id,_presented_phase,_presented_sync)

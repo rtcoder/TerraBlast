@@ -1,0 +1,109 @@
+id = "split_pass"
+name = "Split Pass"
+theme = "canyon"
+size = [64, 20, 48]
+
+[[spawns]]
+team = 1
+slot = 0
+position = [6, 4, 8]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 0
+position = [57, 4, 8]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 1
+position = [6, 4, 16]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 1
+position = [57, 4, 16]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 2
+position = [6, 4, 24]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 2
+position = [57, 4, 24]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 3
+position = [6, 4, 32]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 3
+position = [57, 4, 32]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 4
+position = [6, 4, 40]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 4
+position = [57, 4, 40]
+yaw = -90
+
+[[boxes]]
+position = [0, 0, 0]
+size = [20, 3, 48]
+material = "stone"
+
+[[boxes]]
+position = [0, 3, 0]
+size = [20, 1, 48]
+material = "dirt"
+
+[[boxes]]
+position = [44, 0, 0]
+size = [20, 3, 48]
+material = "stone"
+
+[[boxes]]
+position = [44, 3, 0]
+size = [20, 1, 48]
+material = "dirt"
+
+[[boxes]]
+position = [20, 2, 8]
+size = [24, 2, 6]
+material = "stone"
+
+[[boxes]]
+position = [20, 2, 34]
+size = [24, 2, 6]
+material = "stone"
+
+[[boxes]]
+position = [20, 0, 20]
+size = [24, 1, 8]
+material = "dirt"
+
+[[boxes]]
+position = [15, 4, 20]
+size = [3, 3, 8]
+material = "dirt"
+
+[[boxes]]
+position = [46, 4, 20]
+size = [3, 3, 8]
+material = "dirt"

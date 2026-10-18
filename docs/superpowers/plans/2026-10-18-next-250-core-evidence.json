@@ -1,0 +1,352 @@
+[
+  {
+    "id": "TB-432",
+    "title": "Limit odczytu pliku mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Missing, empty and >1MiB fixtures rejected before parse."
+  },
+  {
+    "id": "TB-433",
+    "title": "Diagnostyka parsera z numerami linii",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Error after blank/comment lines reports line3."
+  },
+  {
+    "id": "TB-434",
+    "title": "Odrzucanie powtórzonych kluczy TOML",
+    "status": "verified",
+    "tests": "core250_tests.gd::_initialize + core250_edges_tests.gd::parser_edges",
+    "evidence": "Root and table duplicates rejected; separate tables independent."
+  },
+  {
+    "id": "TB-435",
+    "title": "Escaping tekstu i komentarzy TOML",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::parser_edges",
+    "evidence": "Escaped quote/backslash/hash roundtrip; invalid escape/unclosed string rejected."
+  },
+  {
+    "id": "TB-436",
+    "title": "Ścisły schemat tabel i kluczy mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::_initialize + core250_edges_tests.gd::parser_edges",
+    "evidence": "Unknown tables/keys and unsupported array grammar rejected; shipped boxes.name retained."
+  },
+  {
+    "id": "TB-437",
+    "title": "Kontrola struktur wejściowego słownika mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "null/bool/int/string/dict malformed containers return definition.errors."
+  },
+  {
+    "id": "TB-438",
+    "title": "Walidacja metadanych mapy",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::parser_edges",
+    "evidence": "ID64/65, Unicode name128/129, theme65 and control chars tested."
+  },
+  {
+    "id": "TB-439",
+    "title": "Kanoniczny eksport definicji mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Definition -> TOML -> definition equality including original operation dictionaries."
+  },
+  {
+    "id": "TB-440",
+    "title": "Izolacja danych definicji mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Mutated source dictionary and copied spawn positions do not alter loaded definition."
+  },
+  {
+    "id": "TB-441",
+    "title": "Strukturalny raport walidacji definicji",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::parser_edges",
+    "evidence": "inspect_definition errors equal legacy errors and ok matches failure."
+  },
+  {
+    "id": "TB-442",
+    "title": "Budżet operacji voxelowych mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "200 huge legal-radius carves exceed32000000 estimated visits and are rejected."
+  },
+  {
+    "id": "TB-443",
+    "title": "Przycięcie pętli carve i fill do bounds",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::map_edges",
+    "evidence": "Clipped fill8 voxels, reversed empty bounds, clipped sphere compared with distance reference."
+  },
+  {
+    "id": "TB-444",
+    "title": "Bezpieczna arytmetyka operacji mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::map_edges",
+    "evidence": "Signed64-extreme box coordinate and out-of-world/over-radius carves rejected."
+  },
+  {
+    "id": "TB-445",
+    "title": "Walidacja zdrowia materiału mapy",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::map_edges",
+    "evidence": "Solid health -1/0/10001 rejected; air health1 rejected and0 accepted."
+  },
+  {
+    "id": "TB-446",
+    "title": "Walidacja katalogu materiałów",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::map_edges",
+    "evidence": "Default catalog valid, NaN resistance and duplicateID invalid; constructor produces four materials."
+  },
+  {
+    "id": "TB-447",
+    "title": "Generator z przekazanym katalogiem materiałów",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::map_edges",
+    "evidence": "Explicit mist catalog builds; missing code and int-valued catalog fail cleanly before code access."
+  },
+  {
+    "id": "TB-448",
+    "title": "Spawny zgodne z kolizją gracza",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::map_edges",
+    "evidence": "Nonsolid mist at spawn permits body; actual solid headroom blocks spawn."
+  },
+  {
+    "id": "TB-449",
+    "title": "Kontrola nakładających się brył spawnów",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::map_edges",
+    "evidence": "Vertical overlap rejected; existing separated arena spawns valid."
+  },
+  {
+    "id": "TB-450",
+    "title": "Fabryka wymaga obu drużyn w wybranym składzie",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::map_edges",
+    "evidence": "Single-team factory/selector invalid; all actual supported counts keep valid teams."
+  },
+  {
+    "id": "TB-451",
+    "title": "Deterministyczny selektor spawnów",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps + core250_edges_tests.gd::map_edges",
+    "evidence": "Reversed input preserves selector order; uneven1+2 composition fills three unique slots."
+  },
+  {
+    "id": "TB-452",
+    "title": "Pojemność registry zgodna z fabryką",
+    "status": "verified",
+    "tests": "core250_tests.gd::content",
+    "evidence": "Nine registry metadata records expose counts2–10 and each count actually creates runner."
+  },
+  {
+    "id": "TB-453",
+    "title": "Fabryka meczu z definicji w pamięci",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Factory file/definition produce equal material arrays and state snapshots."
+  },
+  {
+    "id": "TB-454",
+    "title": "Statystyki składu terenu",
+    "status": "verified",
+    "tests": "core250_tests.gd::analysis + core250_edges_tests.gd::analysis_edges",
+    "evidence": "Known25-cell floor and8x8 bounds/heightmap exact."
+  },
+  {
+    "id": "TB-455",
+    "title": "Analiza otoczenia spawnów",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::analysis_edges",
+    "evidence": "Open spawn radius1 has8 supported neighbors and0 cover; added cover reflected."
+  },
+  {
+    "id": "TB-456",
+    "title": "Komponenty ruchu po płaskim podłożu",
+    "status": "verified",
+    "tests": "core250_tests.gd::analysis",
+    "evidence": "One floor component becomes two separated rooms; small budget marks truncated."
+  },
+  {
+    "id": "TB-457",
+    "title": "Porównanie startowych pozycji drużyn",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::analysis_edges",
+    "evidence": "Mirrored spawn metrics equal; one-sided metal cover produces warning and nonzero delta."
+  },
+  {
+    "id": "TB-458",
+    "title": "Laboratorium balistyki",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Range dirt/stone/metal target positions verified; counts/loadouts build and reset."
+  },
+  {
+    "id": "TB-459",
+    "title": "Tarasowy kamieniołom",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Quarry consecutive stair heights verified; counts/loadouts build and reset."
+  },
+  {
+    "id": "TB-460",
+    "title": "Wąwóz z dwoma obejściami",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Destroy first crossing while second stays intact; counts/loadouts valid."
+  },
+  {
+    "id": "TB-461",
+    "title": "Dziedziniec bunkrów",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Blast removes bunker door while metal frame survives; counts/loadouts valid."
+  },
+  {
+    "id": "TB-462",
+    "title": "Wyspa z pierścieniem osłon",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Island external drop and safe spawn floor verified; counts/loadouts valid."
+  },
+  {
+    "id": "TB-463",
+    "title": "Fabryka trzech pasów",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry + core250_tests.gd::content",
+    "evidence": "Metal dividers/dirt cross passages verified; counts/loadouts valid."
+  },
+  {
+    "id": "TB-464",
+    "title": "Klasyfikator wyniku pocisku bez zmiany fizyki",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::trajectory_edges",
+    "evidence": "All5 reasons classified; invalid and simulation_budget explicitly incomplete."
+  },
+  {
+    "id": "TB-465",
+    "title": "Walidacja kontraktu śladu pocisku",
+    "status": "verified",
+    "tests": "trajectory250_tests.gd::fixture + core250_edges_tests.gd::trajectory_edges",
+    "evidence": "Every real golden result passes validation; malformed/NaN paths fail without runtime error."
+  },
+  {
+    "id": "TB-466",
+    "title": "DDA odcinka do analizy geometrii",
+    "status": "verified",
+    "tests": "core250_tests.gd::trajectories + core250_edges_tests.gd::trajectory_edges",
+    "evidence": "Exact hit voxel/normal/distance; diagonal, boundary, zero-length, nonfinite and distance limits."
+  },
+  {
+    "id": "TB-467",
+    "title": "Diagnostyka przecięć próbkowanej trajektorii",
+    "status": "verified",
+    "tests": "core250_tests.gd::trajectories + core250_edges_tests.gd::trajectory_edges",
+    "evidence": "Segment-crossing wall detected; partial scan marks truncated; simulator unchanged."
+  },
+  {
+    "id": "TB-468",
+    "title": "Regresje granicznych trajektorii wszystkich broni",
+    "status": "verified",
+    "tests": "trajectory250_tests.gd",
+    "evidence": "34 frozen signatures cover three behaviors/air/inside/tangent/corner/escape plus repeated determinism."
+  },
+  {
+    "id": "TB-469",
+    "title": "Regresje granatu z dokładnym fuse",
+    "status": "verified",
+    "tests": "trajectory250_tests.gd::fixture",
+    "evidence": "Grenade0/1 bounce, floor/wall/corner/rest/escape with non-grid fuse0.517 retains frozen signatures."
+  },
+  {
+    "id": "TB-470",
+    "title": "Regresje drill i granic penetracji",
+    "status": "verified",
+    "tests": "trajectory250_tests.gd::fixture",
+    "evidence": "Drill0/1/64: wall/metal/escape; no duplicate deltas, capped count, metal untouched."
+  },
+  {
+    "id": "TB-471",
+    "title": "Regresje preview i wykonania strzału",
+    "status": "verified",
+    "tests": "trajectory250_tests.gd::preview_execution",
+    "evidence": "All3 weapons leave full runner hash unchanged in preview, actual path/reason identical, exactly one turn advanced."
+  },
+  {
+    "id": "TB-472",
+    "title": "Analiza kształtu trajektorii",
+    "status": "verified",
+    "tests": "core250_tests.gd::trajectories",
+    "evidence": "Handwritten path length7, apex3 and malformed result refusal; no inferred timestamps."
+  },
+  {
+    "id": "TB-473",
+    "title": "Ograniczony wybór strzału do punktu",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::trajectory_edges",
+    "evidence": "First3 actual candidate simulations independently ranked; budget3 exact; wrong resources safely rejected."
+  },
+  {
+    "id": "TB-474",
+    "title": "Czysty plan zniszczeń eksplozji",
+    "status": "verified",
+    "tests": "core250_tests.gd::analysis + core250_edges_tests.gd::analysis_edges",
+    "evidence": "Immutable preview matches applied deltas and independent legacy distance formula at radii0/1/4/16; invalid radii bounded."
+  },
+  {
+    "id": "TB-475",
+    "title": "Raport zniszczeń według materiału",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::analysis_edges",
+    "evidence": "Repeated final delta yields exactly1 changed/1 destroyed/100HP/1chunk; malformed position rejected."
+  },
+  {
+    "id": "TB-476",
+    "title": "Izolowane zasoby broni w każdym meczu",
+    "status": "verified",
+    "tests": "core250_tests.gd::maps",
+    "evidence": "Changing first runner weapon speed does not affect second runner resource."
+  },
+  {
+    "id": "TB-477",
+    "title": "Diagnostyka katalogu broni",
+    "status": "verified",
+    "tests": "core250_tests.gd::content + core250_edges_tests.gd::trajectory_edges",
+    "evidence": "null/int/string config types and duplicate resource IDs/codes diagnosed."
+  },
+  {
+    "id": "TB-478",
+    "title": "Podsumowanie charakterystyki broni",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::trajectory_edges",
+    "evidence": "Center/half/boundary damage samples match config; mutation of description does not leak."
+  },
+  {
+    "id": "TB-479",
+    "title": "Zestawy trzech broni bez zmian replay schema",
+    "status": "verified",
+    "tests": "core250_tests.gd::content + legacy core_replay_oct16_tests.gd",
+    "evidence": "Unknown loadout rejected; classic same existing resources/fields; no exported schema changed; existing replay suite passes."
+  },
+  {
+    "id": "TB-480",
+    "title": "Zestaw artyleryjski oparty o obecne zachowania",
+    "status": "verified",
+    "tests": "core250_edges_tests.gd::content_geometry",
+    "evidence": "Artillery IDs1/2/3 validate, ammo bounded, each path differs from classic using unchanged behaviors."
+  },
+  {
+    "id": "TB-481",
+    "title": "Akceptacja macierzy aren i zestawów",
+    "status": "verified",
+    "tests": "core250_tests.gd::content",
+    "evidence": "All9 maps x classic/artillery submit legal finite shot/deltas and reset both material and health arrays; all counts2–10 create."
+  }
+]

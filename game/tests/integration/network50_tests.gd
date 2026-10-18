@@ -92,13 +92,13 @@ func run() -> void:
 	var policy = CapturingServer.new()
 	policy.runner = Factory.create_match(2)
 	policy.pending[20] = Time.get_ticks_msec()
-	policy.reservations["active-token"] = {"player": "blue_1", "peer": 17, "expires": 0}
-	policy._accept_hello(20, {"resume_token": "active-token"})
+	policy.reservations["a".repeat(64)] = {"player": "blue_1", "peer": 17, "expires": 0}
+	policy._accept_hello(20, {"resume_token": "a".repeat(64)})
 	check(policy.sent.get("reason") == "resume_token_in_use", "Live token gets distinct retryable rejection")
 	var retry_client = Client.new()
-	retry_client.resume_token = "active-token"
+	retry_client.resume_token = "a".repeat(64)
 	retry_client._handle(policy.sent)
-	check(retry_client.resume_token == "active-token", "In-use token rejection preserves valid resume credentials")
+	check(retry_client.resume_token == "a".repeat(64), "In-use token rejection preserves valid resume credentials")
 	retry_client.free()
 	policy.slots[17] = "blue_1"
 	policy._handle(17, {"type": "restart"})

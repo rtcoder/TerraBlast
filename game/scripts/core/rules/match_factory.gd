@@ -4,15 +4,18 @@ extends RefCounted
 static func materials() -> Dictionary:
 	return load("res://scripts/core/maps/arena_generator.gd").materials()
 
-static func create_match(player_limit: int = 10, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic") -> RefCounted:
-	if player_limit < 2 or player_limit > 10:
-		return null
+static func create_match(player_limit: int = 10, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic", loadout: String = "classic") -> RefCounted:
 	var definition = load("res://scripts/core/maps/map_loader.gd").load_from_file(map_path)
-	if definition.spawns.size() < player_limit:
-		return null
+	return from_definition(definition,player_limit,preset,loadout)
+
+static func from_definition(definition: RefCounted, count: int = 10, preset: String = "classic", loadout: String = "classic") -> RefCounted:
+	if count < 2 or count > 10: return null
 	var arena: Dictionary = load("res://scripts/core/maps/arena_generator.gd").from_definition(definition)
-	if not arena.errors.is_empty():
-		return null
+	if not arena.errors.is_empty(): return null
+	var selection: Dictionary = load("res://scripts/core/maps/spawn_selector.gd").select(arena.spawns,count)
+	if not selection.ok: return null
+	var catalog: Dictionary = load("res://scripts/core/weapons/weapon_catalog.gd").load_loadout(loadout)
+	if catalog.is_empty(): return null
 	var world = arena.world
 	var configs: Dictionary = arena.materials
 	var rules = load("res://scripts/core/rules/rule_presets.gd").create(preset)
@@ -20,7 +23,7 @@ static func create_match(player_limit: int = 10, map_path: String = "res://maps/
 		return null
 	var players := []
 	var counts := {1: 0, 2: 0}
-	for spawn in arena.spawns.slice(0, player_limit):
+	for spawn in selection.spawns:
 		var player = load("res://scripts/core/rules/player_state.gd").new()
 		var team: int = spawn.team
 		counts[team] += 1
@@ -31,4 +34,4 @@ static func create_match(player_limit: int = 10, map_path: String = "res://maps/
 		player.rotation = Basis(Vector3.UP, deg_to_rad(float(spawn.yaw)))
 		player.health = rules.starting_health
 		players.append(player)
-	return load("res://scripts/core/rules/match_runner.gd").new(world, configs, players, rules, load("res://scripts/core/weapons/weapon_catalog.gd").load_all())
+	return load("res://scripts/core/rules/match_runner.gd").new(world, configs, players, rules, catalog)

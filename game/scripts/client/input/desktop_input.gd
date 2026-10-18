@@ -59,16 +59,11 @@ static func handle(scene: Node, event: InputEvent) -> void:
 						Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 						scene.mouse_look_enabled = true
 						return
-					scene._start_charging_shot()
+					scene._charge_click_intent(true)
 				else:
-					scene._release_charged_shot()
+					scene._charge_click_intent(false)
 			MOUSE_BUTTON_RIGHT:
-				scene.is_aiming = event.pressed and scene._can_control() and not scene.projectile_in_flight and not scene.turn_controller.has_winner()
-				if scene.is_aiming:
-					Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-					scene.mouse_look_enabled = true
-				else:
-					scene._cancel_aim()
+				scene._toggle_aim_intent(event.pressed)
 			MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN:
 				if event.pressed:
 					scene.camera_distance = clampf(scene.camera_distance + (-1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0), 6.0, 18.0)
@@ -87,7 +82,8 @@ static func handle(scene: Node, event: InputEvent) -> void:
 		elif _matches(bindings, "weapon_3", event):
 			scene._select_weapon(3)
 		elif _matches(bindings, "restart", event):
-			scene.restart_match()
+			if scene.has_method("request_restart"): scene.request_restart()
+			else: scene.restart_match()
 		elif _matches(bindings, "jump", event):
 			scene._try_jump_active_player()
 		elif event.keycode == KEY_ESCAPE:

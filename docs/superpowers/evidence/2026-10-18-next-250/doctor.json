@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "checks": {
+    "godot": {
+      "ok": true,
+      "version": "4.6.2.stable.official.71f334935"
+    },
+    "python": {
+      "ok": true,
+      "version": "3.14.7"
+    },
+    "project": {
+      "ok": true
+    },
+    "uids": {
+      "ok": true,
+      "count": 133,
+      "errors": []
+    },
+    "export_presets": {
+      "ok": true,
+      "presets": {
+        "macOS": "macOS",
+        "Windows Desktop": "Windows Desktop",
+        "Linux Desktop": "Linux",
+        "Linux Server": "Linux"
+      }
+    },
+    "maps": {
+      "ok": true,
+      "count": 9
+    },
+    "templates": {
+      "ok": false,
+      "directory": "/Users/rtcoder/Library/Application Support/Godot/export_templates/4.6.2.stable",
+      "missing": [
+        "macos.zip",
+        "windows_release_x86_64.exe",
+        "linux_release.x86_64"
+      ],
+      "optional": true
+    },
+    "nakama": {
+      "ok": true,
+      "optional": true
+    }
+  }
+}

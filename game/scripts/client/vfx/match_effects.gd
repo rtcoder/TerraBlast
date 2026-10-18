@@ -1,4 +1,13 @@
 extends Node3D
+var reduced_motion := false
+var effects_volume := 1.0
+var cue_volume := 1.0
+func configure_preferences(settings: RefCounted) -> void:
+	reduced_motion = settings.reduced_motion
+	effects_volume = settings.effects_volume
+	cue_volume = settings.cue_volume
+func preview_cue() -> void: _tone(660,0.15)
+
 
 func play_events(events: Array) -> void:
 	for event in events:
@@ -29,6 +38,10 @@ func _explosion(position: Vector3, radius: float) -> void:
 	visual.material_override = material
 	add_child(visual)
 	visual.global_position = position
+	if reduced_motion:
+		visual.scale = Vector3.ONE * maxf(1,radius)
+		get_tree().create_timer(0.1).timeout.connect(visual.queue_free)
+		return
 	var tween := create_tween().bind_node(visual).set_parallel(true)
 	tween.tween_property(visual, "scale", Vector3.ONE * maxf(1, radius * 2), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(material, "albedo_color:a", 0.0, 0.45)
@@ -55,7 +68,7 @@ func _tone(frequency: float, duration: float, noise: bool = false) -> void:
 	stream.data = bytes
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
-	player.volume_db = -8
+	player.volume_db = -8 + linear_to_db(maxf(0.00001,effects_volume if noise else cue_volume))
 	add_child(player)
 	player.play()
 	get_tree().create_timer(duration + 0.05).timeout.connect(player.queue_free)

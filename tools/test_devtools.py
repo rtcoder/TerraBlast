@@ -64,7 +64,7 @@ class DevtoolsTests(unittest.TestCase):
         result, document = self.json_cli('--list-maps')
         self.assertEqual(result.returncode, 0)
         self.assertEqual(len(document['maps']), len(list((ROOT / 'game/maps').glob('*.toml'))))
-        self.assertEqual({row['id'] for row in document['maps']}, {'twin_forts', 'two_islands', 'canyon_bridge'})
+        self.assertTrue({'twin_forts', 'two_islands', 'canyon_bridge'} <= {row['id'] for row in document['maps']})
         self.assertTrue(all(row['spawn_count'] == row['capacity'] == 10 and not row['errors'] for row in document['maps']))
         self.assertTrue(all(row['theme'] and row['teams'] == [1, 2] for row in document['maps']))
         with tempfile.TemporaryDirectory() as tmp:

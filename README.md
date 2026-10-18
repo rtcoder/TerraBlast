@@ -77,7 +77,7 @@ Use the [portable tools](tools/README.md) for launchers, map auditing, environme
 
 ## Solo, saves and replay
 
-F5 selects **Hotseat** (default: both teams controlled locally) or **Solo**. In solo, you control the blue team; red players are bots. `easy` evaluates fewer candidate shots than `normal`. Both use the same weapon rules and ammunition as human players. Bots aim and fire from their current position; they do not move or jump. During a bot turn you can use the camera and menus, but cannot move or fire for the bot. Opening a local menu or losing focus pauses bot planning.
+F5 selects **Hotseat** (default: both teams controlled locally) or **Solo**. In solo, select the human team; the opposing team is controlled by bots. `easy` evaluates fewer candidate shots than `normal`. Both use the same weapon rules and ammunition as human players. Bots aim and fire from their current position; they do not move or jump. During a bot turn you can use the camera and menus, but cannot move or fire for the bot. Opening a local menu or losing focus pauses bot planning.
 
 P opens the local match menu with checkpoint and replay controls:
 
@@ -127,3 +127,17 @@ python3 tools/launch.py library --library-dir /absolute/path/to/archive_library 
 ```
 
 Listing validates envelopes and reports metadata; `--verify-library` also decodes checkpoints and re-simulates replays to verify their hashes. Both return JSON and exit 2 on invalid entries. Library paths must have no symlink components; on macOS use `/private/tmp`, rather than the `/tmp` alias, for temporary fixtures.
+
+### Training, local series and accessibility
+
+F5 remembers the last local configuration and supports named profiles, quick hotseat/solo templates, the human team and best-of 1/3/5 series. Restart, surrender and replacing a local match require confirmation. F3 can enable the hotseat handoff screen and three rotating autosave slots. **Continue autosave** restores the latest valid slot and reports skipped damaged saves.
+
+Open **Training** from the local match menu. Eleven lessons cover movement, jumping, cancelling aim, accuracy, power, wind, weapons, safe fire, shots without trajectory help, streaks and an ammunition budget. Each lesson operates on a private copy of the current match. Retry lesson or Retry last shot restores its checkpoint; Return to original match restores the original runner and recording. Coach hints are budgeted and invalidated by state changes; demonstrations do not count as the user's attempts. Training completion is stored separately from gameplay settings.
+
+F3 adds reduced animation, accessible team colors with letter labels, configurable crosshair, toggle aiming, two-click charging, event captions and separate effects/cue volume. Settings and match panels scroll in small windows, with keyboard focus kept within the visible panel.
+
+### Archive search and analysis
+
+The library supports title search, ordering, favorites, pages, details, duplicate entries, JSON file import/export and corrupt-entry diagnostics. Filters and favorites persist separately from archive payloads. Replay analysis reconstructs its own runner in bounded batches and can be cancelled; it reports players, weapons, turns, shots, terrain and eliminations. Shot bookmarks, previous-shot/next-turn navigation, looping and fingerprint-checked saved cursors extend the inspector. Analysis exports JSON or player/shot CSV. See [tool commands](tools/README.md#replay-analysis-and-library-inspection) for headless analysis and comparison.
+
+F2 supports saved connection profiles and a persistent local guest identity. Connection feedback distinguishes authentication, websocket connection, snapshot loading and gameplay readiness. Snapshot transfers are queued with frame budgets, and later match results are applied after the frozen snapshot so joining clients cannot lose intervening shots.

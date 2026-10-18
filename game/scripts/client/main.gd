@@ -4,7 +4,7 @@ func _ready() -> void:
 		printerr("Invalid arguments: " + "; ".join(GameConfig.errors))
 		get_tree().quit(2)
 		return
-	if OS.get_cmdline_user_args().has("--help") or OS.get_cmdline_user_args().has("--version") or OS.get_cmdline_user_args().has("--list-maps") or GameConfig.mode in ["replay", "audit-maps", "library"]:
+	if OS.get_cmdline_user_args().has("--help") or OS.get_cmdline_user_args().has("--version") or OS.get_cmdline_user_args().has("--list-maps") or GameConfig.mode in ["replay", "audit-maps", "library", "analyze-replay", "compare-replays"]:
 		add_child(load("res://scripts/server/utility_cli.gd").new())
 		return
 	if GameConfig.mode == "simulate":

@@ -11,10 +11,16 @@ func _init(initial_world: RefCounted, initial_material_configs: Dictionary) -> v
 	material_configs = initial_material_configs
 
 func apply_explosion(center: Vector3i, radius: int, base_damage: int) -> Array:
+	var deltas := preview_explosion(center,radius,base_damage)
+	for delta in deltas: world.set_voxel(delta.position,delta.material_id,delta.health)
+	return deltas
+
+func preview_explosion(center: Vector3i, radius: int, base_damage: int) -> Array:
 	var deltas: Array = []
-	var safe_radius: int = maxi(0, radius)
-	var min_position := center - Vector3i(safe_radius, safe_radius, safe_radius)
-	var max_position := center + Vector3i(safe_radius, safe_radius, safe_radius)
+	if radius < 0 or radius > 16 or base_damage < 0 or base_damage > 10000: return deltas
+	var safe_radius: int = radius
+	var min_position := (center - Vector3i(safe_radius, safe_radius, safe_radius)).max(Vector3i.ZERO)
+	var max_position := (center + Vector3i(safe_radius, safe_radius, safe_radius)).min(world.size - Vector3i.ONE)
 
 	for z in range(min_position.z, max_position.z + 1):
 		for y in range(min_position.y, max_position.y + 1):
@@ -42,12 +48,7 @@ func apply_explosion(center: Vector3i, radius: int, base_damage: int) -> Array:
 					continue
 
 				var new_health: int = maxi(0, int(world.get_health(position)) - damage)
-				if new_health <= 0:
-					world.set_voxel(position, 0, 0)
-				else:
-					world.set_health(position, new_health)
-
-				deltas.append(TerrainDeltaScript.new(position, world.get_material_id(position), world.get_health(position)))
+				deltas.append(TerrainDeltaScript.new(position, 0 if new_health <= 0 else material_id, new_health))
 
 	return deltas
 

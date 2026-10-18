@@ -23,17 +23,19 @@ static func materials() -> Dictionary:
 static func generate(map_path: String, chunk_size: int = 16) -> Dictionary:
 	return from_definition(Loader.load_from_file(map_path), chunk_size)
 
-static func from_definition(definition: RefCounted, chunk_size: int = 16) -> Dictionary:
-	var errors: Array[String] = Validator.validate_definition(definition)
+static func from_definition(definition: RefCounted, chunk_size: int = 16, material_configs: Dictionary = {}) -> Dictionary:
+	var configs := materials() if material_configs.is_empty() else material_configs
+	var errors: Array[String] = preload("res://scripts/core/voxels/material_catalog.gd").validate(configs)
+	if errors.is_empty(): errors.append_array(Validator.validate_definition(definition, configs))
 	var spawns: Array[Spawn] = []
-	var result := {"world": null, "materials": materials(), "spawns": spawns, "errors": errors}
+	var result := {"world": null, "materials": configs, "spawns": spawns, "errors": errors}
 	if chunk_size <= 0:
 		errors.append("Chunk size must be positive")
 	if not errors.is_empty():
 		return result
 	var world = load("res://scripts/core/voxels/voxel_world_data.gd").new(definition.size, chunk_size)
 	Builder.apply_to_world(world, result.materials, definition)
-	errors.append_array(Validator.validate(definition, world))
+	errors.append_array(Validator.validate(definition, world, configs))
 	if not errors.is_empty():
 		return result
 	var slots := {}

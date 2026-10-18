@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponConfig" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/core/weapons/weapon_config.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = 1
+code = "artillery_bazooka"
+display_name = "Heavy Howitzer"
+behavior = "impact"
+projectile_speed = 60.0
+gravity_scale = 1.4
+explosion_radius = 6
+terrain_damage = 200
+player_damage = 50
+player_damage_radius = 6.5
+max_uses_per_match = 4
+fuse_time = 3.0
+drill_voxels = 4

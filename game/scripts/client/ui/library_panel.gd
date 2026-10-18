@@ -37,7 +37,8 @@ func _ready() -> void:
 	filter.item_selected.connect(func(_index): refresh_requested.emit())
 	box.add_child(filter)
 	entries = ItemList.new()
-	entries.custom_minimum_size = Vector2(490,150)
+	entries.custom_minimum_size = Vector2(0,150)
+	entries.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	entries.item_selected.connect(func(index): title_input.text = entries.get_item_metadata(index).title)
 	box.add_child(entries)
 	title_input = LineEdit.new()
@@ -90,8 +91,8 @@ func present(result: Dictionary) -> void:
 		entries.set_item_tooltip(index,"%s\n%s · %s\n%s" % [entry.title,entry.kind,date,entry.id])
 		if entry.id == prior: entries.select(index)
 	var errors: Array = result.get("errors",[])
-	status.text = "%d entries" % entries.item_count if result.ok else str(result.get("reason","Library unavailable"))
-	if not errors.is_empty(): status.text += "\n%d invalid entries: %s" % [errors.size(),str(errors[0].get("reason","Invalid file"))]
+	status.text = "%d entries" % entries.item_count if result.ok else error_message(str(result.get("reason","Library unavailable")))
+	if not errors.is_empty(): status.text += "\n%d invalid entries: %s" % [errors.size(),error_message(str(errors[0].get("reason","Invalid file")))]
 func _confirm_delete() -> void:
 	pending_delete = selected_id()
 	if pending_delete.is_empty():
@@ -101,4 +102,34 @@ func _confirm_delete() -> void:
 	confirmation.dialog_text = "Permanently delete “%s”?" % entries.get_item_metadata(index).title
 	confirmation.popup_centered()
 func _process(_delta: float) -> void:
-	scroll.custom_minimum_size.y = minf(box.get_combined_minimum_size().y,maxf(150,get_viewport_rect().size.y-90))
+	preload("res://scripts/client/ui/panel_layout.gd").fit(self,scroll,get_viewport_rect().size)
+
+static func error_message(reason: String) -> String:
+	var messages := {
+		"invalid_title":"Enter a name of 1–48 characters without control characters.",
+		"entry_limit":"The library is full (100 entries). Delete an entry before saving.",
+		"file_too_large":"This archive exceeds the 32 MiB file limit.",
+		"invalid_id":"Choose an archive entry first.",
+		"invalid_kind":"Choose Checkpoint JSON or Replay JSON for this file.",
+		"open_failed":"The file could not be opened. Check its location and permissions.",
+		"write_failed":"The file could not be saved. Check free space and folder permissions.",
+		"directory_failed":"The library folder could not be created. Check permissions.",
+		"unsafe_path":"Choose a regular file outside the archive library; linked paths are not supported.",
+		"output_exists":"That file already exists. Confirm replacement or choose another name.",
+		"invalid_json":"The file is not valid JSON. Choose a TerraBlast archive.",
+		"invalid_envelope":"The library entry is damaged. Use Storage and damaged entries to remove it.",
+		"invalid_metadata":"The archive metadata is damaged. Use library diagnostics.",
+		"invalid_archive":"This is not a valid replay archive. Check the selected import type.",
+		"invalid_session":"This is not a valid checkpoint. Check the selected import type.",
+		"invalid_recording":"The replay contains invalid actions and cannot be opened.",
+		"invalid_snapshot":"The checkpoint state is invalid and cannot be restored.",
+		"hash_mismatch":"Archive verification failed: its contents do not match the recorded state.",
+		"invalid_data":"The current state cannot be archived. Finish the current action and try again.",
+		"delete_failed":"The entry could not be deleted. Check that it still exists and is writable.",
+		"corrupt_entries":"Some entries are damaged. Valid entries remain available; open Storage and damaged entries.",
+		"invalid_checkpoint":"Choose two valid checkpoint entries to compare.",
+		"invalid_query":"The search settings are invalid. Clear the search and choose a supported filter.",
+		"invalid_extension":"Choose the requested .json or .csv file extension.",
+		"operation_no_longer_available":"The operation was cancelled because the active session changed.",
+	}
+	return messages.get(reason,"Operation failed: " + reason.replace("_"," ") + ".")

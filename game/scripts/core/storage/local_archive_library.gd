@@ -175,3 +175,106 @@ func import_file(kind: String, path: String, title: String) -> Dictionary:
 	var loaded: Dictionary = Session.load(path) if kind == "session" else Archive.load_verified(path)
 	if not loaded.ok: return loaded
 	return save_session(title, loaded.runner, loaded.options, loaded.velocities) if kind == "session" else save_replay(title, loaded.recorder, loaded.runner)
+
+func query(options: Dictionary = {}) -> Dictionary:
+	for key in options:
+		if key not in ["query","sort","kind","offset","limit","favorites_only","favorites"]: return failure("invalid_query")
+	var text: Variant = options.get("query","")
+	var order: Variant = options.get("sort","newest")
+	var offset: Variant = options.get("offset",0)
+	var limit: Variant = options.get("limit",100)
+	if not text is String or text.length()>100 or order not in ["newest","oldest","title","kind"] or not offset is int or offset<0 or offset>100 or not limit is int or limit<1 or limit>100 or not options.get("favorites_only",false) is bool or not options.get("favorites",[]) is Array: return failure("invalid_query")
+	var listing := list_entries(str(options.get("kind","")))
+	var words := PackedStringArray()
+	for word in text.strip_edges().to_lower().split(" ",false): words.append(word)
+	var needle := " ".join(words)
+	var entries: Array = []
+	for entry in listing.get("entries",[]):
+		if not needle.is_empty() and not " ".join(entry.title.strip_edges().to_lower().split(" ",false)).contains(needle): continue
+		if options.get("favorites_only",false) and not options.get("favorites",[]).has(entry.id): continue
+		entry["size_bytes"] = _file_size(_path(entry.id))
+		entries.append(entry)
+	entries.sort_custom(func(a,b):
+		if order=="title" and a.title.to_lower()!=b.title.to_lower(): return a.title.to_lower()<b.title.to_lower()
+		if order=="kind" and a.kind!=b.kind: return a.kind<b.kind
+		if order=="oldest" and a.created!=b.created: return a.created<b.created
+		if order=="newest" and a.created!=b.created: return a.created>b.created
+		return a.id<b.id
+	)
+	listing["total"] = entries.size()
+	listing["entries"] = entries.slice(offset,offset+limit)
+	listing["offset"] = offset
+	return listing
+func _file_size(path: String) -> int:
+	var file := FileAccess.open(path,FileAccess.READ)
+	if file == null: return 0
+	var size := file.get_length()
+	file.close()
+	return size
+func fingerprint(id: String) -> String:
+	var result := _read(id)
+	return JSON.stringify(result.envelope.payload,"",true,true).sha256_text() if result.ok else ""
+func duplicate_entry(id: String, title: String) -> Dictionary:
+	if not valid_title(title): return failure("invalid_title")
+	var result := _read(id)
+	if not result.ok: return result
+	# Verify before duplicating; metadata listing alone does not verify a payload.
+	var verified := load_entry(id)
+	if not verified.ok: return verified
+	return _save_encoded(result.envelope.metadata.kind,title,{"ok":true,"payload":result.envelope.payload})
+func export_entry(id: String, output: String, replace: bool = false) -> Dictionary:
+	var result := _read(id)
+	if not result.ok: return result
+	var verified := load_entry(id)
+	if not verified.ok: return verified
+	var path := ProjectSettings.globalize_path(output).simplify_path()
+	if not path.is_absolute_path() or not _safe_path(path) or path==_path(id) or path.get_extension().to_lower()!="json": return failure("unsafe_path")
+	# Exports cannot overwrite another library entry or the preference store.
+	if path.get_base_dir()==base_path and valid_id(path.get_basename().get_file()): return failure("unsafe_path")
+	if FileAccess.file_exists(path) and not replace: return failure("output_exists")
+	var error := _export_atomic(path,JSON.stringify(result.envelope.payload,"",true,true))
+	return {"ok":true,"path":path} if error==OK else failure("write_failed")
+func preview(id: String) -> Dictionary:
+	var loaded := load_entry(id)
+	if not loaded.ok: return loaded
+	var state: Dictionary = loaded.runner.state_snapshot()
+	var health := {"1":0,"2":0}
+	for player in state.players: health[str(int(player.team))] += int(player.health)
+	return {"ok":true,"id":id,"kind":loaded.kind,"title":loaded.metadata.title,"turn":state.turn_id,"status":state.status,"player_count":state.players.size(),"team_health":health,"size_bytes":_file_size(_path(id)),"fingerprint":fingerprint(id),"actions":loaded.recorder.data.actions.size() if loaded.kind=="replay" else 0}
+func health_report() -> Dictionary:
+	var listing := list_entries()
+	var bytes := 0
+	var groups := {}
+	var valid_count := 0
+	for invalid in listing.get("errors",[]):
+		if valid_id(str(invalid.get("id",""))) and _safe_path(_path(invalid.id)): bytes += _file_size(_path(invalid.id))
+	for entry in listing.get("entries",[]):
+		bytes += _file_size(_path(entry.id))
+		var verified := load_entry(entry.id)
+		if not verified.ok:
+			listing.errors.append({"id":entry.id,"reason":verified.get("reason","invalid_payload")})
+			listing.ok = false
+			continue
+		valid_count += 1
+		var digest := fingerprint(entry.id)
+		if not groups.has(digest): groups[digest] = []
+		groups[digest].append(entry.id)
+	var duplicates: Array = []
+	for digest in groups:
+		if groups[digest].size()>1: duplicates.append({"fingerprint":digest,"ids":groups[digest]})
+	return {"ok":listing.ok,"entries":valid_count,"invalid":listing.get("errors",[]).size(),"size_bytes":bytes,"errors":listing.get("errors",[]),"duplicates":duplicates}
+static func compare_checkpoints(first: Dictionary, second: Dictionary) -> Dictionary:
+	if not first.get("ok",false) or not second.get("ok",false) or first.get("kind")!="session" or second.get("kind")!="session": return failure("invalid_checkpoint")
+	return {"ok":true,"same_world":first.runner.world.material_ids==second.runner.world.material_ids and first.runner.world.health_values==second.runner.world.health_values,"same_state":first.runner.state_snapshot()==second.runner.state_snapshot(),"same_options":first.options==second.options,"same_velocities":first.velocities==second.velocities}
+
+static func _export_atomic(path: String, content: String) -> Error:
+	var temporary := path + ".tmp-%d-%d" % [OS.get_process_id(),Time.get_ticks_usec()]
+	var file := FileAccess.open(temporary,FileAccess.WRITE)
+	if file == null: return FileAccess.get_open_error()
+	file.store_string(content)
+	file.flush()
+	var error := file.get_error()
+	file.close()
+	if error==OK: error = DirAccess.rename_absolute(temporary,path)
+	if error!=OK: DirAccess.remove_absolute(temporary)
+	return error

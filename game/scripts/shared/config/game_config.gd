@@ -25,13 +25,13 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 	var index := 0
 	while index < args.size():
 		var flag := args[index]
-		if flag in ["--smoke", "--help", "--version", "--list-maps", "--lobby", "--verify-library"]:
+		if flag in ["--smoke", "--help", "--version", "--list-maps", "--lobby", "--verify-library", "--library-health"]:
 			if seen.has(flag):
 				result.append("Duplicate argument: " + flag)
 			seen[flag] = true
 			index += 1
 			continue
-		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record", "--library-dir"]:
+		if flag not in ["--mode", "--port", "--map", "--players", "--host", "--guest-id", "--shots", "--seed", "--output", "--replay", "--preset", "--maps-dir", "--bots", "--record", "--library-dir", "--query", "--sort", "--entry", "--replay-other", "--analysis-format", "--reservation-seconds", "--hello-seconds", "--packet-rate", "--byte-rate", "--snapshot-chunks", "--snapshot-bytes", "--receive-bytes", "--server-report", "--shutdown-after"]:
 			result.append("Unknown argument: " + flag)
 			index += 1
 			continue
@@ -45,7 +45,7 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 		var value := args[index + 1]
 		match flag:
 			"--mode":
-				if value not in ["local-dev", "client", "server", "simulate", "replay", "audit-maps", "library"]:
+				if value not in ["local-dev", "client", "server", "simulate", "replay", "audit-maps", "library", "analyze-replay", "compare-replays"]:
 					result.append("Invalid mode: " + value)
 			"--map":
 				if not MAPS.has(value):
@@ -57,10 +57,20 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 			"--preset":
 				if value not in ["classic", "quick", "training"]:
 					result.append("Unknown preset: " + value)
+			"--reservation-seconds", "--hello-seconds", "--shutdown-after":
+				var limits: Array = {"--reservation-seconds":[1.0,300.0],"--hello-seconds":[1.0,30.0],"--shutdown-after":[0.1,3600.0]}[flag]
+				if not value.is_valid_float() or not is_finite(value.to_float()) or value.to_float()<limits[0] or value.to_float()>limits[1]: result.append("Invalid value for " + flag)
+			"--packet-rate", "--byte-rate", "--snapshot-chunks", "--snapshot-bytes", "--receive-bytes":
+				var limits: Array = {"--packet-rate":[60,1000],"--byte-rate":[8192,1048576],"--snapshot-chunks":[1,64],"--snapshot-bytes":[65536,8388608],"--receive-bytes":[8192,4194304]}[flag]
+				if not value.is_valid_int() or value.to_int()<limits[0] or value.to_int()>limits[1]: result.append("Invalid value for " + flag)
+			"--sort":
+				if value not in ["newest","oldest","title","kind"]: result.append("Invalid sort")
+			"--analysis-format":
+				if value not in ["json","players","shots"]: result.append("Invalid analysis format")
 			"--bots":
 				if value not in ["easy", "normal"]:
 					result.append("Unknown bot difficulty: " + value)
-			"--host", "--guest-id", "--output", "--replay", "--maps-dir", "--record", "--library-dir":
+			"--host", "--guest-id", "--output", "--replay", "--maps-dir", "--record", "--library-dir", "--query", "--entry", "--replay-other", "--server-report":
 				if value.strip_edges().is_empty() or value.length() > 255:
 					result.append("Invalid value for " + flag)
 		index += 2
@@ -71,8 +81,12 @@ static func validate_args(args: PackedStringArray) -> Array[String]:
 	for flag in ["--bots", "--record"]:
 		if seen.has(flag) and selected_mode != "simulate":
 			result.append(flag + " requires --mode simulate")
-	for flag in ["--library-dir", "--verify-library"]:
+	for flag in ["--library-dir", "--verify-library", "--library-health"]:
 		if seen.has(flag) and selected_mode != "library": result.append(flag + " requires --mode library")
+	if seen.has("--replay-other") and selected_mode != "compare-replays": result.append("--replay-other requires compare-replays")
+	if seen.has("--analysis-format") and selected_mode != "analyze-replay": result.append("--analysis-format requires analyze-replay")
+	for flag in ["--reservation-seconds","--hello-seconds","--packet-rate","--byte-rate","--snapshot-chunks","--snapshot-bytes","--receive-bytes","--server-report","--shutdown-after"]:
+		if seen.has(flag) and selected_mode != "server": result.append(flag + " requires server mode")
 	var record_index := args.find("--record")
 	var output_index := args.find("--output")
 	if record_index >= 0 and output_index >= 0 and record_index + 1 < args.size() and output_index + 1 < args.size():

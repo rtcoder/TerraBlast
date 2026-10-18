@@ -1,0 +1,1108 @@
+[
+  {
+    "id": "TB-332",
+    "title": "Biblioteka: wyszukiwanie nazw",
+    "acceptance": "Query case-insensitive i whitespace normalization filtruje metadata bez wykonywania symulacji.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-332",
+      "title": "Biblioteka: wyszukiwanie nazw",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Unicode search text_changed filters actual rendered ItemList."
+    }
+  },
+  {
+    "id": "TB-333",
+    "title": "Biblioteka: sortowanie listy",
+    "acceptance": "Sort newest/oldest/title/kind stabilny po ID; nie mutuje zapisów.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-333",
+      "title": "Biblioteka: sortowanie listy",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Sort title selection persists sort=title and refresh uses query API."
+    }
+  },
+  {
+    "id": "TB-334",
+    "title": "Biblioteka: paginacja",
+    "acceptance": "Offset/limit ograniczone, wyniki zawierają total i stronę; bez utraty wybranego ID po refresh.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-334",
+      "title": "Biblioteka: paginacja",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "25 valid entries: first page20, next page5; refresh retains selected ID."
+    }
+  },
+  {
+    "id": "TB-335",
+    "title": "Biblioteka: statystyka przestrzeni",
+    "acceptance": "Raport liczby poprawnych/uszkodzonych plików i bajtów, bez podążania za symlinkami.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-335",
+      "title": "Biblioteka: statystyka przestrzeni",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Storage diagnostics renders entries/damaged/bytes from health_report."
+    }
+  },
+  {
+    "id": "TB-336",
+    "title": "Biblioteka: szczegóły wybranej pozycji",
+    "acceptance": "UI pokazuje datę UTC, typ, rozmiar i ID, nie tylko tooltip.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-336",
+      "title": "Biblioteka: szczegóły wybranej pozycji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Selected details visibly include full title, UTC date, kind, byte size and ID."
+    }
+  },
+  {
+    "id": "TB-337",
+    "title": "Biblioteka: eksport surowego zapisu",
+    "acceptance": "export_entry(id,path) wyodrębnia zgodny ReplayArchive/SessionStore, bez modyfikowania źródła.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-337",
+      "title": "Biblioteka: eksport surowego zapisu",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Raw export from selected ID writes compatible archive through export_entry; source unchanged."
+    }
+  },
+  {
+    "id": "TB-338",
+    "title": "Biblioteka: duplikowanie wpisu",
+    "acceptance": "duplicate_entry(id,title) nadaje nowe ID i datę, zachowuje dokładny payload.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-338",
+      "title": "Biblioteka: duplikowanie wpisu",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Duplicate selected checkpoint via coordinator creates new entry; fingerprint comparison confirms same payload."
+    }
+  },
+  {
+    "id": "TB-339",
+    "title": "Biblioteka: wykrywanie duplikatów treści",
+    "acceptance": "Fingerprint payload pozwala wskazać duplikaty niezależnie od tytułów i dat.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-339",
+      "title": "Biblioteka: wykrywanie duplikatów treści",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Storage diagnostics shows one duplicate payload group after duplication."
+    }
+  },
+  {
+    "id": "TB-340",
+    "title": "Biblioteka: lista błędnych pozycji",
+    "acceptance": "Osobny diagnostics zwraca ID/pliki i przyczynę korupcji, nie ukrywa ich z listy napraw.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-340",
+      "title": "Biblioteka: lista błędnych pozycji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Malformed envelope listed in dedicated damaged-entry ItemList with safe ID and reason."
+    }
+  },
+  {
+    "id": "TB-341",
+    "title": "Biblioteka: usuwanie uszkodzonego wpisu w UI",
+    "acceptance": "Wybranie poprawnego ID uszkodzonego pliku i osobne potwierdzenie umożliwia odzyskanie limitu miejsca.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-341",
+      "title": "Biblioteka: usuwanie uszkodzonego wpisu w UI",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Damaged file remains until explicit ConfirmationDialog.confirmed, then is deleted."
+    }
+  },
+  {
+    "id": "TB-342",
+    "title": "Biblioteka: import wybranego pliku",
+    "acceptance": "FileDialog importu .json zamiast wyłącznie dwóch stałych quick paths; rodzaj walidowany.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-342",
+      "title": "Biblioteka: import wybranego pliku",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "FileDialog JSON import captures selected replay kind/title and imports exported archive successfully."
+    }
+  },
+  {
+    "id": "TB-343",
+    "title": "Biblioteka: eksport wybranego pliku w UI",
+    "acceptance": "Save dialog potwierdza overwrite i raportuje błąd bez utraty wpisu.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-343",
+      "title": "Biblioteka: eksport wybranego pliku w UI",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Existing target opens path-specific overwrite confirmation; cancel and late callback leave target safe."
+    }
+  },
+  {
+    "id": "TB-344",
+    "title": "Biblioteka: ulubione",
+    "acceptance": "Oddzielny mały plik preferencji z walidowanymi ID, togglefavorite nie zmienia payload.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-344",
+      "title": "Biblioteka: ulubione",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Favorite toggle updates isolated Preferences object/file, not archive payload."
+    }
+  },
+  {
+    "id": "TB-345",
+    "title": "Biblioteka: filtr ulubionych",
+    "acceptance": "Lista pokazuje starred entries; brakujące ID są pomijane, nie blokują biblioteki.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-345",
+      "title": "Biblioteka: filtr ulubionych",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Favorites-only checkbox filters rendered list to starred entry."
+    }
+  },
+  {
+    "id": "TB-346",
+    "title": "Biblioteka: zapamiętanie filtrów",
+    "acceptance": "query/kind/sort są wczytywane walidowane i zapisywane niezależnie od archiwów.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-346",
+      "title": "Biblioteka: zapamiętanie filtrów",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Stored preferences reload with saved title sort and favorite ID."
+    }
+  },
+  {
+    "id": "TB-347",
+    "title": "Biblioteka: szybki podgląd checkpointu",
+    "acceptance": "Preview zwraca turn, status, teamsHP, liczba graczy po walidacji bez podmiany sceny.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-347",
+      "title": "Biblioteka: szybki podgląd checkpointu",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Checkpoint preview displays turn/team HP/player count without changing live runner."
+    }
+  },
+  {
+    "id": "TB-348",
+    "title": "Replay: podsumowanie nagrania",
+    "acceptance": "Pure analyzer zwraca actioncounts,duration,shots,players i wynik, nie mutuje recordera.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-348",
+      "title": "Replay: podsumowanie nagrania",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Completed Analyzer report displayed in statistics panel after private incremental analysis."
+    }
+  },
+  {
+    "id": "TB-349",
+    "title": "Replay: oś tur",
+    "acceptance": "Zwraca granice zmian aktywnego gracza/tury z czasem i indeksem akcji.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-349",
+      "title": "Replay: oś tur",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Turns tab populated with three boundaries; next-turn navigation seeks exact boundary71."
+    }
+  },
+  {
+    "id": "TB-350",
+    "title": "Replay: zakładki strzałów",
+    "acceptance": "Zwraca index,time,player,weapon,damage,kills z wykonanych akcji, spójnie z playback.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-350",
+      "title": "Replay: zakładki strzałów",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Two shot bookmarks populated and selecting row seeks exact action71."
+    }
+  },
+  {
+    "id": "TB-351",
+    "title": "Replay: statystyki graczy",
+    "acceptance": "Agreguje shots/hits/damage/kills z całego nagrania, nie tylko ostatnich32history.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-351",
+      "title": "Replay: statystyki graczy",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab displays player shots/hits/damage/kills from full analyzer result."
+    }
+  },
+  {
+    "id": "TB-352",
+    "title": "Replay: wykorzystanie broni",
+    "acceptance": "Agreguje liczbę strzałów i efekty według weapon_id, obsługuje dowolny walidowany katalog.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-352",
+      "title": "Replay: wykorzystanie broni",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab renders weapon usage with actual weapon display names."
+    }
+  },
+  {
+    "id": "TB-353",
+    "title": "Replay: dystans ruchu",
+    "acceptance": "Sumuje rzeczywiste przemieszczenie akcji move perplayer, wyklucza knockback od shots.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-353",
+      "title": "Replay: dystans ruchu",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab exposes actual movement distance from analyzer report."
+    }
+  },
+  {
+    "id": "TB-354",
+    "title": "Replay: czas aktywnych graczy",
+    "acceptance": "Rozdziela ticktime według aktywnego gracza, nie dubluje move.delta.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-354",
+      "title": "Replay: czas aktywnych graczy",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab exposes recorded active time separately from movement distance."
+    }
+  },
+  {
+    "id": "TB-355",
+    "title": "Replay: bilans destrukcji",
+    "acceptance": "Podsumowuje zmienione/zniszczone voxele i materiały na podstawie deltas.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-355",
+      "title": "Replay: bilans destrukcji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab exposes changed/destroyed terrain totals."
+    }
+  },
+  {
+    "id": "TB-356",
+    "title": "Replay: punkty eliminacji",
+    "acceptance": "Timeline wskazuje akcje i graczy zmieniających alive true->false, również surrender/tick.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-356",
+      "title": "Replay: punkty eliminacji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Statistics tab exposes elimination count from completed report."
+    }
+  },
+  {
+    "id": "TB-357",
+    "title": "Replay: porównanie nagrań",
+    "acceptance": "Porównuje końcowe hashe, wynik, długość, metryki bez sugerowania zgodności różnych initialstates.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ]
+  },
+  {
+    "id": "TB-358",
+    "title": "Replay: eksport analizy JSON",
+    "acceptance": "Walidowany wynik analizera zapisuje atomowo, z wersją i czytelnym błędem.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-358",
+      "title": "Replay: eksport analizy JSON",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Inspector JSON report export writes file through Analyzer.export_report."
+    }
+  },
+  {
+    "id": "TB-359",
+    "title": "Replay: eksport tabel CSV",
+    "acceptance": "CSV perplayer/shot, poprawne quote/commas/newlines i ochrona formuł nazw graczy.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-359",
+      "title": "Replay: eksport tabel CSV",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Players and shots CSV export controls each create requested file and release busy guard."
+    }
+  },
+  {
+    "id": "TB-360",
+    "title": "Replay: diagnostyka pierwszego błędu",
+    "acceptance": "Analyzer zwraca index/type/reason pierwszej niewykonalnej akcji, bez fałszywego success.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ]
+  },
+  {
+    "id": "TB-361",
+    "title": "Replay: budżet analizy",
+    "acceptance": "Begin/step(max_actions) inkrementalnie liczy statystyki, cap4096 na krok; progres/cancel.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-361",
+      "title": "Replay: budżet analizy",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "One update processes exactly32 actions; doubled Analyze cannot replace running job."
+    }
+  },
+  {
+    "id": "TB-362",
+    "title": "Replay: UI listy strzałów",
+    "acceptance": "Inspector pokazuje shotbookmarks i wybór przenosi do dokładnej granicy akcji.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-362",
+      "title": "Replay: UI listy strzałów",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Shots ItemList has two actual shots; selecting first rebuilds displayed playback at action71."
+    }
+  },
+  {
+    "id": "TB-363",
+    "title": "Replay: UI statystyk nagrania",
+    "acceptance": "Panel analizy pokazuje duration,turns,players,weapons,destruction bez zakrywania live HUD.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-363",
+      "title": "Replay: UI statystyk nagrania",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Completed statistics summary and tabs rendered natively at800x600/HUD125%."
+    }
+  },
+  {
+    "id": "TB-364",
+    "title": "Replay: UI postępu analizy",
+    "acceptance": "Cięższe nagrania analizowane porcjami z cancel; wyjście z inspectora usuwa zadanie.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-364",
+      "title": "Replay: UI postępu analizy",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Progress increments under32-action budget; Cancel marks job cancelled; new job completes."
+    }
+  },
+  {
+    "id": "TB-365",
+    "title": "Replay: keyboard previous shot",
+    "acceptance": "Przycisk Previous shot wyszukuje poprzednią granicę strzału; brak wcześniejszego nie mutuje.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-365",
+      "title": "Replay: keyboard previous shot",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Ctrl+Left handled by archive UI seeks previous shot at action73."
+    }
+  },
+  {
+    "id": "TB-366",
+    "title": "Replay: skok do następnej tury",
+    "acceptance": "Next turn przenosi po zmianie turn/generation, obsługuje EOF bez zapętlenia.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-366",
+      "title": "Replay: skok do następnej tury",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Next turn button/coordinator seeks exact first turn boundary71."
+    }
+  },
+  {
+    "id": "TB-367",
+    "title": "Replay: tryb loop",
+    "acceptance": "Jawna opcja po EOF przewija do początku, nie robi busyloop dla pustego nagrania.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-367",
+      "title": "Replay: tryb loop",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Manual seek EOF remains EOF; timed playback reaching EOF resets index0 and resumes only with Loop enabled."
+    }
+  },
+  {
+    "id": "TB-368",
+    "title": "Replay: przywracanie ostatniej pozycji",
+    "acceptance": "Per-entry cursor preference waliduje fingerprint/index, zmieniony wpis ignoruje stary cursor.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-368",
+      "title": "Replay: przywracanie ostatniej pozycji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Returning saves index15; reopening same fingerprint resumes15; mismatched fingerprint resolves0."
+    }
+  },
+  {
+    "id": "TB-369",
+    "title": "Replay: marker wybranej akcji",
+    "acceptance": "Czytelny opis tick/move/shot/surrender z nazwą gracza i broni zamiast pustego typu.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-369",
+      "title": "Replay: marker wybranej akcji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Action label displays player display name, weapon and power; native screenshot verifies Blue1/Bazooka."
+    }
+  },
+  {
+    "id": "TB-370",
+    "title": "Replay: nieudane seek widoczne",
+    "acceptance": "UI pokazuje przyczynę invalid/no next shot, zachowuje kursor i runner.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-370",
+      "title": "Replay: nieudane seek widoczne",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Invalid seek_index(-1) retains playback and shows visible seek failure."
+    }
+  },
+  {
+    "id": "TB-371",
+    "title": "Checkpoint: porównanie zapisów",
+    "acceptance": "Compare raportuje zgodność world/state/options/velocities jako osobne wyniki.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-371",
+      "title": "Checkpoint: porównanie zapisów",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Pinned checkpoint compared against duplicate shows equal terrain/state/options/velocities."
+    }
+  },
+  {
+    "id": "TB-372",
+    "title": "Biblioteka CLI: query i sort",
+    "acceptance": "CLI list options zgodne z core query/sort, odrzuca niewłaściwe wartości.",
+    "implementation": [
+      "game/scripts/server/utility_cli.gd",
+      "game/scripts/shared/config/game_config.gd",
+      "tools/launch.py"
+    ],
+    "verification": [
+      "tools/test_analysis_cli.py",
+      "tools/test_library_cli.py"
+    ]
+  },
+  {
+    "id": "TB-373",
+    "title": "Biblioteka CLI: preview ID",
+    "acceptance": "Wskazane --entry zwraca tylko zweryfikowany preview, błąd ID ->exit2.",
+    "implementation": [
+      "game/scripts/server/utility_cli.gd",
+      "game/scripts/shared/config/game_config.gd",
+      "tools/launch.py"
+    ],
+    "verification": [
+      "tools/test_analysis_cli.py",
+      "tools/test_library_cli.py"
+    ]
+  },
+  {
+    "id": "TB-374",
+    "title": "Biblioteka CLI: analiza replay",
+    "acceptance": "Tryb analyze-replay na jawnej ścieżce zwraca JSON bez uruchomienia klienta.",
+    "implementation": [
+      "game/scripts/server/utility_cli.gd",
+      "game/scripts/shared/config/game_config.gd",
+      "tools/launch.py"
+    ],
+    "verification": [
+      "tools/test_analysis_cli.py",
+      "tools/test_library_cli.py"
+    ]
+  },
+  {
+    "id": "TB-375",
+    "title": "Biblioteka CLI: porównanie replay",
+    "acceptance": "Tryb compare-replays przyjmuje dwie ścieżki i zwraca wersjonowany raport.",
+    "implementation": [
+      "game/scripts/server/utility_cli.gd",
+      "game/scripts/shared/config/game_config.gd",
+      "tools/launch.py"
+    ],
+    "verification": [
+      "tools/test_analysis_cli.py",
+      "tools/test_library_cli.py"
+    ]
+  },
+  {
+    "id": "TB-376",
+    "title": "Biblioteka CLI: raport stanu katalogu",
+    "acceptance": "--library-health zwraca rozmiary, malformed i duplikaty bez zapisu do biblioteki.",
+    "implementation": [
+      "game/scripts/server/utility_cli.gd",
+      "game/scripts/shared/config/game_config.gd",
+      "tools/launch.py"
+    ],
+    "verification": [
+      "tools/test_analysis_cli.py",
+      "tools/test_library_cli.py"
+    ]
+  },
+  {
+    "id": "TB-377",
+    "title": "Analiza: kontrakty legacy archive",
+    "acceptance": "Analiza ładuje v1/v2 przez istniejący codec, nie osłabia finalhash.",
+    "implementation": [
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_archive.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd"
+    ]
+  },
+  {
+    "id": "TB-378",
+    "title": "Biblioteka: unicode i długie nazwy w UI",
+    "acceptance": "Lista skraca wyłącznie display, tooltip/details zachowują całe48unicode znaków.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-378",
+      "title": "Biblioteka: unicode i długie nazwy w UI",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "48-character Unicode title searched, rendered and wrapped in native800x600/HUD125% library."
+    }
+  },
+  {
+    "id": "TB-379",
+    "title": "Biblioteka: blokada podwójnych operacji",
+    "acceptance": "UI disable podczas analyze/import/export, drugi click nie duplikuje zadania ani wpisów.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-379",
+      "title": "Biblioteka: blokada podwójnych operacji",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Busy import disables operations; repeated Analyze retains same job; hidden/remote/late-dialog callbacks safely cancel."
+    }
+  },
+  {
+    "id": "TB-380",
+    "title": "Biblioteka: komunikaty błędów dla użytkownika",
+    "acceptance": "Known errors mapped na konkretne wskazówki capacity/title/corrupt/path zamiast surowych code.",
+    "implementation": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd"
+    ],
+    "verification": [
+      "game/tests/unit/archive_analysis_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd",
+      "game/tests/unit/archive_review_tests.gd",
+      "game/tests/integration/archive_ui250_next_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-380",
+      "title": "Biblioteka: komunikaty błędów dla użytkownika",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Invalid-ID export displays actionable text; capacity/title messages specify100 entries and1–48 characters."
+    }
+  },
+  {
+    "id": "TB-381",
+    "title": "Analiza: izolacja live session",
+    "acceptance": "Integracyjny przebieg save/export/analyze/seek/return sprawdza hash+velocities i brak wpływu na onlineauthority.",
+    "implementation": [
+      "game/scripts/client/session/archive_workflows.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/debug/voxel_debug.gd"
+    ],
+    "verification": [
+      "game/tests/integration/archive_ui250_next_tests.gd",
+      "game/tests/integration/client_library_next_tests.gd",
+      "game/tests/unit/archive250_edges_tests.gd"
+    ],
+    "ui_evidence": {
+      "id": "TB-381",
+      "title": "Analiza: izolacja live session",
+      "component": "archive_ui",
+      "status": "verified",
+      "tests": "game/tests/integration/archive_ui250_next_tests.gd (native and headless); client_library_next_tests.gd (isolated legacy)",
+      "evidence": "Private analysis leaves live state hash unchanged; Return restores same live runner. Legacy client library also verifies velocity restoration."
+    }
+  }
+]

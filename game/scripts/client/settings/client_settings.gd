@@ -8,9 +8,29 @@ var fullscreen := false
 var hud_scale := 1.0
 var show_trajectory := true
 var high_contrast := false
-const FIELDS := ["volume", "muted", "sensitivity", "invert_y", "fullscreen", "hud_scale", "show_trajectory", "high_contrast"]
+var reduced_motion := false
+var team_palette := "standard"
+var crosshair_size := 16.0
+var crosshair_contrast := false
+var aim_mode := "hold"
+var charge_mode := "hold"
+var captions := false
+var effects_volume := 1.0
+var cue_volume := 1.0
+var hotseat_handoff := false
+var autosave := false
+const FIELDS := ["volume", "muted", "sensitivity", "invert_y", "fullscreen", "hud_scale", "show_trajectory", "high_contrast", "reduced_motion", "team_palette", "crosshair_size", "crosshair_contrast", "aim_mode", "charge_mode", "captions", "effects_volume", "cue_volume", "hotseat_handoff", "autosave"]
 const PATH := "user://preferences.cfg"
 func update(values: Dictionary) -> void:
+	for field in ["reduced_motion","crosshair_contrast","captions","hotseat_handoff","autosave"]:
+		if values.get(field) is bool: set(field,values[field])
+	for field in ["effects_volume","cue_volume","crosshair_size"]:
+		var value: Variant = values.get(field)
+		if (value is float or value is int) and is_finite(float(value)):
+			set(field,clampf(float(value),8 if field == "crosshair_size" else 0,32 if field == "crosshair_size" else 1))
+	for field in {"aim_mode":["hold","toggle"],"charge_mode":["hold","click"],"team_palette":["standard","accessible"]}:
+		var allowed: Array = {"aim_mode":["hold","toggle"],"charge_mode":["hold","click"],"team_palette":["standard","accessible"]}[field]
+		if values.get(field) in allowed: set(field,values[field])
 	for field in ["volume", "sensitivity"]:
 		var value: Variant = values.get(field)
 		if (value is float or value is int) and is_finite(float(value)):
@@ -49,3 +69,15 @@ func reset_defaults() -> void:
 	hud_scale = 1.0
 	show_trajectory = true
 	high_contrast = false
+
+	reduced_motion = false
+	team_palette = "standard"
+	crosshair_size = 16.0
+	crosshair_contrast = false
+	aim_mode = "hold"
+	charge_mode = "hold"
+	captions = false
+	effects_volume = 1.0
+	cue_volume = 1.0
+	hotseat_handoff = false
+	autosave = false

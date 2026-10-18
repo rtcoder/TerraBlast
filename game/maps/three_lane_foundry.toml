@@ -1,0 +1,119 @@
+id = "three_lane_foundry"
+name = "Three Lane Foundry"
+theme = "industrial"
+size = [64, 20, 48]
+
+[[spawns]]
+team = 1
+slot = 0
+position = [6, 4, 8]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 0
+position = [57, 4, 8]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 1
+position = [6, 4, 16]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 1
+position = [57, 4, 16]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 2
+position = [6, 4, 24]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 2
+position = [57, 4, 24]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 3
+position = [6, 4, 32]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 3
+position = [57, 4, 32]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 4
+position = [6, 4, 40]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 4
+position = [57, 4, 40]
+yaw = -90
+
+[[boxes]]
+position = [0, 0, 0]
+size = [64, 3, 48]
+material = "stone"
+
+[[boxes]]
+position = [0, 3, 0]
+size = [64, 1, 48]
+material = "dirt"
+
+[[boxes]]
+position = [18, 4, 15]
+size = [11, 5, 1]
+material = "metal"
+
+[[boxes]]
+position = [29, 4, 15]
+size = [6, 5, 1]
+material = "dirt"
+
+[[boxes]]
+position = [35, 4, 15]
+size = [11, 5, 1]
+material = "metal"
+
+[[boxes]]
+position = [18, 4, 31]
+size = [11, 5, 1]
+material = "metal"
+
+[[boxes]]
+position = [29, 4, 31]
+size = [6, 5, 1]
+material = "dirt"
+
+[[boxes]]
+position = [35, 4, 31]
+size = [11, 5, 1]
+material = "metal"
+
+[[boxes]]
+position = [24, 4, 7]
+size = [3, 3, 3]
+material = "stone"
+
+[[boxes]]
+position = [38, 4, 23]
+size = [3, 3, 3]
+material = "stone"
+
+[[boxes]]
+position = [24, 4, 39]
+size = [3, 3, 3]
+material = "stone"

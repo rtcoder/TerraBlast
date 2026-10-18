@@ -1,0 +1,6 @@
+**
+!build/
+!build/server/
+!build/server/**
+!server/
+!server/Dockerfile

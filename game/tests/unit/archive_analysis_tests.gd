@@ -1,0 +1,46 @@
+extends SceneTree
+var failures := 0
+func check(value: bool, label: String) -> void:
+	if not value:
+		failures += 1
+		push_error(label)
+func _initialize() -> void:
+	if not ResourceLoader.exists("res://scripts/core/replay/replay_analyzer.gd"):
+		check(false,"Replay analyzer exists")
+		quit(1)
+		return
+	var factory = load("res://scripts/core/rules/match_factory.gd")
+	var replay = load("res://scripts/core/replay/match_replay.gd")
+	var runner = factory.create_match(2)
+	var recorder = replay.new()
+	recorder.capture(runner)
+	recorder.tick(runner,0.1)
+	recorder.tick(runner,0.2)
+	var hash_before: String = replay.state_hash(runner)
+	var analyzer = load("res://scripts/core/replay/replay_analyzer.gd").new()
+	check(analyzer.begin(recorder),"Initialize analysis")
+	check(analyzer.step(1).ok and not analyzer.finished,"Bounded incremental analysis")
+	check(analyzer.step(100).ok and analyzer.finished,"Finish analysis")
+	var summary: Dictionary = analyzer.summary()
+	check(summary.ok and summary.action_count == 2 and is_equal_approx(summary.duration,0.3),"Duration from ticks")
+	check(summary.final_hash==hash_before and replay.state_hash(runner)==hash_before,"Private runner and exact hash")
+	check(summary.players[0].active_time>0,"Active time accounted")
+	var lib = load("res://scripts/core/storage/local_archive_library.gd").new(("/private/tmp" if OS.get_name()=="macOS" else "/tmp").path_join("tb250-archive-%d" % OS.get_process_id()))
+	var saved: Dictionary = lib.save_replay("Zulu Replay",recorder,runner)
+	check(saved.ok,"Save fixture")
+	check(lib.query({"query":"  zULu ","sort":"title","limit":1}).entries.size()==1,"Normalized search and pagination")
+	check(not lib.query({"sort":"unknown"}).ok,"Reject bad query")
+	var copied: Dictionary = lib.duplicate_entry(saved.id,"Alpha Replay")
+	check(copied.ok and copied.id!=saved.id,"Duplicate preserves payload under new ID")
+	check(lib.health_report().duplicates.size()==1,"Duplicate payload fingerprint")
+	var preview: Dictionary = lib.preview(saved.id)
+	check(preview.ok and preview.player_count==2,"Preview without replacing live runner")
+	var out: String = lib.base_path.path_join("export.json")
+	check(lib.export_entry(saved.id,out).ok,"Raw replay export")
+	check(load("res://scripts/core/replay/replay_archive.gd").load_verified(out).ok,"Exported raw replay verifies")
+	DirAccess.remove_absolute(out)
+	lib.delete_entry(saved.id)
+	lib.delete_entry(copied.id)
+	DirAccess.remove_absolute(lib.base_path)
+	print("archive_analysis: %d failures" % failures)
+	quit(1 if failures else 0)

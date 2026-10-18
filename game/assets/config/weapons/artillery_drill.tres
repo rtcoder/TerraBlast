@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponConfig" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/core/weapons/weapon_config.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = 3
+code = "artillery_drill"
+display_name = "Precision Drill"
+behavior = "drill"
+projectile_speed = 90.0
+gravity_scale = 0.15
+explosion_radius = 3
+terrain_damage = 150
+player_damage = 32
+player_damage_radius = 3.5
+max_uses_per_match = 3
+fuse_time = 2.5
+drill_voxels = 6

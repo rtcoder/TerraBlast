@@ -1,0 +1,94 @@
+id = "ring_island"
+name = "Ring Island"
+theme = "island"
+size = [64, 20, 48]
+
+[[spawns]]
+team = 1
+slot = 0
+position = [6, 4, 8]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 0
+position = [57, 4, 8]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 1
+position = [6, 4, 16]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 1
+position = [57, 4, 16]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 2
+position = [6, 4, 24]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 2
+position = [57, 4, 24]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 3
+position = [6, 4, 32]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 3
+position = [57, 4, 32]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 4
+position = [6, 4, 40]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 4
+position = [57, 4, 40]
+yaw = -90
+
+[[boxes]]
+position = [3, 0, 3]
+size = [58, 3, 42]
+material = "stone"
+
+[[boxes]]
+position = [3, 3, 3]
+size = [58, 1, 42]
+material = "dirt"
+
+[[boxes]]
+position = [17, 4, 12]
+size = [2, 3, 24]
+material = "dirt"
+
+[[boxes]]
+position = [45, 4, 12]
+size = [2, 3, 24]
+material = "dirt"
+
+[[boxes]]
+position = [25, 4, 10]
+size = [14, 3, 2]
+material = "dirt"
+
+[[boxes]]
+position = [25, 4, 36]
+size = [14, 3, 2]
+material = "dirt"

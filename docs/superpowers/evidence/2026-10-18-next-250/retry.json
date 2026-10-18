@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-18T20:23:13.898344+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "13a7621359f3713947a53358cb28713b99a1a641",
+  "optional_checks": {
+    "nakama": true,
+    "render": true
+  },
+  "tests": [
+    {
+      "name": "test_lobby_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.672,
+      "log_path": "/private/tmp/tb250-final-retry/attempt-bogqkkgc/test_lobby_cli.out"
+    }
+  ],
+  "finished_at": "2026-10-18T20:23:18.578549+00:00"
+}

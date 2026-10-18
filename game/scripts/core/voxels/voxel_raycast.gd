@@ -32,3 +32,36 @@ static func first_solid(world: RefCounted, origin: Vector3, direction: Vector3, 
 		cell[axis] += step[axis]
 		distances[axis] += increments[axis]
 	return MISS
+
+# Analysis-only exact segment traversal; existing projectile integration is unchanged.
+static func segment_hit(world: RefCounted, start: Vector3, end: Vector3, materials: Dictionary = {}) -> Dictionary:
+	var result := {"hit":false,"position":start,"voxel":MISS,"normal":Vector3.ZERO,"distance":0.0,"reason":"invalid"}
+	if not start.is_finite() or not end.is_finite(): return result
+	var length := start.distance_to(end)
+	if length > 4096: return result
+	var cell := Vector3i(floori(start.x),floori(start.y),floori(start.z))
+	var direction := (end-start).normalized()
+	var step := Vector3i(signf(direction.x),signf(direction.y),signf(direction.z))
+	var distances := Vector3(INF,INF,INF)
+	var increments := Vector3(INF,INF,INF)
+	for axis in range(3):
+		if direction[axis] != 0:
+			increments[axis] = absf(1.0/direction[axis])
+			distances[axis] = (float(cell[axis]+(1 if step[axis]>0 else 0))-start[axis])/direction[axis]
+	var traveled := 0.0
+	var normal := Vector3.ZERO
+	for iteration in range(16384):
+		if traveled > length: break
+		if is_solid(world,cell,materials):
+			return {"hit":true,"position":start+direction*traveled,"voxel":cell,"normal":normal,"distance":traveled,"reason":"hit"}
+		if length == 0: break
+		var axis := 0 if distances.x <= distances.y and distances.x <= distances.z else (1 if distances.y <= distances.z else 2)
+		traveled = distances[axis]
+		cell[axis] += step[axis]
+		distances[axis] += increments[axis]
+		normal = Vector3.ZERO
+		normal[axis] = -step[axis]
+	result.position = end
+	result.distance = length
+	result.reason = "miss"
+	return result

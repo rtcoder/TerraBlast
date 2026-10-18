@@ -50,8 +50,55 @@ python3 tools/launch.py server --map canyon_bridge --players 10 --lobby --smoke
 python3 tools/test_lobby_cli.py
 ```
 
-All modes accept the registered arenas `twin_forts`, `two_islands`, and `canyon_bridge`. The server defaults to 2 players; `--players 2..10` sets its required capacity. Startup prints the map, preset, actual player count, capacity and `lobby`/`auto` mode. Insufficient spawns fail before binding a port. `--lobby` is a server-only boolean flag with no value; duplicate flags and invalid contexts exit 2.
+All modes accept the nine registered arenas listed below. The server defaults to 2 players; `--players 2..10` sets its required capacity. Startup prints the map, preset, actual player count, capacity and `lobby`/`auto` mode. Insufficient spawns fail before binding a port. `--lobby` is a server-only boolean flag with no value; duplicate flags and invalid contexts exit 2.
 
 F2 selects the host and port. F7 shows the match roster, edits your name before start and toggles Ready. Lobby mode waits for the full connected and ready roster. Any disconnect pauses gameplay until full capacity reconnects; F4 retries a reserved slot. After match end the full roster must vote for rematch, then select Ready again. Without `--lobby`, a full roster starts automatically. The default 2-player auto mode remains compatible.
 
 These are manually allocated Godot match servers. Nakama authentication, lobbies and matchmaking remain separate metagame services; no automatic server provisioning is implemented.
+
+## Selecting and resuming tests
+
+```sh
+python3 tools/run_tests.py --list --include '*250*'
+python3 tools/run_tests.py --include '*tests' --exclude '*network*' --fail-fast --log-dir /private/tmp/tb-tests --junit /private/tmp/tb-tests/junit.xml
+python3 tools/run_tests.py --rerun-failed /private/tmp/tb-tests/report.json --log-dir /private/tmp/tb-retry --jsonl
+python3 tools/doctor.py --templates --output /private/tmp/tb-doctor.json
+```
+
+`--include` and `--exclude` accept repeated case-sensitive globs. An empty selection is an error. Retry reports supply trusted test names only, never executable commands. Timeouts must be finite and within `(0,3600]` seconds. Each invocation retains a separate attempt directory; JSON is atomically updated after each case, and interruption retains partial results. JSONL emits one result per case. Optional Nakama/render checks are identified explicitly in the report.
+
+## Local release artifacts
+
+```sh
+python3 tools/launch.py release plan --platform linux --platform server
+python3 tools/release.py build --platform server --timeout 300
+python3 tools/release.py verify build/server
+python3 tools/release.py package build/server build/TerraBlast-server.zip
+# The context must be the repository root, not server/:
+docker build -f server/Dockerfile -t terrablast-server .
+docker run --rm -p 19170:19170/udp terrablast-server --port 19170
+```
+
+Build requires a Godot 4.6.2-or-newer patch in the 4.6 release line and matching installed export templates. Missing templates fail preflight; nothing is downloaded automatically. `plan` needs no engine. `build` invokes the selected export presets with bounded execution and per-platform logs; a non-empty binary is required before a manifest is written. Manifests cover all outputs, including sidecar PCK files, with sizes and SHA256 hashes. `verify` rejects missing, changed, unlisted or linked files. `package` creates a deterministic ZIP and updates `SHA256SUMS`. Existing artifacts require explicit `--replace`; build replacement is limited to a previously verified manifest. Use canonical paths without symlink components (on macOS, `/private/tmp` rather than `/tmp`).
+
+The container runs as UID10001 with writable user-data under `/home/terrablast`; only prepared server outputs enter its build context. Runtime arguments follow the existing entrypoint. Platform exports and Docker execution require the corresponding external tools/templates; offline tests use fake exporters to verify failure handling and package integrity.
+
+## Replay analysis and library inspection
+
+```sh
+python3 tools/launch.py audit-maps
+python3 tools/launch.py local-dev --map ballistics_range --dry-run
+python3 tools/launch.py analyze-replay --replay /private/tmp/replay.json --output /private/tmp/analysis.json
+python3 tools/launch.py analyze-replay --replay /private/tmp/replay.json --analysis-format shots --output /private/tmp/shots.csv
+python3 tools/launch.py compare-replays --replay /private/tmp/first.json --replay-other /private/tmp/second.json
+python3 tools/launch.py library --query 'practice' --sort title
+python3 tools/launch.py library --library-health
+```
+
+Analysis verifies the archive and reconstructs a private runner. It reports players, weapons, shot bookmarks, turn transitions, terrain changes and eliminations; simulation time comes from recorded ticks. `--analysis-format players|shots` exports CSV, including formula-safe quoted text. Comparison reports initial/final hashes and outcome differences. An output cannot replace either input archive. Library inspection supports `--entry ID`, query/sort and storage diagnostics without opening a gameplay scene.
+
+The registry now contains nine arenas: `twin_forts`, `two_islands`, `canyon_bridge`, `ballistics_range`, `terraced_quarry`, `split_pass`, `bunker_court`, `ring_island`, `three_lane_foundry`. Audit output includes supported player counts.
+
+## Bounded server operation
+
+Server-only flags: `--reservation-seconds 1..300`, `--hello-seconds 1..30`, `--packet-rate 60..1000`, `--byte-rate 8192..1048576`, `--snapshot-chunks 1..64`, `--snapshot-bytes 65536..8388608`, `--receive-bytes 8192..4194304`. `--shutdown-after SECONDS` (0.1..3600) requests graceful shutdown. `--server-report /absolute/path.json` atomically records diagnostics at shutdown; its existing parent must be outside the project and contain no symlink components. Reports omit credentials and tokens.

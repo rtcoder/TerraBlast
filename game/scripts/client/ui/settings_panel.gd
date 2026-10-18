@@ -1,4 +1,5 @@
 extends PanelContainer
+signal sound_preview_requested
 signal closed
 signal preferences_changed
 var widgets := {}
@@ -52,6 +53,17 @@ func setup(settings: RefCounted, input_bindings: RefCounted = null) -> void:
 	visibility_changed.connect(func():
 		if not visible:
 			cancel_capture())
+	for field in ["reduced_motion","crosshair_contrast","captions","hotseat_handoff","autosave"]:
+		_toggle(box,field.replace("_"," ").capitalize(),field)
+	for data in [["Aim mode","aim_mode",["hold","toggle"]],["Charge mode","charge_mode",["hold","click"]],["Team palette","team_palette",["standard","accessible"]]]:
+		_choice(box,data[0],data[1],data[2])
+	_slider(box,"Crosshair size","crosshair_size",8,32,1)
+	_slider(box,"Effects volume","effects_volume",0,1,0.05)
+	_slider(box,"Cue volume","cue_volume",0,1,0.05)
+	var preview := Button.new()
+	preview.text = "Preview sound cue"
+	preview.pressed.connect(func(): sound_preview_requested.emit())
+	box.add_child(preview)
 	var reset := Button.new()
 	reset.text = "Restore defaults"
 	reset.pressed.connect(reset_preferences)
@@ -101,6 +113,8 @@ func reset_preferences(persist: bool = true) -> void:
 		var widget: Control = widgets[field]
 		if widget is Range:
 			widget.set_value_no_signal(preferences.get(field))
+		elif widget is OptionButton:
+			widget.select(widget.get_meta("values").find(preferences.get(field)))
 		elif widget is BaseButton:
 			widget.set_pressed_no_signal(preferences.get(field))
 	preferences.apply()
@@ -155,3 +169,19 @@ func _binding_save() -> void:
 func _notification(what: int) -> void:
 	if what == MainLoop.NOTIFICATION_APPLICATION_FOCUS_OUT:
 		cancel_capture()
+
+func _choice(box: VBoxContainer, title: String, field: String, values: Array) -> void:
+	var label := Label.new()
+	label.text = title
+	box.add_child(label)
+	var choice := OptionButton.new()
+	for value in values: choice.add_item(value)
+	choice.select(values.find(preferences.get(field)))
+	choice.set_meta("values",values)
+	choice.item_selected.connect(func(index): _change(field,values[index]))
+	widgets[field] = choice
+	box.add_child(choice)
+
+func _process(_delta: float) -> void:
+	if get_child_count() > 0 and get_child(0) is ScrollContainer:
+		preload("res://scripts/client/ui/panel_layout.gd").fit(self,get_child(0),get_viewport_rect().size)

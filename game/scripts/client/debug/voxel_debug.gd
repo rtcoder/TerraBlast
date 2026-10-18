@@ -14,6 +14,8 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var archive_ui: RefCounted
+var workflows: RefCounted
 var bindings: RefCounted
 var library: RefCounted
 var library_panel: PanelContainer
@@ -105,7 +107,13 @@ func _ready() -> void:
 	_update_hud()
 	backend_menu = load("res://scripts/client/backend/backend_menu.gd").new()
 	add_child(backend_menu)
+	backend_menu.retry_requested.connect(func():
+		if remote_mode and network != null: network.retry_connection())
 	backend_menu.menu_visibility_changed.connect(func(_open: bool): _refresh_menu_state())
+	workflows = preload("res://scripts/client/session/client_workflows.gd").new(self)
+	workflows.setup()
+	archive_ui = preload("res://scripts/client/session/archive_workflows.gd").new(self)
+	archive_ui.setup()
 	_apply_client_preferences()
 	backend_menu.connect_game.connect(func(host: String):
 		_begin_network_connection(host, backend_menu.selected_port())
@@ -113,10 +121,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_advance_replay(delta)
-	if not remote_mode and not projectile_in_flight and not local_paused and session.playback == null and runner.state.status == "playing":
+	if archive_ui != null: archive_ui.update(delta)
+	if not remote_mode and not projectile_in_flight and not local_paused and session.playback == null and runner.state.status == "playing" and (workflows == null or not workflows.training.active):
 		var events: Array = session.recorder.tick(runner, delta)
 		if not events.is_empty():
 			effects.play_events(events)
+			if workflows != null: workflows.consume(events)
 			_cancel_aim()
 			_face_camera_toward_enemy()
 	session.update_bot()
@@ -137,14 +147,19 @@ func _physics_process(delta: float) -> void:
 		_update_camera_transition(delta)
 		_update_camera_transform()
 	_update_trajectory_preview()
+	if workflows != null: workflows.update(delta)
 
 func _input(event: InputEvent) -> void:
+	if archive_ui != null and archive_ui.handle_input(event):
+		get_viewport().set_input_as_handled()
+		return
 	preload("res://scripts/client/input/desktop_input.gd").handle(self, event)
 
 func _start_charging_shot() -> void:
 	if not _can_control() or not is_aiming or projectile_in_flight or turn_controller.has_winner():
 		return
 	is_charging_shot = true
+	if workflows != null: workflows.training.observe_intent("charge")
 	shot_charge = 0.0
 	_update_power_bar()
 
@@ -202,7 +217,9 @@ func _fire_at_mouse(screen_position: Vector2, shot_power: float = 1.0) -> void:
 		network.send_command(command)
 		_cancel_aim()
 		return
+	if workflows != null and not workflows.before_shot(command): return
 	var result: Dictionary = session.recorder.submit(runner, command)
+	if workflows != null: workflows.after_shot(command,result)
 	if not result.ok:
 		return
 	_play_result(result)
@@ -233,6 +250,7 @@ func _play_result(result: Dictionary) -> void:
 
 func _finish_playback() -> void:
 	effects.play_events(pending_result.get("events", []))
+	if workflows != null: workflows.consume(pending_result.get("events",[]))
 	voxel_world.refresh_deltas(pending_result.get("deltas", []))
 	pending_result = {}
 	if is_instance_valid(active_projectile):
@@ -268,7 +286,7 @@ func _bind_players() -> void:
 	for player in players:
 		player_velocities[player.player_id] = Vector3.ZERO
 		player_walk_phases[player.player_id] = 0.0
-		var color := Color(0.15, 0.36, 1.0) if player.team_id == 1 else Color(1.0, 0.18, 0.12)
+		var color := preload("res://scripts/client/ui/team_visual_scheme.gd").color(player.team_id,preferences.team_palette)
 		var marker := _create_player_marker(color)
 		add_child(marker)
 		player_nodes[player.player_id] = marker
@@ -365,8 +383,10 @@ func _update_player_nodes() -> void:
 		marker.position = player.position
 		marker.visible = player.is_alive
 		var health_label: Label3D = marker.get_node("HealthLabel")
-		health_label.text = "%s  HP %d%s" % [player.display_name, player.health, " •" if player == active_player else ""]
-		health_label.modulate = Color(0.5,0.75,1) if player.team_id == 1 else Color(1,0.55,0.45)
+		health_label.text = "[%s] %s  HP %d%s" % [preload("res://scripts/client/ui/team_visual_scheme.gd").label(player.team_id), player.display_name, player.health, " •" if player == active_player else ""]
+		health_label.modulate = preload("res://scripts/client/ui/team_visual_scheme.gd").color(player.team_id,preferences.team_palette)
+		marker.get_node("Body").material_override.albedo_color = health_label.modulate
+		marker.get_node("LeftArm").material_override.albedo_color = health_label.modulate.darkened(0.22)
 		if active_player != null and player.player_id == active_player.player_id:
 			marker.rotation.y = orbit_yaw
 		else:
@@ -458,6 +478,8 @@ func _update_active_player_movement(delta: float) -> void:
 
 	var velocity: Vector3 = session.recorder.move(runner, player_velocities.get(active_player.player_id, Vector3.ZERO), _get_move_input(), orbit_yaw, false, delta)
 	player_velocities[active_player.player_id] = velocity
+	if workflows != null:
+		workflows.training.observe_motion(active_player.position,velocity,PlayerMotion.blocked(runner.world,active_player.position+Vector3.DOWN*0.05,runner.materials),false)
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	if horizontal_speed > 0.05:
 		var phase: float = player_walk_phases.get(active_player.player_id, 0.0)
@@ -482,6 +504,7 @@ func _try_jump_active_player() -> void:
 
 	var velocity: Vector3 = player_velocities.get(active_player.player_id, Vector3.ZERO)
 	velocity.y = jump_speed
+	if workflows != null: workflows.training.observe_motion(active_player.position,velocity,true,true)
 	player_velocities[active_player.player_id] = velocity
 
 func _get_move_input() -> Vector2:
@@ -544,6 +567,10 @@ func _update_camera_transition(delta: float) -> void:
 
 	var target: Vector3 = active_player.position + Vector3.UP * camera_height
 	_ensure_camera_transition_initialized(target)
+	if preferences.reduced_motion:
+		camera_focus_position = target
+		camera_visual_yaw = orbit_yaw
+		return
 	var focus_weight := clampf(1.0 - exp(-camera_focus_transition_speed * delta), 0.0, 1.0)
 	var yaw_weight := clampf(1.0 - exp(-camera_yaw_transition_speed * delta), 0.0, 1.0)
 	camera_focus_position = camera_focus_position.lerp(target, focus_weight)
@@ -557,6 +584,7 @@ func _ensure_camera_transition_initialized(target: Vector3) -> void:
 	camera_transition_initialized = true
 
 func _cancel_aim() -> void:
+	if workflows != null and is_charging_shot: workflows.training.observe_intent("cancel")
 	is_aiming = false
 	is_charging_shot = false
 	shot_charge = 0.0
@@ -590,9 +618,13 @@ func _setup_trajectory_preview() -> void:
 func _update_trajectory_preview() -> void:
 	aim_indicator.visible = _can_control() and is_aiming and not projectile_in_flight
 	trajectory_preview.visible = aim_indicator.visible and preferences.show_trajectory
+	if workflows != null and workflows.training.active:
+		trajectory_preview.visible = aim_indicator.visible and workflows.training.assistance != "none"
 	if not aim_indicator.visible:
 		return
 	var points := _get_trajectory_points()
+	if workflows != null and workflows.training.active and workflows.training.assistance == "partial":
+		points = points.slice(0,maxi(2,points.size()/3))
 	if points.size() < 2:
 		trajectory_preview.hide()
 		return
@@ -616,6 +648,7 @@ func _update_trajectory_preview() -> void:
 
 
 func _can_control() -> bool:
+	if workflows != null and workflows.blocked(): return false
 	if menu_open or local_paused or runner.state.status != "playing" or session.playback != null or session.is_bot_turn():
 		return false
 	if not remote_mode:
@@ -631,6 +664,8 @@ func _connect_network(host: String, port: int = -1) -> void:
 		if network != source or not remote_mode:
 			return
 		network_status = message
+		if backend_menu != null: backend_menu.present_game_connection(source.status_snapshot())
+		if lobby_panel != null: lobby_panel.present_connection(source.status_snapshot())
 		if lobby_panel != null:
 			lobby_panel.feedback.text = message
 			_present_lobby()
@@ -638,7 +673,21 @@ func _connect_network(host: String, port: int = -1) -> void:
 	source.synchronized.connect(func():
 		if network == source and remote_mode:
 			_sync_network()
+			if backend_menu != null and not source.get_meta("recorded_connection",false):
+				source.set_meta("recorded_connection",true)
+				backend_menu.record_connection_success(source.last_host,source.last_port)
 	)
+	if source.has_signal("metrics_changed"):
+		source.metrics_changed.connect(func():
+			if network == source and remote_mode:
+				if backend_menu != null: backend_menu.present_game_connection(source.status_snapshot())
+				if lobby_panel != null: lobby_panel.present_connection(source.status_snapshot()))
+	source.rejected.connect(func(reason):
+		if network == source and remote_mode and lobby_panel != null: lobby_panel.operation_rejected(reason))
+	source.snapshot_progress_changed.connect(func(_completed,_total):
+		if network == source and remote_mode:
+			if backend_menu != null: backend_menu.present_game_connection(source.status_snapshot())
+			if lobby_panel != null: lobby_panel.present_connection(source.status_snapshot()))
 	source.lobby_changed.connect(func():
 		if network == source and remote_mode:
 			_on_lobby_changed()
@@ -712,6 +761,8 @@ func _setup_client_panels() -> void:
 	lobby_panel = preload("res://scripts/client/ui/lobby_panel.gd").new()
 	$Hud.add_child(lobby_panel)
 	lobby_panel.close_requested.connect(_close_overlays)
+	lobby_panel.retry_requested.connect(func():
+		if remote_mode and network != null: network.retry_connection())
 	lobby_panel.disconnect_requested.connect(_disconnect_to_local)
 	lobby_panel.ready_requested.connect(func(value: bool):
 		if remote_mode and network != null: network.set_ready(value)
@@ -731,12 +782,13 @@ func _setup_client_panels() -> void:
 	$Hud.add_child(match_panels)
 	match_panels.resume_requested.connect(_close_overlays)
 	match_panels.close_requested.connect(_close_overlays)
-	match_panels.setup_requested.connect(func(map_name: String, count: int, preset: String):
-		if not start_local_match(map_name, count, preset, match_panels.mode_select.get_item_text(match_panels.mode_select.selected), match_panels.difficulty_select.get_item_text(match_panels.difficulty_select.selected)):
-			match_panels.setup_error.text = "Cannot start this match"
+	match_panels.setup_requested.connect(func(_map_name: String, _count: int, _preset: String):
+		if workflows != null: workflows.request("new_match",match_panels.current_configuration())
 	)
-	match_panels.restart_requested.connect(restart_match)
-	match_panels.surrender_requested.connect(_surrender)
+	match_panels.restart_requested.connect(request_restart)
+	match_panels.surrender_requested.connect(func():
+		if remote_mode: _surrender()
+		elif workflows != null: workflows.request("surrender"))
 	match_panels.save_requested.connect(func(): _save_session())
 	match_panels.load_requested.connect(func(): _load_session())
 	match_panels.export_requested.connect(func(): _save_replay())
@@ -837,8 +889,9 @@ func _sync_rule_controls() -> void:
 	max_charge_time = rules.max_charge_time
 
 func _refresh_menu_state() -> void:
-	menu_open = library_panel.visible or lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
+	menu_open = (workflows != null and workflows.overlays_open()) or library_panel.visible or lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
 	local_paused = menu_open and not remote_mode
+	if workflows != null: workflows.refresh_visibility()
 	if menu_open:
 		turn_banner.hide()
 	if is_instance_valid(active_projectile):
@@ -848,11 +901,13 @@ func _refresh_menu_state() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if menu_open else Input.MOUSE_MODE_CAPTURED)
 
 func _close_overlays() -> void:
+	if workflows != null: workflows.close_overlays()
 	if session.playback != null: session.playback.set_playing(false)
 	library_panel.hide()
 	lobby_panel.hide()
 	settings_panel.hide()
 	match_panels.hide_panels()
+	if workflows != null and workflows.handoff: match_panels.handoff_panel.show()
 	if backend_menu != null:
 		backend_menu.toggle(false)
 	_refresh_menu_state()
@@ -882,7 +937,9 @@ func _toggle_help() -> void:
 	match_panels.help_panel.visible = open
 	_refresh_menu_state()
 
-func start_local_match(map_name: String, count: int, preset: String, mode := "hotseat", difficulty := "normal") -> bool:
+func start_local_match(map_name: String, count: int, preset: String, mode := "hotseat", difficulty := "normal", human_team: int = 1) -> bool:
+	if human_team not in [1,2]: return false
+	if workflows != null and workflows.training.active: return false
 	if mode not in ["hotseat", "solo"] or difficulty not in ["easy", "normal"] or session.playback != null:
 		return false
 	if remote_mode or not GameConfig.MAPS.has(map_name) or count < 2 or count > 10 or preset not in ["classic", "quick", "training"]:
@@ -898,7 +955,7 @@ func start_local_match(map_name: String, count: int, preset: String, mode := "ho
 	end_presented_key = ""
 	effects.clear()
 	runner = replacement
-	session.options = {"mode": mode, "difficulty": difficulty, "human_team": 1}
+	session.options = {"mode": mode, "difficulty": difficulty, "human_team": human_team}
 	session.new_recording()
 	rules = runner.rules
 	_sync_rule_controls()
@@ -913,6 +970,7 @@ func start_local_match(map_name: String, count: int, preset: String, mode := "ho
 	_close_overlays()
 	last_shot_label.text = ""
 	_update_hud()
+	if workflows != null: workflows.on_started()
 	return true
 
 func _surrender() -> void:
@@ -972,6 +1030,7 @@ func _update_match_panels(delta: float) -> void:
 			match_panels.restart_button.disabled = remote_mode and (network == null or network.player_id != "blue_1")
 
 func _apply_client_preferences() -> void:
+	if effects != null: effects.configure_preferences(preferences)
 	var text_size := roundi(20 * preferences.hud_scale)
 	hud_label.add_theme_font_size_override("font_size", text_size)
 	scoreboard.add_theme_font_size_override("font_size", roundi(15 * preferences.hud_scale))
@@ -980,6 +1039,9 @@ func _apply_client_preferences() -> void:
 	match_panels.update_bindings(bindings)
 	for panel in [settings_panel, match_panels, lobby_panel, library_panel]:
 		_scale_panel(panel, roundi(16 * preferences.hud_scale))
+	if workflows != null:
+		_scale_panel(workflows.training_panel,roundi(16 * preferences.hud_scale))
+		_scale_panel(workflows.confirmation,roundi(16 * preferences.hud_scale))
 	var contrast: bool = preferences.high_contrast
 	if not $Hud/Crosshair.has_node("OutlineHorizontal"):
 		for data in [["OutlineHorizontal", Vector2(2,15), Vector2(32,6)], ["OutlineVertical", Vector2(15,2), Vector2(6,32)]]:
@@ -1061,6 +1123,7 @@ func _inspect_recording(recorder: RefCounted) -> bool:
 	match_panels.replay_speed.select(2)
 	_refresh_menu_state()
 	_update_replay_status()
+	if archive_ui != null: archive_ui.on_opened()
 	return true
 
 func _step_replay() -> void:
@@ -1096,6 +1159,7 @@ func _update_replay_status() -> void:
 func _return_from_replay() -> void:
 	if session.playback == null:
 		return
+	if archive_ui != null: archive_ui.closing_replay()
 	var live: RefCounted = session.live_runner
 	session.playback = null
 	session.live_runner = null
@@ -1129,14 +1193,13 @@ func _replace_local_runner(replacement: RefCounted) -> void:
 	_update_scoreboard()
 
 func _begin_network_connection(host: String, port: int) -> void:
-	if session.playback != null or port < 1 or port > 65535 or host.strip_edges().is_empty():
+	if (workflows != null and workflows.training.active) or session.playback != null or port < 1 or port > 65535 or host.strip_edges().is_empty():
 		return
 	var previous = network
 	network = null
 	if is_instance_valid(previous):
 		previous.set_process(false)
-		previous.close()
-		previous.resume_token = ""
+		previous.leave()
 		previous.queue_free()
 	if is_instance_valid(active_projectile):
 		active_projectile.queue_free()
@@ -1157,8 +1220,7 @@ func _disconnect_to_local() -> void:
 	remote_mode = false
 	if is_instance_valid(previous):
 		previous.set_process(false)
-		previous.close()
-		previous.resume_token = ""
+		previous.leave()
 		previous.queue_free()
 	network_status = ""
 	lobby_panel.feedback.text = ""
@@ -1224,7 +1286,7 @@ func _toggle_lobby() -> void:
 	_refresh_menu_state()
 
 func _toggle_library() -> void:
-	if remote_mode or session.playback != null: return
+	if remote_mode or session.playback != null or (workflows != null and workflows.training.active): return
 	var opening := not library_panel.visible
 	_close_overlays()
 	library_panel.visible = opening
@@ -1232,13 +1294,17 @@ func _toggle_library() -> void:
 	_refresh_menu_state()
 
 func _refresh_library() -> void:
+	if archive_ui != null:
+		archive_ui.refresh()
+		return
 	library_panel.present(library.list_entries(library_panel.selected_kind()))
 
 func _library_feedback(result: Dictionary, message: String) -> void:
 	if result.ok: _refresh_library()
-	library_panel.status.text = message if result.ok else str(result.get("reason","Operation failed"))
+	library_panel.status.text = message if result.ok else library_panel.error_message(str(result.get("reason","Operation failed")))
 
 func _library_save(kind: String, title: String) -> void:
+	if archive_ui != null and archive_ui.busy: return
 	if not session.can_archive():
 		library_panel.status.text = "Available locally between shots."
 		return
@@ -1246,12 +1312,16 @@ func _library_save(kind: String, title: String) -> void:
 	_library_feedback(result,"Saved: " + title)
 
 func _library_load(id: String) -> bool:
+	if archive_ui != null and archive_ui.busy: return false
 	if not session.can_archive(): return false
 	var result: Dictionary = library.load_entry(id)
 	if not result.ok:
 		_library_feedback(result,"")
 		return false
-	if result.kind == "replay": return _inspect_recording(result.recorder)
+	if result.kind == "replay":
+		var opened := _inspect_recording(result.recorder)
+		if opened and archive_ui != null: archive_ui.opened_entry(id)
+		return opened
 	session.options = result.options
 	_replace_local_runner(result.runner)
 	player_velocities = result.velocities
@@ -1260,14 +1330,17 @@ func _library_load(id: String) -> bool:
 	return true
 
 func _library_rename(id: String, title: String) -> void:
+	if archive_ui != null and archive_ui.busy: return
 	if not session.can_archive(): return
 	_library_feedback(library.rename_entry(id,title),"Renamed: " + title)
 
 func _library_delete(id: String) -> void:
+	if archive_ui != null and archive_ui.busy: return
 	if not session.can_archive(): return
 	_library_feedback(library.delete_entry(id),"Entry deleted.")
 
 func _library_import(kind: String, title: String) -> void:
+	if archive_ui != null and archive_ui.busy: return
 	if not session.can_archive(): return
 	var path := "user://last_session.json" if kind == "session" else "user://last_replay.json"
 	_library_feedback(library.import_file(kind,path,title),"Imported: " + title)
@@ -1289,15 +1362,19 @@ func _advance_replay(delta: float) -> void:
 		return
 	for action in result.results:
 		if action.has("result"): voxel_world.refresh_deltas(action.result.get("deltas",[]))
+	if archive_ui != null: archive_ui.on_playback_advanced(result.changed)
 	if result.changed:
 		_update_player_nodes()
 		_update_scoreboard()
 	_update_replay_status()
 
 func _seek_replay_time(value: float) -> void:
-	if session.playback != null and session.playback.seek_time(value):
+	if session.playback == null: return
+	if session.playback.seek_time(value):
 		_replace_local_runner(session.playback.runner)
 		_update_replay_status()
+	else:
+		match_panels.replay_status.text = "Seek failed: " + session.playback.last_error
 
 func _next_replay_shot() -> void:
 	if session.playback != null and session.playback.next_shot():
@@ -1310,3 +1387,28 @@ func _scrub_replay(direction: int) -> void:
 	if session.playback.seek(target):
 		_replace_local_runner(session.playback.runner)
 		_update_replay_status()
+
+func request_restart() -> void:
+	if workflows != null: workflows.request("restart")
+	else: restart_match()
+
+func _toggle_aim_intent(pressed: bool) -> void:
+	if preferences.aim_mode == "toggle":
+		if not pressed: return
+		if is_aiming:
+			_cancel_aim()
+			return
+	is_aiming = pressed and _can_control() and not projectile_in_flight and not turn_controller.has_winner()
+	if is_aiming:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		mouse_look_enabled = true
+		if workflows != null: workflows.training.observe_intent("aim")
+	else: _cancel_aim()
+
+func _charge_click_intent(pressed: bool) -> void:
+	if preferences.charge_mode == "click":
+		if pressed:
+			if is_charging_shot: _release_charged_shot()
+			else: _start_charging_shot()
+	elif pressed: _start_charging_shot()
+	else: _release_charged_shot()

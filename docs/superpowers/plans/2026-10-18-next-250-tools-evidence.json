@@ -1,0 +1,352 @@
+[
+  {
+    "id": "TB-282",
+    "title": "Runner: ścisły timeout",
+    "implementation": "tools/run_tests.py: valid_timeout/select_cases/failed_names/main",
+    "evidence": "tools/test_delivery.py: test_timeout_validation, test_selection, test_rerun_validates_names, test_cli_validation_without_engine",
+    "limitations": ""
+  },
+  {
+    "id": "TB-283",
+    "title": "Runner: jawny wybór testów",
+    "implementation": "tools/run_tests.py: valid_timeout/select_cases/failed_names/main",
+    "evidence": "tools/test_delivery.py: test_timeout_validation, test_selection, test_rerun_validates_names, test_cli_validation_without_engine",
+    "limitations": ""
+  },
+  {
+    "id": "TB-284",
+    "title": "Runner: wykluczanie testów",
+    "implementation": "tools/run_tests.py: valid_timeout/select_cases/failed_names/main",
+    "evidence": "tools/test_delivery.py: test_timeout_validation, test_selection, test_rerun_validates_names, test_cli_validation_without_engine",
+    "limitations": ""
+  },
+  {
+    "id": "TB-285",
+    "title": "Runner: listowanie planu",
+    "implementation": "tools/run_tests.py: valid_timeout/select_cases/failed_names/main",
+    "evidence": "tools/test_delivery.py: test_timeout_validation, test_selection, test_rerun_validates_names, test_cli_validation_without_engine",
+    "limitations": ""
+  },
+  {
+    "id": "TB-286",
+    "title": "Runner: ponowienie nieudanych kontroli",
+    "implementation": "tools/run_tests.py: valid_timeout/select_cases/failed_names/main",
+    "evidence": "tools/test_delivery.py: test_timeout_validation, test_selection, test_rerun_validates_names, test_cli_validation_without_engine",
+    "limitations": ""
+  },
+  {
+    "id": "TB-287",
+    "title": "Runner: fail fast",
+    "implementation": "tools/run_tests.py: main/write_reports",
+    "evidence": "tools/test_release_review.py: test_fail_fast_preserves_skipped_and_jsonl, test_incremental_report_survives_interrupt",
+    "limitations": ""
+  },
+  {
+    "id": "TB-288",
+    "title": "Runner: raport inkrementalny",
+    "implementation": "tools/run_tests.py: main/write_reports",
+    "evidence": "tools/test_release_review.py: test_fail_fast_preserves_skipped_and_jsonl, test_incremental_report_survives_interrupt",
+    "limitations": ""
+  },
+  {
+    "id": "TB-289",
+    "title": "Runner: identyfikacja przebiegu",
+    "implementation": "tools/run_tests.py: main/write_reports/junit",
+    "evidence": "tools/test_delivery.py: test_report_and_junit; test_release_review.py: invoke",
+    "limitations": ""
+  },
+  {
+    "id": "TB-290",
+    "title": "Runner: unikalne katalogi prób",
+    "implementation": "tools/run_tests.py: main/write_reports/junit",
+    "evidence": "tools/test_delivery.py: test_report_and_junit; test_release_review.py: invoke",
+    "limitations": ""
+  },
+  {
+    "id": "TB-291",
+    "title": "Runner: raport JUnit",
+    "implementation": "tools/run_tests.py: main/write_reports/junit",
+    "evidence": "tools/test_delivery.py: test_report_and_junit; test_release_review.py: invoke",
+    "limitations": ""
+  },
+  {
+    "id": "TB-292",
+    "title": "Runner: JSONL postępu",
+    "implementation": "tools/run_tests.py: main --jsonl",
+    "evidence": "tools/test_release_review.py: test_fail_fast_preserves_skipped_and_jsonl",
+    "limitations": ""
+  },
+  {
+    "id": "TB-293",
+    "title": "Runner: summary trybu headless",
+    "implementation": "tools/devtools.py: run_case/bounded_text",
+    "evidence": "tools/test_delivery.py: test_large_finished_log_and_signal; tools/test_devtools.py",
+    "limitations": ""
+  },
+  {
+    "id": "TB-294",
+    "title": "Procesy: ograniczenie odczytu logu",
+    "implementation": "tools/devtools.py: run_case/bounded_text",
+    "evidence": "tools/test_delivery.py: test_large_finished_log_and_signal; tools/test_devtools.py",
+    "limitations": ""
+  },
+  {
+    "id": "TB-295",
+    "title": "Procesy: diagnostyka sygnałów",
+    "implementation": "tools/devtools.py: run_case/bounded_text",
+    "evidence": "tools/test_delivery.py: test_large_finished_log_and_signal; tools/test_devtools.py",
+    "limitations": ""
+  },
+  {
+    "id": "TB-296",
+    "title": "Procesy: kontrola przerwania",
+    "implementation": "tools/run_tests.py: main interruption handler; tools/devtools.py process group cleanup",
+    "evidence": "tools/test_release_review.py: test_incremental_report_survives_interrupt; tools/test_devtools.py timeout descendant cleanup",
+    "limitations": ""
+  },
+  {
+    "id": "TB-297",
+    "title": "Sieć testowa: timeout CLI",
+    "implementation": "tools/run_network_process_test.py; game/tests/integration/network_smoke.gd and tools/devtools.py",
+    "evidence": "tools/test_devtools.py; root full suite network smoke",
+    "limitations": ""
+  },
+  {
+    "id": "TB-298",
+    "title": "Sieć testowa: dynamiczny port smoke",
+    "implementation": "tools/run_network_process_test.py; game/tests/integration/network_smoke.gd and tools/devtools.py",
+    "evidence": "tools/test_devtools.py; root full suite network smoke",
+    "limitations": ""
+  },
+  {
+    "id": "TB-299",
+    "title": "Doctor: parser argumentów",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-300",
+    "title": "Doctor: minimalna wersja Godota",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-301",
+    "title": "Doctor: kontrola Python",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-302",
+    "title": "Doctor: zapis artefaktów",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-303",
+    "title": "Doctor: eksport templates",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-304",
+    "title": "Doctor: sprawdzanie UID",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-305",
+    "title": "Doctor: kontrola presetów eksportu",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-306",
+    "title": "Doctor: kontrola symlinków output",
+    "implementation": "tools/doctor.py: main/output_path/compatible_version/inspect_uids/inspect_presets",
+    "evidence": "tools/test_delivery.py: test_doctor_contracts; tools/test_release_review.py: test_doctor_rejects_untracked_source_and_git_alias; tools/test_devtools.py: test_missing_binary_doctor_and_suite_report",
+    "limitations": "Export templates absent: real exports not executed."
+  },
+  {
+    "id": "TB-307",
+    "title": "Release: plan buildów",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-308",
+    "title": "Release: wybór platform",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-309",
+    "title": "Release: preflight templates",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-310",
+    "title": "Release: kontrolowany eksport",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-311",
+    "title": "Release: izolowane katalogi",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-312",
+    "title": "Release: manifest artefaktów",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-313",
+    "title": "Release: weryfikacja manifestu",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-314",
+    "title": "Release: deterministyczne archiwum",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-315",
+    "title": "Release: sumy kontrolne",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-316",
+    "title": "Release: rozpoznanie brakującego binarium",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-317",
+    "title": "Release: polityka istniejących paczek",
+    "implementation": "tools/release.py: plan/build/make_manifest/verify_manifest/package",
+    "evidence": "tools/test_delivery.py: release plan, manifest, deterministic package, fake export, sidecar, checksums, failed export; tools/test_release_review.py: containment and nested manifest tests",
+    "limitations": "Actual platform exports not executed: export templates absent. Export command tested with controlled fake process."
+  },
+  {
+    "id": "TB-318",
+    "title": "Release: build serwera w Dockerze",
+    "implementation": "server/Dockerfile; .dockerignore",
+    "evidence": "Static review of binary COPY, USER 10001, port environment, allowlisted context",
+    "limitations": "Docker image not built or run in this review; requires exported Linux server artifact."
+  },
+  {
+    "id": "TB-319",
+    "title": "Release: nieuprzywilejowany kontener",
+    "implementation": "server/Dockerfile; .dockerignore",
+    "evidence": "Static review of binary COPY, USER 10001, port environment, allowlisted context",
+    "limitations": "Docker image not built or run in this review; requires exported Linux server artifact."
+  },
+  {
+    "id": "TB-320",
+    "title": "Release: konfiguracja portu kontenera",
+    "implementation": "server/Dockerfile; .dockerignore",
+    "evidence": "Static review of binary COPY, USER 10001, port environment, allowlisted context",
+    "limitations": "Docker image not built or run in this review; requires exported Linux server artifact."
+  },
+  {
+    "id": "TB-321",
+    "title": "Release: minimalny build context",
+    "implementation": "server/Dockerfile; .dockerignore",
+    "evidence": "Static review of binary COPY, USER 10001, port environment, allowlisted context",
+    "limitations": "Docker image not built or run in this review; requires exported Linux server artifact."
+  },
+  {
+    "id": "TB-322",
+    "title": "Release: walidacja PCK",
+    "implementation": "tools/release.py: build",
+    "evidence": "tools/test_delivery.py: test_fake_export_and_sidecar",
+    "limitations": "Actual PCK export not executed: templates absent."
+  },
+  {
+    "id": "TB-323",
+    "title": "CI: kontrola checksum silnika",
+    "implementation": ".github/workflows/godot.yml",
+    "evidence": "Static review: pinned checksum verification, concurrency cancellation, contents read, JUnit/log upload",
+    "limitations": "GitHub hosted workflow not run locally."
+  },
+  {
+    "id": "TB-324",
+    "title": "CI: anulowanie starszych przebiegów",
+    "implementation": ".github/workflows/godot.yml",
+    "evidence": "Static review: pinned checksum verification, concurrency cancellation, contents read, JUnit/log upload",
+    "limitations": "GitHub hosted workflow not run locally."
+  },
+  {
+    "id": "TB-325",
+    "title": "CI: minimalne uprawnienia",
+    "implementation": ".github/workflows/godot.yml",
+    "evidence": "Static review: pinned checksum verification, concurrency cancellation, contents read, JUnit/log upload",
+    "limitations": "GitHub hosted workflow not run locally."
+  },
+  {
+    "id": "TB-326",
+    "title": "CI: raport JUnit i zachowane logi",
+    "implementation": ".github/workflows/godot.yml",
+    "evidence": "Static review: pinned checksum verification, concurrency cancellation, contents read, JUnit/log upload",
+    "limitations": "GitHub hosted workflow not run locally."
+  },
+  {
+    "id": "TB-327",
+    "title": "CLI: launcher trybu audit-maps",
+    "implementation": "tools/launch.py: main",
+    "evidence": "tools/test_delivery.py: test_launcher_dry_run_and_release_plan; tools/test_devtools.py CLI tests",
+    "limitations": ""
+  },
+  {
+    "id": "TB-328",
+    "title": "CLI: launcher narzędzi release",
+    "implementation": "tools/launch.py: main",
+    "evidence": "tools/test_delivery.py: test_launcher_dry_run_and_release_plan; tools/test_devtools.py CLI tests",
+    "limitations": ""
+  },
+  {
+    "id": "TB-329",
+    "title": "CLI: dry run uruchomienia gry",
+    "implementation": "tools/launch.py: main",
+    "evidence": "tools/test_delivery.py: test_launcher_dry_run_and_release_plan; tools/test_devtools.py CLI tests",
+    "limitations": ""
+  },
+  {
+    "id": "TB-330",
+    "title": "CLI: walidacja wersji przed build",
+    "implementation": "tools/release.py engine version check; tools/test_delivery.py",
+    "evidence": "tools/test_delivery.py: 15 passing tests; tools/test_release_review.py: 6 passing tests",
+    "limitations": ""
+  },
+  {
+    "id": "TB-331",
+    "title": "Narzędzia: test kontraktów offline",
+    "implementation": "tools/release.py engine version check; tools/test_delivery.py",
+    "evidence": "tools/test_delivery.py: 15 passing tests; tools/test_release_review.py: 6 passing tests",
+    "limitations": ""
+  }
+]

@@ -12,6 +12,8 @@ static func _apply_box(world: RefCounted, material_configs: Dictionary, box: Dic
 	var size := _vector3i_from_array(box.get("size", [1, 1, 1]))
 	var material_id := _material_id(material_configs, str(box.get("material", "dirt")))
 	var health := int(box.get("health", _material_health(material_configs, material_id)))
+	if material_id < 0: return
+	if material_id == 0: health = 0
 	world.fill_box(position, position + size, material_id, health)
 
 static func _apply_carve(world: RefCounted, carve: Dictionary) -> void:
@@ -21,9 +23,9 @@ static func _apply_carve(world: RefCounted, carve: Dictionary) -> void:
 
 static func _carve_sphere(world: RefCounted, center: Vector3i, radius: int) -> void:
 	var radius_squared := radius * radius
-	for z in range(center.z - radius, center.z + radius + 1):
-		for y in range(center.y - radius, center.y + radius + 1):
-			for x in range(center.x - radius, center.x + radius + 1):
+	for z in range(maxi(0, center.z - radius), mini(world.size.z, center.z + radius + 1)):
+		for y in range(maxi(0, center.y - radius), mini(world.size.y, center.y + radius + 1)):
+			for x in range(maxi(0, center.x - radius), mini(world.size.x, center.x + radius + 1)):
 				var position := Vector3i(x, y, z)
 				if position.distance_squared_to(center) <= radius_squared:
 					world.set_voxel(position, 0, 0)
@@ -33,7 +35,7 @@ static func _material_id(material_configs: Dictionary, code: String) -> int:
 		var material: Resource = material_configs[material_id]
 		if material.code == code:
 			return material_id
-	return 1
+	return -1
 
 static func _material_health(material_configs: Dictionary, material_id: int) -> int:
 	var material: Resource = material_configs.get(material_id)

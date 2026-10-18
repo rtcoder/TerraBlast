@@ -1,5 +1,21 @@
 extends Control
 ## Presentation and user intent only. Owner scene applies authoritative results.
+signal training_requested
+signal autosave_requested
+signal next_round_requested
+var profiles = preload("res://scripts/client/session/local_match_profiles.gd").new()
+var player_count: SpinBox
+var preset_select: OptionButton
+var human_team_select: OptionButton
+var _last_configuration := {}
+var series_select: OptionButton
+var profile_select: OptionButton
+var profile_name: LineEdit
+var config_summary: Label
+var start_button: Button
+var handoff_panel: PanelContainer
+signal handoff_ready
+var delete_profile_pending := ""
 signal save_requested
 signal load_requested
 signal export_requested
@@ -42,6 +58,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pause_panel = _panel("Match menu — P to close")
 	_button(pause_panel, "Library — F8", func(): library_requested.emit())
+	_button(pause_panel, "Training lessons", func(): training_requested.emit())
+	_button(pause_panel, "Continue latest autosave", func(): autosave_requested.emit())
 	_button(pause_panel, "Resume", func(): resume_requested.emit())
 	_button(pause_panel, "Surrender current player", func(): surrender_requested.emit())
 	_button(pause_panel, "Save local game", func(): save_requested.emit())
@@ -106,20 +124,22 @@ func _ready() -> void:
 		difficulty_select.add_item(key)
 	difficulty_select.select(1)
 	_box(setup_panel).add_child(difficulty_select)
-	_label(setup_panel, "Players (solo: blue human / red bots)")
+	_label(setup_panel, "Players (choose human team below)")
 	var count := SpinBox.new()
+	player_count = count
 	count.min_value = 2
 	count.max_value = 10
 	count.value = 10
 	_box(setup_panel).add_child(count)
 	_label(setup_panel, "Rules preset")
 	var preset := OptionButton.new()
+	preset_select = preset
 	for key in ["classic", "quick", "training"]:
 		preset.add_item(key)
 	_box(setup_panel).add_child(preset)
 	setup_error = Label.new()
 	_box(setup_panel).add_child(setup_error)
-	_button(setup_panel, "Start new match", func(): setup_requested.emit(str(map_select.get_item_metadata(map_select.selected)), int(count.value), preset.get_item_text(preset.selected)))
+	start_button = _button(setup_panel, "Start new match", func(): setup_requested.emit(str(map_select.get_item_metadata(map_select.selected)), int(count.value), preset.get_item_text(preset.selected)))
 	_button(setup_panel, "Cancel", func(): close_requested.emit())
 	help_panel = _panel("Controls — F6 to close")
 	help_label = Label.new()
@@ -131,6 +151,10 @@ func _ready() -> void:
 	end_label = Label.new()
 	_box(end_panel).add_child(end_label)
 	restart_button = _button(end_panel, "Restart", func(): restart_requested.emit())
+	_button(end_panel,"Next round in series",func(): next_round_requested.emit())
+	handoff_panel = _panel("Pass control to the next player")
+	_button(handoff_panel,"Ready",func(): handoff_ready.emit())
+	_setup_local_tools()
 	for panel in panels:
 		panel.hide()
 func _box(panel: PanelContainer) -> VBoxContainer:
@@ -181,8 +205,8 @@ func _label(panel: PanelContainer, text: String) -> void:
 func _process(_delta: float) -> void:
 	for panel in panels:
 		var scroll: ScrollContainer = panel.get_child(0)
-		var desired: float = _box(panel).get_combined_minimum_size().y
-		scroll.custom_minimum_size.y = minf(desired, maxf(150.0, get_viewport_rect().size.y - 90.0))
+		preload("res://scripts/client/ui/panel_layout.gd").fit(panel,scroll,get_viewport_rect().size)
+	_update_configuration()
 
 func _describe_map(index: int) -> void:
 	var info: Dictionary = preload("res://scripts/core/maps/map_registry.gd").describe(str(map_select.get_item_metadata(index)))
@@ -194,3 +218,84 @@ func update_bindings(bindings: RefCounted) -> void:
 
 func _seek_after_keyboard() -> void:
 	seek_requested.emit(replay_seek.value)
+
+func current_configuration() -> Dictionary:
+	return {"map":str(map_select.get_item_metadata(map_select.selected)),"count":int(player_count.value),"preset":preset_select.get_item_text(preset_select.selected),"mode":mode_select.get_item_text(mode_select.selected),"difficulty":difficulty_select.get_item_text(difficulty_select.selected),"human_team":human_team_select.selected+1}
+
+func apply_configuration(value: Dictionary) -> void:
+	if not profiles.validate(value).ok: return
+	for index in map_select.item_count:
+		if map_select.get_item_metadata(index) == value.map: map_select.select(index)
+	player_count.max_value = preload("res://scripts/core/maps/map_registry.gd").describe(value.map).get("player_capacity",10)
+	player_count.value = value.count
+	preset_select.select(["classic","quick","training"].find(value.preset))
+	mode_select.select(["hotseat","solo"].find(value.mode))
+	difficulty_select.select(["easy","normal"].find(value.difficulty))
+	human_team_select.select(value.human_team-1)
+	_describe_map(map_select.selected)
+
+func _setup_local_tools() -> void:
+	profiles.load_from()
+	_label(setup_panel,"Human team (solo)")
+	human_team_select = OptionButton.new()
+	for title in ["Team A / Blue","Team B / Red"]: human_team_select.add_item(title)
+	_box(setup_panel).add_child(human_team_select)
+	_label(setup_panel,"Series length")
+	series_select = OptionButton.new()
+	for count in [1,3,5]: series_select.add_item("Best of " + str(count))
+	_box(setup_panel).add_child(series_select)
+	for key in profiles.templates():
+		_button(setup_panel,"Template: " + key.replace("_"," "),func(): apply_configuration(profiles.templates()[key]))
+	profile_select = OptionButton.new()
+	_box(setup_panel).add_child(profile_select)
+	profile_select.item_selected.connect(func(index):
+		var title := profile_select.get_item_text(index)
+		if profiles.profiles.has(title):
+			apply_configuration(profiles.profiles[title])
+			profile_name.text = title
+		delete_profile_pending = "")
+	profile_name = LineEdit.new()
+	profile_name.placeholder_text = "Configuration profile name"
+	profile_name.max_length = 48
+	_box(setup_panel).add_child(profile_name)
+	_button(setup_panel,"Save profile",func():
+		var result: Dictionary = profiles.put_profile(profile_name.text,current_configuration())
+		if not result.ok: setup_error.text = result.reason
+		else:
+			setup_error.text = "Profile saved" if profiles.save_to() == OK else "Profile changed; save failed"
+			_refresh_profiles())
+	_button(setup_panel,"Delete profile (press twice to confirm)",func():
+		if profile_select.item_count == 0: return
+		var title := profile_select.get_item_text(profile_select.selected)
+		if delete_profile_pending != title:
+			delete_profile_pending = title
+			setup_error.text = "Press Delete again to remove: " + title
+			return
+		profiles.remove_profile(title)
+		setup_error.text = "Profile removed" if profiles.save_to() == OK else "Profile removed in memory; save failed"
+		delete_profile_pending = ""
+		_refresh_profiles())
+	config_summary = Label.new()
+	config_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_box(setup_panel).add_child(config_summary)
+	_refresh_profiles()
+	_box(setup_panel).move_child(start_button,_box(setup_panel).get_child_count()-1)
+	for child in _box(setup_panel).get_children():
+		if child is Button and child.text == "Cancel": _box(setup_panel).move_child(child,_box(setup_panel).get_child_count()-1)
+	if not profiles.last_config.is_empty(): apply_configuration(profiles.last_config)
+
+func _refresh_profiles() -> void:
+	profile_select.clear()
+	for title in profiles.profiles: profile_select.add_item(title)
+
+func _update_configuration() -> void:
+	if human_team_select == null: return
+	var value := current_configuration()
+	if value == _last_configuration: return
+	var capacity: int = preload("res://scripts/core/maps/map_registry.gd").describe(value.map).get("player_capacity",10)
+	player_count.max_value = mini(10,capacity)
+	_last_configuration = current_configuration().duplicate()
+	var result: Dictionary = profiles.validate(_last_configuration)
+	start_button.disabled = not result.ok
+	var rules = preload("res://scripts/core/rules/rule_presets.gd").create(value.preset)
+	config_summary.text = "%s | %s players | %s | Human team %s\nHP %s | Turn %.0fs | Turn limit %s" % [value.map,int(player_count.value),value.mode,value.human_team,rules.starting_health,rules.turn_time,rules.max_turns]

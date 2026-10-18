@@ -1,0 +1,3389 @@
+[
+  {
+    "title": "Runner: ścisły timeout",
+    "description": "Odrzuca NaN, Infinity, zero, ujemny timeout i wartości >3600 przed uruchomieniem procesów.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Odrzuca NaN, Infinity, zero, ujemny timeout i wartości >3600 przed uruchomieniem procesów.",
+    "group": "tools",
+    "id": "TB-282"
+  },
+  {
+    "title": "Runner: jawny wybór testów",
+    "description": "--include z powtarzalnymi globami wybiera tylko pasujące nazwy; brak dopasowania kończy się błędem.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--include z powtarzalnymi globami wybiera tylko pasujące nazwy; brak dopasowania kończy się błędem.",
+    "group": "tools",
+    "id": "TB-283"
+  },
+  {
+    "title": "Runner: wykluczanie testów",
+    "description": "--exclude odejmuje globy od wyboru, nie uruchamia wykluczonych procesów.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--exclude odejmuje globy od wyboru, nie uruchamia wykluczonych procesów.",
+    "group": "tools",
+    "id": "TB-284"
+  },
+  {
+    "title": "Runner: listowanie planu",
+    "description": "--list drukuje JSON nazw i poleceń bez uruchamiania silnika.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--list drukuje JSON nazw i poleceń bez uruchamiania silnika.",
+    "group": "tools",
+    "id": "TB-285"
+  },
+  {
+    "title": "Runner: ponowienie nieudanych kontroli",
+    "description": "--rerun-failed REPORT wybiera failed/timeout/log_limit i odrzuca nieznane nazwy.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--rerun-failed REPORT wybiera failed/timeout/log_limit i odrzuca nieznane nazwy.",
+    "group": "tools",
+    "id": "TB-286"
+  },
+  {
+    "title": "Runner: fail fast",
+    "description": "--fail-fast kończy po pierwszym błędzie, raport rozróżnia pominięte testy.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--fail-fast kończy po pierwszym błędzie, raport rozróżnia pominięte testy.",
+    "group": "tools",
+    "id": "TB-287"
+  },
+  {
+    "title": "Runner: raport inkrementalny",
+    "description": "Atomowy raport zapisany po każdym zakończonym teście, zachowany przy przerwaniu.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Atomowy raport zapisany po każdym zakończonym teście, zachowany przy przerwaniu.",
+    "group": "tools",
+    "id": "TB-288"
+  },
+  {
+    "title": "Runner: identyfikacja przebiegu",
+    "description": "Raport zawiera schema, started/finished UTC, platformę i rewizję git bez sekretów.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Raport zawiera schema, started/finished UTC, platformę i rewizję git bez sekretów.",
+    "group": "tools",
+    "id": "TB-289"
+  },
+  {
+    "title": "Runner: unikalne katalogi prób",
+    "description": "Kolejne próby nie nadpisują poprzednich logów; report wskazuje właściwą próbę.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Kolejne próby nie nadpisują poprzednich logów; report wskazuje właściwą próbę.",
+    "group": "tools",
+    "id": "TB-290"
+  },
+  {
+    "title": "Runner: raport JUnit",
+    "description": "--junit generuje XML z failures/timeouts/skips i ścieżką logu, poprawnie escapuje tekst.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--junit generuje XML z failures/timeouts/skips i ścieżką logu, poprawnie escapuje tekst.",
+    "group": "tools",
+    "id": "TB-291"
+  },
+  {
+    "title": "Runner: JSONL postępu",
+    "description": "--jsonl publikuje jeden rekord na kontrolę dla narzędzi automatyzujących.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--jsonl publikuje jeden rekord na kontrolę dla narzędzi automatyzujących.",
+    "group": "tools",
+    "id": "TB-292"
+  },
+  {
+    "title": "Runner: summary trybu headless",
+    "description": "Raport jawnie identyfikuje pominięte Nakama/render zamiast sugerować ich wykonanie.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Raport jawnie identyfikuje pominięte Nakama/render zamiast sugerować ich wykonanie.",
+    "group": "tools",
+    "id": "TB-293"
+  },
+  {
+    "title": "Procesy: ograniczenie odczytu logu",
+    "description": "run_case nie wczytuje do pamięci nieograniczonego logu, także jeśli proces kończy się przed pollingiem.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "run_case nie wczytuje do pamięci nieograniczonego logu, także jeśli proces kończy się przed pollingiem.",
+    "group": "tools",
+    "id": "TB-294"
+  },
+  {
+    "title": "Procesy: diagnostyka sygnałów",
+    "description": "Raport rozróżnia exit code, sygnał, timeout i spawn failure z czytelnym reason.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Raport rozróżnia exit code, sygnał, timeout i spawn failure z czytelnym reason.",
+    "group": "tools",
+    "id": "TB-295"
+  },
+  {
+    "title": "Procesy: kontrola przerwania",
+    "description": "SIGINT/SIGTERM zapisuje przerwany test i sprząta potomków, zwraca niezerowy status.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "SIGINT/SIGTERM zapisuje przerwany test i sprząta potomków, zwraca niezerowy status.",
+    "group": "tools",
+    "id": "TB-296"
+  },
+  {
+    "title": "Sieć testowa: timeout CLI",
+    "description": "run_network_process_test odrzuca niefinity i niewłaściwy zakres czasu przed startem.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "run_network_process_test odrzuca niefinity i niewłaściwy zakres czasu przed startem.",
+    "group": "tools",
+    "id": "TB-297"
+  },
+  {
+    "title": "Sieć testowa: dynamiczny port smoke",
+    "description": "Bootstrap smoke runnera używa wolnego portu zamiast stałego19174.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Bootstrap smoke runnera używa wolnego portu zamiast stałego19174.",
+    "group": "tools",
+    "id": "TB-298"
+  },
+  {
+    "title": "Doctor: parser argumentów",
+    "description": "Nieznane opcje kończą się2; --help nie uruchamia Godota.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Nieznane opcje kończą się2; --help nie uruchamia Godota.",
+    "group": "tools",
+    "id": "TB-299"
+  },
+  {
+    "title": "Doctor: minimalna wersja Godota",
+    "description": "Weryfikuje wersję >=4.6.2 i zgodny major, oddzielnie od poprawnego exit code.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Weryfikuje wersję >=4.6.2 i zgodny major, oddzielnie od poprawnego exit code.",
+    "group": "tools",
+    "id": "TB-300"
+  },
+  {
+    "title": "Doctor: kontrola Python",
+    "description": "Raportuje wersję Python i wymaganie >=3.10.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Raportuje wersję Python i wymaganie >=3.10.",
+    "group": "tools",
+    "id": "TB-301"
+  },
+  {
+    "title": "Doctor: zapis artefaktów",
+    "description": "Opcjonalny --output zapisuje atomowy JSON również przy negatywnym wyniku kontroli.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Opcjonalny --output zapisuje atomowy JSON również przy negatywnym wyniku kontroli.",
+    "group": "tools",
+    "id": "TB-302"
+  },
+  {
+    "title": "Doctor: eksport templates",
+    "description": "Opcjonalna kontrola obecności wersjonowanych export templates bez pobierania.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Opcjonalna kontrola obecności wersjonowanych export templates bez pobierania.",
+    "group": "tools",
+    "id": "TB-303"
+  },
+  {
+    "title": "Doctor: sprawdzanie UID",
+    "description": "Weryfikuje format, unikalność i obecność odpowiadającego skryptu dla sidecarów.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Weryfikuje format, unikalność i obecność odpowiadającego skryptu dla sidecarów.",
+    "group": "tools",
+    "id": "TB-304"
+  },
+  {
+    "title": "Doctor: kontrola presetów eksportu",
+    "description": "Weryfikuje wymagane4presety, platformy i ścieżki docelowe wewnątrz build.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Weryfikuje wymagane4presety, platformy i ścieżki docelowe wewnątrz build.",
+    "group": "tools",
+    "id": "TB-305"
+  },
+  {
+    "title": "Doctor: kontrola symlinków output",
+    "description": "Preflight odrzuca artefakt wyjściowy wskazujący na plik źródłowy lub repo config.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Preflight odrzuca artefakt wyjściowy wskazujący na plik źródłowy lub repo config.",
+    "group": "tools",
+    "id": "TB-306"
+  },
+  {
+    "title": "Release: plan buildów",
+    "description": "Nowy release.py plan zwraca nazwy platform i dokładne komendy bez wykonywania eksportu.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Nowy release.py plan zwraca nazwy platform i dokładne komendy bez wykonywania eksportu.",
+    "group": "tools",
+    "id": "TB-307"
+  },
+  {
+    "title": "Release: wybór platform",
+    "description": "Walidowane macos/windows/linux/server i deduplikacja wyboru, unknown błąd.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Walidowane macos/windows/linux/server i deduplikacja wyboru, unknown błąd.",
+    "group": "tools",
+    "id": "TB-308"
+  },
+  {
+    "title": "Release: preflight templates",
+    "description": "Eksport zatrzymuje się przed pracą przy braku właściwej wersji templates.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Eksport zatrzymuje się przed pracą przy braku właściwej wersji templates.",
+    "group": "tools",
+    "id": "TB-309"
+  },
+  {
+    "title": "Release: kontrolowany eksport",
+    "description": "build uruchamia Godot --export-release z timeoutem i osobnym logiem dla platformy.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "build uruchamia Godot --export-release z timeoutem i osobnym logiem dla platformy.",
+    "group": "tools",
+    "id": "TB-310"
+  },
+  {
+    "title": "Release: izolowane katalogi",
+    "description": "Artefakty trafiają do wskazanego build-root, bez nadpisywania źródeł lub dowolnych ścieżek.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Artefakty trafiają do wskazanego build-root, bez nadpisywania źródeł lub dowolnych ścieżek.",
+    "group": "tools",
+    "id": "TB-311"
+  },
+  {
+    "title": "Release: manifest artefaktów",
+    "description": "Manifest zawiera platformę, rozmiar, SHA256, wersję silnika i git revision.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Manifest zawiera platformę, rozmiar, SHA256, wersję silnika i git revision.",
+    "group": "tools",
+    "id": "TB-312"
+  },
+  {
+    "title": "Release: weryfikacja manifestu",
+    "description": "verify przelicza hash/size i odrzuca brakujące, dodatkowo wskazane traversal i symlinki.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "verify przelicza hash/size i odrzuca brakujące, dodatkowo wskazane traversal i symlinki.",
+    "group": "tools",
+    "id": "TB-313"
+  },
+  {
+    "title": "Release: deterministyczne archiwum",
+    "description": "package tworzy uporządkowany zip ze stabilnymi timestampami i manifestem.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "package tworzy uporządkowany zip ze stabilnymi timestampami i manifestem.",
+    "group": "tools",
+    "id": "TB-314"
+  },
+  {
+    "title": "Release: sumy kontrolne",
+    "description": "SHA256SUMS powstaje dla paczek z bezpiecznymi nazwami, bez absolutnych ścieżek.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "SHA256SUMS powstaje dla paczek z bezpiecznymi nazwami, bez absolutnych ścieżek.",
+    "group": "tools",
+    "id": "TB-315"
+  },
+  {
+    "title": "Release: rozpoznanie brakującego binarium",
+    "description": "Po pozornie udanym eksporcie brak/zerowy plik jest błędem i nie publikuje manifestu sukcesu.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Po pozornie udanym eksporcie brak/zerowy plik jest błędem i nie publikuje manifestu sukcesu.",
+    "group": "tools",
+    "id": "TB-316"
+  },
+  {
+    "title": "Release: polityka istniejących paczek",
+    "description": "Domyślnie brak overwrite, jawne --replace do ponowienia własnego build root.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Domyślnie brak overwrite, jawne --replace do ponowienia własnego build root.",
+    "group": "tools",
+    "id": "TB-317"
+  },
+  {
+    "title": "Release: build serwera w Dockerze",
+    "description": "Dockerfile i udokumentowany context konsumują rzeczywisty output presetu Linux Server.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Dockerfile i udokumentowany context konsumują rzeczywisty output presetu Linux Server.",
+    "group": "tools",
+    "id": "TB-318"
+  },
+  {
+    "title": "Release: nieuprzywilejowany kontener",
+    "description": "Kontener uruchamia serwer jako UID10001, bez roota, ma writable user-data.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Kontener uruchamia serwer jako UID10001, bez roota, ma writable user-data.",
+    "group": "tools",
+    "id": "TB-319"
+  },
+  {
+    "title": "Release: konfiguracja portu kontenera",
+    "description": "EXPOSE UDP19170 oraz komenda --port działają bez zmiany entrypoint.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "EXPOSE UDP19170 oraz komenda --port działają bez zmiany entrypoint.",
+    "group": "tools",
+    "id": "TB-320"
+  },
+  {
+    "title": "Release: minimalny build context",
+    "description": "dockerignore wyklucza repo/secrets i nie wyklucza gotowego binarium/PCK.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "dockerignore wyklucza repo/secrets i nie wyklucza gotowego binarium/PCK.",
+    "group": "tools",
+    "id": "TB-321"
+  },
+  {
+    "title": "Release: walidacja PCK",
+    "description": "Manifest i packaging ujmują sidecarPCK jeśli exporter go utworzył, nie gubią danych gry.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Manifest i packaging ujmują sidecarPCK jeśli exporter go utworzył, nie gubią danych gry.",
+    "group": "tools",
+    "id": "TB-322"
+  },
+  {
+    "title": "CI: kontrola checksum silnika",
+    "description": "Pobranie pinnedengine weryfikuje SHA256 z release checksums przed rozpakowaniem.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Pobranie pinnedengine weryfikuje SHA256 z release checksums przed rozpakowaniem.",
+    "group": "tools",
+    "id": "TB-323"
+  },
+  {
+    "title": "CI: anulowanie starszych przebiegów",
+    "description": "Concurrency group anuluje poprzedni run tego samego ref bez mieszania gałęzi.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Concurrency group anuluje poprzedni run tego samego ref bez mieszania gałęzi.",
+    "group": "tools",
+    "id": "TB-324"
+  },
+  {
+    "title": "CI: minimalne uprawnienia",
+    "description": "Workflow używa contents:read i nie otrzymuje write permissions.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Workflow używa contents:read i nie otrzymuje write permissions.",
+    "group": "tools",
+    "id": "TB-325"
+  },
+  {
+    "title": "CI: raport JUnit i zachowane logi",
+    "description": "CI upload obejmuje report/JUnit/logs również przy błędzie testów.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "CI upload obejmuje report/JUnit/logs również przy błędzie testów.",
+    "group": "tools",
+    "id": "TB-326"
+  },
+  {
+    "title": "CLI: launcher trybu audit-maps",
+    "description": "Jawny audit-maps w launch.py bez obchodzenia przez simulate.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Jawny audit-maps w launch.py bez obchodzenia przez simulate.",
+    "group": "tools",
+    "id": "TB-327"
+  },
+  {
+    "title": "CLI: launcher narzędzi release",
+    "description": "launch.py release przekazuje argumenty atomowo i działa z obcego cwd.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "launch.py release przekazuje argumenty atomowo i działa z obcego cwd.",
+    "group": "tools",
+    "id": "TB-328"
+  },
+  {
+    "title": "CLI: dry run uruchomienia gry",
+    "description": "--dry-run launchera pokazuje JSON argv/cwd bez odpalenia procesu, nie interpretuje shell.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "--dry-run launchera pokazuje JSON argv/cwd bez odpalenia procesu, nie interpretuje shell.",
+    "group": "tools",
+    "id": "TB-329"
+  },
+  {
+    "title": "CLI: walidacja wersji przed build",
+    "description": "Release odrzuca inny major/minor oraz niedostępny executable, zachowuje czytelny exit2.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Release odrzuca inny major/minor oraz niedostępny executable, zachowuje czytelny exit2.",
+    "group": "tools",
+    "id": "TB-330"
+  },
+  {
+    "title": "Narzędzia: test kontraktów offline",
+    "description": "Nowy suite używa fake executables/temporary dirs do timeout/filter/report/export/hash/package bez pobierania templates.",
+    "files": [
+      "tools/run_tests.py",
+      "tools/devtools.py",
+      "tools/doctor.py",
+      "tools/release.py",
+      "tools/launch.py",
+      "tools/test_delivery.py",
+      ".github/workflows/godot.yml",
+      "server/Dockerfile"
+    ],
+    "acceptance": "Nowy suite używa fake executables/temporary dirs do timeout/filter/report/export/hash/package bez pobierania templates.",
+    "group": "tools",
+    "id": "TB-331"
+  },
+  {
+    "title": "Biblioteka: wyszukiwanie nazw",
+    "description": "Query case-insensitive i whitespace normalization filtruje metadata bez wykonywania symulacji.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Query case-insensitive i whitespace normalization filtruje metadata bez wykonywania symulacji.",
+    "group": "archives",
+    "id": "TB-332"
+  },
+  {
+    "title": "Biblioteka: sortowanie listy",
+    "description": "Sort newest/oldest/title/kind stabilny po ID; nie mutuje zapisów.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Sort newest/oldest/title/kind stabilny po ID; nie mutuje zapisów.",
+    "group": "archives",
+    "id": "TB-333"
+  },
+  {
+    "title": "Biblioteka: paginacja",
+    "description": "Offset/limit ograniczone, wyniki zawierają total i stronę; bez utraty wybranego ID po refresh.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Offset/limit ograniczone, wyniki zawierają total i stronę; bez utraty wybranego ID po refresh.",
+    "group": "archives",
+    "id": "TB-334"
+  },
+  {
+    "title": "Biblioteka: statystyka przestrzeni",
+    "description": "Raport liczby poprawnych/uszkodzonych plików i bajtów, bez podążania za symlinkami.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Raport liczby poprawnych/uszkodzonych plików i bajtów, bez podążania za symlinkami.",
+    "group": "archives",
+    "id": "TB-335"
+  },
+  {
+    "title": "Biblioteka: szczegóły wybranej pozycji",
+    "description": "UI pokazuje datę UTC, typ, rozmiar i ID, nie tylko tooltip.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "UI pokazuje datę UTC, typ, rozmiar i ID, nie tylko tooltip.",
+    "group": "archives",
+    "id": "TB-336"
+  },
+  {
+    "title": "Biblioteka: eksport surowego zapisu",
+    "description": "export_entry(id,path) wyodrębnia zgodny ReplayArchive/SessionStore, bez modyfikowania źródła.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "export_entry(id,path) wyodrębnia zgodny ReplayArchive/SessionStore, bez modyfikowania źródła.",
+    "group": "archives",
+    "id": "TB-337"
+  },
+  {
+    "title": "Biblioteka: duplikowanie wpisu",
+    "description": "duplicate_entry(id,title) nadaje nowe ID i datę, zachowuje dokładny payload.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "duplicate_entry(id,title) nadaje nowe ID i datę, zachowuje dokładny payload.",
+    "group": "archives",
+    "id": "TB-338"
+  },
+  {
+    "title": "Biblioteka: wykrywanie duplikatów treści",
+    "description": "Fingerprint payload pozwala wskazać duplikaty niezależnie od tytułów i dat.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Fingerprint payload pozwala wskazać duplikaty niezależnie od tytułów i dat.",
+    "group": "archives",
+    "id": "TB-339"
+  },
+  {
+    "title": "Biblioteka: lista błędnych pozycji",
+    "description": "Osobny diagnostics zwraca ID/pliki i przyczynę korupcji, nie ukrywa ich z listy napraw.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Osobny diagnostics zwraca ID/pliki i przyczynę korupcji, nie ukrywa ich z listy napraw.",
+    "group": "archives",
+    "id": "TB-340"
+  },
+  {
+    "title": "Biblioteka: usuwanie uszkodzonego wpisu w UI",
+    "description": "Wybranie poprawnego ID uszkodzonego pliku i osobne potwierdzenie umożliwia odzyskanie limitu miejsca.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Wybranie poprawnego ID uszkodzonego pliku i osobne potwierdzenie umożliwia odzyskanie limitu miejsca.",
+    "group": "archives",
+    "id": "TB-341"
+  },
+  {
+    "title": "Biblioteka: import wybranego pliku",
+    "description": "FileDialog importu .json zamiast wyłącznie dwóch stałych quick paths; rodzaj walidowany.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "FileDialog importu .json zamiast wyłącznie dwóch stałych quick paths; rodzaj walidowany.",
+    "group": "archives",
+    "id": "TB-342"
+  },
+  {
+    "title": "Biblioteka: eksport wybranego pliku w UI",
+    "description": "Save dialog potwierdza overwrite i raportuje błąd bez utraty wpisu.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Save dialog potwierdza overwrite i raportuje błąd bez utraty wpisu.",
+    "group": "archives",
+    "id": "TB-343"
+  },
+  {
+    "title": "Biblioteka: ulubione",
+    "description": "Oddzielny mały plik preferencji z walidowanymi ID, togglefavorite nie zmienia payload.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Oddzielny mały plik preferencji z walidowanymi ID, togglefavorite nie zmienia payload.",
+    "group": "archives",
+    "id": "TB-344"
+  },
+  {
+    "title": "Biblioteka: filtr ulubionych",
+    "description": "Lista pokazuje starred entries; brakujące ID są pomijane, nie blokują biblioteki.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Lista pokazuje starred entries; brakujące ID są pomijane, nie blokują biblioteki.",
+    "group": "archives",
+    "id": "TB-345"
+  },
+  {
+    "title": "Biblioteka: zapamiętanie filtrów",
+    "description": "query/kind/sort są wczytywane walidowane i zapisywane niezależnie od archiwów.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "query/kind/sort są wczytywane walidowane i zapisywane niezależnie od archiwów.",
+    "group": "archives",
+    "id": "TB-346"
+  },
+  {
+    "title": "Biblioteka: szybki podgląd checkpointu",
+    "description": "Preview zwraca turn, status, teamsHP, liczba graczy po walidacji bez podmiany sceny.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Preview zwraca turn, status, teamsHP, liczba graczy po walidacji bez podmiany sceny.",
+    "group": "archives",
+    "id": "TB-347"
+  },
+  {
+    "title": "Replay: podsumowanie nagrania",
+    "description": "Pure analyzer zwraca actioncounts,duration,shots,players i wynik, nie mutuje recordera.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Pure analyzer zwraca actioncounts,duration,shots,players i wynik, nie mutuje recordera.",
+    "group": "archives",
+    "id": "TB-348"
+  },
+  {
+    "title": "Replay: oś tur",
+    "description": "Zwraca granice zmian aktywnego gracza/tury z czasem i indeksem akcji.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Zwraca granice zmian aktywnego gracza/tury z czasem i indeksem akcji.",
+    "group": "archives",
+    "id": "TB-349"
+  },
+  {
+    "title": "Replay: zakładki strzałów",
+    "description": "Zwraca index,time,player,weapon,damage,kills z wykonanych akcji, spójnie z playback.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Zwraca index,time,player,weapon,damage,kills z wykonanych akcji, spójnie z playback.",
+    "group": "archives",
+    "id": "TB-350"
+  },
+  {
+    "title": "Replay: statystyki graczy",
+    "description": "Agreguje shots/hits/damage/kills z całego nagrania, nie tylko ostatnich32history.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Agreguje shots/hits/damage/kills z całego nagrania, nie tylko ostatnich32history.",
+    "group": "archives",
+    "id": "TB-351"
+  },
+  {
+    "title": "Replay: wykorzystanie broni",
+    "description": "Agreguje liczbę strzałów i efekty według weapon_id, obsługuje dowolny walidowany katalog.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Agreguje liczbę strzałów i efekty według weapon_id, obsługuje dowolny walidowany katalog.",
+    "group": "archives",
+    "id": "TB-352"
+  },
+  {
+    "title": "Replay: dystans ruchu",
+    "description": "Sumuje rzeczywiste przemieszczenie akcji move perplayer, wyklucza knockback od shots.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Sumuje rzeczywiste przemieszczenie akcji move perplayer, wyklucza knockback od shots.",
+    "group": "archives",
+    "id": "TB-353"
+  },
+  {
+    "title": "Replay: czas aktywnych graczy",
+    "description": "Rozdziela ticktime według aktywnego gracza, nie dubluje move.delta.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Rozdziela ticktime według aktywnego gracza, nie dubluje move.delta.",
+    "group": "archives",
+    "id": "TB-354"
+  },
+  {
+    "title": "Replay: bilans destrukcji",
+    "description": "Podsumowuje zmienione/zniszczone voxele i materiały na podstawie deltas.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Podsumowuje zmienione/zniszczone voxele i materiały na podstawie deltas.",
+    "group": "archives",
+    "id": "TB-355"
+  },
+  {
+    "title": "Replay: punkty eliminacji",
+    "description": "Timeline wskazuje akcje i graczy zmieniających alive true->false, również surrender/tick.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Timeline wskazuje akcje i graczy zmieniających alive true->false, również surrender/tick.",
+    "group": "archives",
+    "id": "TB-356"
+  },
+  {
+    "title": "Replay: porównanie nagrań",
+    "description": "Porównuje końcowe hashe, wynik, długość, metryki bez sugerowania zgodności różnych initialstates.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Porównuje końcowe hashe, wynik, długość, metryki bez sugerowania zgodności różnych initialstates.",
+    "group": "archives",
+    "id": "TB-357"
+  },
+  {
+    "title": "Replay: eksport analizy JSON",
+    "description": "Walidowany wynik analizera zapisuje atomowo, z wersją i czytelnym błędem.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Walidowany wynik analizera zapisuje atomowo, z wersją i czytelnym błędem.",
+    "group": "archives",
+    "id": "TB-358"
+  },
+  {
+    "title": "Replay: eksport tabel CSV",
+    "description": "CSV perplayer/shot, poprawne quote/commas/newlines i ochrona formuł nazw graczy.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "CSV perplayer/shot, poprawne quote/commas/newlines i ochrona formuł nazw graczy.",
+    "group": "archives",
+    "id": "TB-359"
+  },
+  {
+    "title": "Replay: diagnostyka pierwszego błędu",
+    "description": "Analyzer zwraca index/type/reason pierwszej niewykonalnej akcji, bez fałszywego success.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Analyzer zwraca index/type/reason pierwszej niewykonalnej akcji, bez fałszywego success.",
+    "group": "archives",
+    "id": "TB-360"
+  },
+  {
+    "title": "Replay: budżet analizy",
+    "description": "Begin/step(max_actions) inkrementalnie liczy statystyki, cap4096 na krok; progres/cancel.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Begin/step(max_actions) inkrementalnie liczy statystyki, cap4096 na krok; progres/cancel.",
+    "group": "archives",
+    "id": "TB-361"
+  },
+  {
+    "title": "Replay: UI listy strzałów",
+    "description": "Inspector pokazuje shotbookmarks i wybór przenosi do dokładnej granicy akcji.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Inspector pokazuje shotbookmarks i wybór przenosi do dokładnej granicy akcji.",
+    "group": "archives",
+    "id": "TB-362"
+  },
+  {
+    "title": "Replay: UI statystyk nagrania",
+    "description": "Panel analizy pokazuje duration,turns,players,weapons,destruction bez zakrywania live HUD.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Panel analizy pokazuje duration,turns,players,weapons,destruction bez zakrywania live HUD.",
+    "group": "archives",
+    "id": "TB-363"
+  },
+  {
+    "title": "Replay: UI postępu analizy",
+    "description": "Cięższe nagrania analizowane porcjami z cancel; wyjście z inspectora usuwa zadanie.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Cięższe nagrania analizowane porcjami z cancel; wyjście z inspectora usuwa zadanie.",
+    "group": "archives",
+    "id": "TB-364"
+  },
+  {
+    "title": "Replay: keyboard previous shot",
+    "description": "Przycisk Previous shot wyszukuje poprzednią granicę strzału; brak wcześniejszego nie mutuje.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Przycisk Previous shot wyszukuje poprzednią granicę strzału; brak wcześniejszego nie mutuje.",
+    "group": "archives",
+    "id": "TB-365"
+  },
+  {
+    "title": "Replay: skok do następnej tury",
+    "description": "Next turn przenosi po zmianie turn/generation, obsługuje EOF bez zapętlenia.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Next turn przenosi po zmianie turn/generation, obsługuje EOF bez zapętlenia.",
+    "group": "archives",
+    "id": "TB-366"
+  },
+  {
+    "title": "Replay: tryb loop",
+    "description": "Jawna opcja po EOF przewija do początku, nie robi busyloop dla pustego nagrania.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Jawna opcja po EOF przewija do początku, nie robi busyloop dla pustego nagrania.",
+    "group": "archives",
+    "id": "TB-367"
+  },
+  {
+    "title": "Replay: przywracanie ostatniej pozycji",
+    "description": "Per-entry cursor preference waliduje fingerprint/index, zmieniony wpis ignoruje stary cursor.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Per-entry cursor preference waliduje fingerprint/index, zmieniony wpis ignoruje stary cursor.",
+    "group": "archives",
+    "id": "TB-368"
+  },
+  {
+    "title": "Replay: marker wybranej akcji",
+    "description": "Czytelny opis tick/move/shot/surrender z nazwą gracza i broni zamiast pustego typu.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Czytelny opis tick/move/shot/surrender z nazwą gracza i broni zamiast pustego typu.",
+    "group": "archives",
+    "id": "TB-369"
+  },
+  {
+    "title": "Replay: nieudane seek widoczne",
+    "description": "UI pokazuje przyczynę invalid/no next shot, zachowuje kursor i runner.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "UI pokazuje przyczynę invalid/no next shot, zachowuje kursor i runner.",
+    "group": "archives",
+    "id": "TB-370"
+  },
+  {
+    "title": "Checkpoint: porównanie zapisów",
+    "description": "Compare raportuje zgodność world/state/options/velocities jako osobne wyniki.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Compare raportuje zgodność world/state/options/velocities jako osobne wyniki.",
+    "group": "archives",
+    "id": "TB-371"
+  },
+  {
+    "title": "Biblioteka CLI: query i sort",
+    "description": "CLI list options zgodne z core query/sort, odrzuca niewłaściwe wartości.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "CLI list options zgodne z core query/sort, odrzuca niewłaściwe wartości.",
+    "group": "archives",
+    "id": "TB-372"
+  },
+  {
+    "title": "Biblioteka CLI: preview ID",
+    "description": "Wskazane --entry zwraca tylko zweryfikowany preview, błąd ID ->exit2.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Wskazane --entry zwraca tylko zweryfikowany preview, błąd ID ->exit2.",
+    "group": "archives",
+    "id": "TB-373"
+  },
+  {
+    "title": "Biblioteka CLI: analiza replay",
+    "description": "Tryb analyze-replay na jawnej ścieżce zwraca JSON bez uruchomienia klienta.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Tryb analyze-replay na jawnej ścieżce zwraca JSON bez uruchomienia klienta.",
+    "group": "archives",
+    "id": "TB-374"
+  },
+  {
+    "title": "Biblioteka CLI: porównanie replay",
+    "description": "Tryb compare-replays przyjmuje dwie ścieżki i zwraca wersjonowany raport.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Tryb compare-replays przyjmuje dwie ścieżki i zwraca wersjonowany raport.",
+    "group": "archives",
+    "id": "TB-375"
+  },
+  {
+    "title": "Biblioteka CLI: raport stanu katalogu",
+    "description": "--library-health zwraca rozmiary, malformed i duplikaty bez zapisu do biblioteki.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "--library-health zwraca rozmiary, malformed i duplikaty bez zapisu do biblioteki.",
+    "group": "archives",
+    "id": "TB-376"
+  },
+  {
+    "title": "Analiza: kontrakty legacy archive",
+    "description": "Analiza ładuje v1/v2 przez istniejący codec, nie osłabia finalhash.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Analiza ładuje v1/v2 przez istniejący codec, nie osłabia finalhash.",
+    "group": "archives",
+    "id": "TB-377"
+  },
+  {
+    "title": "Biblioteka: unicode i długie nazwy w UI",
+    "description": "Lista skraca wyłącznie display, tooltip/details zachowują całe48unicode znaków.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Lista skraca wyłącznie display, tooltip/details zachowują całe48unicode znaków.",
+    "group": "archives",
+    "id": "TB-378"
+  },
+  {
+    "title": "Biblioteka: blokada podwójnych operacji",
+    "description": "UI disable podczas analyze/import/export, drugi click nie duplikuje zadania ani wpisów.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "UI disable podczas analyze/import/export, drugi click nie duplikuje zadania ani wpisów.",
+    "group": "archives",
+    "id": "TB-379"
+  },
+  {
+    "title": "Biblioteka: komunikaty błędów dla użytkownika",
+    "description": "Known errors mapped na konkretne wskazówki capacity/title/corrupt/path zamiast surowych code.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Known errors mapped na konkretne wskazówki capacity/title/corrupt/path zamiast surowych code.",
+    "group": "archives",
+    "id": "TB-380"
+  },
+  {
+    "title": "Analiza: izolacja live session",
+    "description": "Integracyjny przebieg save/export/analyze/seek/return sprawdza hash+velocities i brak wpływu na onlineauthority.",
+    "files": [
+      "game/scripts/core/storage/local_archive_library.gd",
+      "game/scripts/core/replay/replay_analyzer.gd",
+      "game/scripts/core/replay/replay_playback.gd",
+      "game/scripts/client/ui/library_panel.gd",
+      "game/scripts/client/session/library_preferences.gd",
+      "game/scripts/server/utility_cli.gd",
+      "game/tests/unit/archive_analysis_tests.gd",
+      "tools/test_analysis_cli.py"
+    ],
+    "acceptance": "Integracyjny przebieg save/export/analyze/seek/return sprawdza hash+velocities i brak wpływu na onlineauthority.",
+    "group": "archives",
+    "id": "TB-381"
+  },
+  {
+    "title": "Limit odczytu pliku mapy",
+    "description": "MapLoader.load_from_file ogranicza plik do 1 MiB przed odczytem, zwraca błędy otwarcia/pustego pliku/rozmiaru i zamyka uchwyt.",
+    "files": [
+      "game/scripts/core/maps/map_loader.gd"
+    ],
+    "acceptance": "Pusty, brakujący i ponadlimitowy fixture są odrzucane; wszystkie istniejące mapy nadal się wczytują.",
+    "group": "core",
+    "id": "TB-432"
+  },
+  {
+    "title": "Diagnostyka parsera z numerami linii",
+    "description": "TomlMapParser.parse zachowuje _errors:Array[String], dodaje numer linii i kontekst sekcji do błędów.",
+    "files": [
+      "game/scripts/core/maps/toml_map_parser.gd"
+    ],
+    "acceptance": "Błąd wartości i nagłówka wskazuje właściwą linię; komentarze i puste linie nie przesuwają numeracji.",
+    "group": "core",
+    "id": "TB-433"
+  },
+  {
+    "title": "Odrzucanie powtórzonych kluczy TOML",
+    "description": "Parser wykrywa duplikaty osobno w root i każdej instancji tabeli; nie nadpisuje pierwszej wartości.",
+    "files": [
+      "game/scripts/core/maps/toml_map_parser.gd"
+    ],
+    "acceptance": "Powtórzony root/key i spawn/key zwracają błędy; ten sam key w dwóch różnych spawnach pozostaje poprawny.",
+    "group": "core",
+    "id": "TB-434"
+  },
+  {
+    "title": "Escaping tekstu i komentarzy TOML",
+    "description": "Obsłużyć escaped quote/backslash/newline/tab w stringach obsługiwanego podzbioru; komentarz zaczyna się poza stringiem.",
+    "files": [
+      "game/scripts/core/maps/toml_map_parser.gd"
+    ],
+    "acceptance": "Roundtrip stringów z quote, backslash i #; błędne escape i niedomknięty string odrzucone.",
+    "group": "core",
+    "id": "TB-435"
+  },
+  {
+    "title": "Ścisły schemat tabel i kluczy mapy",
+    "description": "Odrzucić nieznane root keys i nagłówki/klucze spawns, boxes, carves, zamiast ignorować literówki. Zachować obecne poprawne pola.",
+    "files": [
+      "game/scripts/core/maps/toml_map_parser.gd",
+      "game/scripts/core/maps/map_loader.gd"
+    ],
+    "acceptance": "Fixtures literówek są odrzucane; wszystkie shipped TOML mają zero błędów.",
+    "group": "core",
+    "id": "TB-436"
+  },
+  {
+    "title": "Kontrola struktur wejściowego słownika mapy",
+    "description": "MapLoader.from_dictionary sprawdza typ _errors i kolekcji bez runtime exception; nie próbuje iterować po skalarze.",
+    "files": [
+      "game/scripts/core/maps/map_loader.gd"
+    ],
+    "acceptance": "Fuzz tabela null/bool/string/int/dict w kolekcjach daje kontrolowany definition.errors bez crasha.",
+    "group": "core",
+    "id": "TB-437"
+  },
+  {
+    "title": "Walidacja metadanych mapy",
+    "description": "Walidować id jako 1–64 małe litery/cyfry/underscore, name 1–128 znaków, theme do64; odrzucać control characters.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "Graniczne długości i kontrolne znaki przetestowane; nazwy Unicode dozwolone.",
+    "group": "core",
+    "id": "TB-438"
+  },
+  {
+    "title": "Kanoniczny eksport definicji mapy",
+    "description": "Nowy MapSerializer.to_dictionary(definition) i to_toml(definition)->Dictionary ok/text/reason; stabilna kolejność i poprawne escaping.",
+    "files": [
+      "game/scripts/core/maps/map_serializer.gd"
+    ],
+    "acceptance": "Eksport/parse zachowuje rozmiar, metadane, kolejność operacji i spawny; dwa eksporty są identyczne.",
+    "group": "core",
+    "id": "TB-439"
+  },
+  {
+    "title": "Izolacja danych definicji mapy",
+    "description": "MapLoader kopiuje zagnieżdżone dane wejściowe; MapDefinition.copy() zwraca niezależny obiekt wraz z errors.",
+    "files": [
+      "game/scripts/core/maps/map_loader.gd",
+      "game/scripts/core/maps/map_definition.gd"
+    ],
+    "acceptance": "Mutacja input oraz kopii pozycji spawn/box nie wpływa na oryginalną definicję.",
+    "group": "core",
+    "id": "TB-440"
+  },
+  {
+    "title": "Strukturalny raport walidacji definicji",
+    "description": "MapValidator.inspect_definition(definition)->{ok,errors:Array[String],warnings:Array[String]} jako stabilny agregator bez zmiany starych API.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "ok odpowiada errors.is_empty; legacy validate_definition zwraca te same błędy; warnings nie blokują generowania.",
+    "group": "core",
+    "id": "TB-441"
+  },
+  {
+    "title": "Budżet operacji voxelowych mapy",
+    "description": "Dodać oszacowanie pracy wszystkich box/carve jako sumy przyciętych AABB oraz limit 32 milionów odwiedzin przed budową.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "Wiele nakładających się ogromnych operacji odrzucone mimo liczby <4096; shipped mapy mieszczą się w limicie.",
+    "group": "core",
+    "id": "TB-442"
+  },
+  {
+    "title": "Przycięcie pętli carve i fill do bounds",
+    "description": "MapBuilder._carve_sphere i VoxelWorldData.fill_box iterują po przecięciu ze światem; wynik dla legalnych operacji identyczny.",
+    "files": [
+      "game/scripts/core/maps/map_builder.gd",
+      "game/scripts/core/voxels/voxel_world_data.gd"
+    ],
+    "acceptance": "Porównanie z referencyjną małą pętlą dla częściowo zewnętrznych sphere/box; brak zmian poza bounds.",
+    "group": "core",
+    "id": "TB-443"
+  },
+  {
+    "title": "Bezpieczna arytmetyka operacji mapy",
+    "description": "Walidować rozsądny zakres integer współrzędnych i extent przed dodawaniem; carve musi przecinać bounds, radius pozostaje1–256.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "Ekstremalne signed64 wartości i carve całkowicie poza światem nie przechodzą walidacji.",
+    "group": "core",
+    "id": "TB-444"
+  },
+  {
+    "title": "Walidacja zdrowia materiału mapy",
+    "description": "Walidować jawne health jako integer 0–10000; air wymaga0, solid dodatniego. Domyślne health nadal pochodzi z materiału.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd",
+      "game/scripts/core/maps/map_builder.gd"
+    ],
+    "acceptance": "Ujemne/zero solid/niezerowe air/ponadlimitowe health odrzucone; obecne mapy zachowują health arrays.",
+    "group": "core",
+    "id": "TB-445"
+  },
+  {
+    "title": "Walidacja katalogu materiałów",
+    "description": "Nowy MaterialCatalog.validate(configs)->Array[String], from_configs(Array)->Dictionary; kontrola ID/code, duplikatów, finite resistance i health.",
+    "files": [
+      "game/scripts/core/voxels/material_catalog.gd"
+    ],
+    "acceptance": "Nieprawidłowe material Resource zwracają błędy; standardowe cztery materiały przechodzą.",
+    "group": "core",
+    "id": "TB-446"
+  },
+  {
+    "title": "Generator z przekazanym katalogiem materiałów",
+    "description": "ArenaGenerator.from_definition(definition,chunk_size=16,material_configs={}) obsługuje opcjonalny zwalidowany katalog; nieznany kod nigdy nie zamienia się cicho w dirt.",
+    "files": [
+      "game/scripts/core/maps/arena_generator.gd",
+      "game/scripts/core/maps/map_builder.gd",
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "Własny niesolidny materiał działa; nieznany kod daje errors/world=null; domyślne światy identyczne.",
+    "group": "core",
+    "id": "TB-447"
+  },
+  {
+    "title": "Spawny zgodne z kolizją gracza",
+    "description": "MapValidator.validate(definition,world,materials={}) używa PlayerMotion.blocked i VoxelRaycast.is_solid dla headroom/support.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd",
+      "game/scripts/core/maps/arena_generator.gd"
+    ],
+    "acceptance": "Niesolidny niezerowy materiał nie blokuje spawnu; solidny sufit i brak podpory odrzucane.",
+    "group": "core",
+    "id": "TB-448"
+  },
+  {
+    "title": "Kontrola nakładających się brył spawnów",
+    "description": "Wykrywać przecinanie AABB pawnów RADIUS/HEIGHT, w tym spawny pionowo nad sobą; zachować pełny raport błędów.",
+    "files": [
+      "game/scripts/core/maps/map_validator.gd"
+    ],
+    "acceptance": "Spawny odległe o jeden voxel pionowo odrzucane, poprawnie oddzielone akceptowane.",
+    "group": "core",
+    "id": "TB-449"
+  },
+  {
+    "title": "Fabryka wymaga obu drużyn w wybranym składzie",
+    "description": "MatchFactory odrzuca count i skład bez żywego przeciwnika już przed tworzeniem runnera.",
+    "files": [
+      "game/scripts/core/rules/match_factory.gd"
+    ],
+    "acceptance": "Mapa z samą drużyną1 nie tworzy meczu; istniejące mapy działają dla liczebności2–10.",
+    "group": "core",
+    "id": "TB-450"
+  },
+  {
+    "title": "Deterministyczny selektor spawnów",
+    "description": "Nowy SpawnSelector.select(spawns,count)->{ok,spawns,reason}; sort slot/team, wybór naprzemienny i kontrolowane uzupełnienie braków.",
+    "files": [
+      "game/scripts/core/maps/spawn_selector.gd",
+      "game/scripts/core/rules/match_factory.gd"
+    ],
+    "acceptance": "Kolejność wejściowa nie wpływa na wynik; brak duplikatów; oba zespoły dla każdego dopuszczonego count.",
+    "group": "core",
+    "id": "TB-451"
+  },
+  {
+    "title": "Pojemność registry zgodna z fabryką",
+    "description": "MapRegistry.describe wylicza supported_player_counts przez selektor; sprawdza błędy definicji oraz zgodność jej ID z registry.",
+    "files": [
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Każdy zgłoszony count daje poprawny select; nieznane lub błędne mapy nie zwracają fikcyjnych metadanych.",
+    "group": "core",
+    "id": "TB-452"
+  },
+  {
+    "title": "Fabryka meczu z definicji w pamięci",
+    "description": "MatchFactory.from_definition(definition,count=10,preset=\"classic\",loadout=\"classic\") współdzielona przez create_match; bez duplikacji budowania świata.",
+    "files": [
+      "game/scripts/core/rules/match_factory.gd"
+    ],
+    "acceptance": "Świat i snapshot z file oraz definition identyczne; nieprawidłowa definicja zwraca null.",
+    "group": "core",
+    "id": "TB-453"
+  },
+  {
+    "title": "Statystyki składu terenu",
+    "description": "Nowy ArenaAnalysis.summarize(world,materials)->Dictionary: per-material counts, solid/destructible count, occupied bounds i heightmap.",
+    "files": [
+      "game/scripts/core/maps/arena_analysis.gd"
+    ],
+    "acceptance": "Ręcznie policzony mały świat daje dokładne wyniki; wszystkie odczyty nie mutują arrays.",
+    "group": "core",
+    "id": "TB-454"
+  },
+  {
+    "title": "Analiza otoczenia spawnów",
+    "description": "ArenaAnalysis.spawn_clearance(world,spawns,materials,radius=3) raportuje wolne sąsiednie stanowiska, podpory i bliskość krawędzi.",
+    "files": [
+      "game/scripts/core/maps/arena_analysis.gd"
+    ],
+    "acceptance": "Ręczne fixtures open/boxed/ledge rozróżniane; promień ograniczony, deterministyczny raport.",
+    "group": "core",
+    "id": "TB-455"
+  },
+  {
+    "title": "Komponenty ruchu po płaskim podłożu",
+    "description": "ArenaAnalysis.walk_components(world,materials,max_nodes=100000) analizuje tylko poziome sąsiedztwo podpartego miejsca z headroom; jawne truncated.",
+    "files": [
+      "game/scripts/core/maps/arena_analysis.gd"
+    ],
+    "acceptance": "Dwa rozdzielone pokoje dają dwa komponenty; otwarcie przejścia je scala; budżet ogranicza wynik. Bez obietnicy analizy skoków.",
+    "group": "core",
+    "id": "TB-456"
+  },
+  {
+    "title": "Porównanie startowych pozycji drużyn",
+    "description": "ArenaAnalysis.compare_teams(world,spawns,materials) porównuje średnie wysokości, wolne sąsiedztwo i cover; ostrzeżenia zamiast zakazu asymetrii.",
+    "files": [
+      "game/scripts/core/maps/arena_analysis.gd"
+    ],
+    "acceptance": "Lustrzany fixture daje zerowe różnice; przesunięcie osłony daje przewidywalny wynik.",
+    "group": "core",
+    "id": "TB-457"
+  },
+  {
+    "title": "Laboratorium balistyki",
+    "description": "Znane odległości, stanowiska i oddzielone ściany dirt/stone/metal. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/ballistics_range.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Każda ściana ma oczekiwany materiał i znaną grubość; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-458"
+  },
+  {
+    "title": "Tarasowy kamieniołom",
+    "description": "Wielopoziomowe tarasy połączone schodami, niskie i wysokie osłony. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/terraced_quarry.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Schody mają kolejne wysokości i prześwit; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-459"
+  },
+  {
+    "title": "Wąwóz z dwoma obejściami",
+    "description": "Dwie niezależne drogi oraz odsłonięte centrum. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/split_pass.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Obie drogi istnieją i zniszczenie jednego mostu nie narusza drugiego; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-460"
+  },
+  {
+    "title": "Dziedziniec bunkrów",
+    "description": "Metalowy szkielet i niszczalne wejścia do bunkrów dla zastosowania drill. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/bunker_court.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Wejścia dirt/stone są niszczalne, szkielet metal przetrwa; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-461"
+  },
+  {
+    "title": "Wyspa z pierścieniem osłon",
+    "description": "Ryzykowne obrzeże i osłonięte wnętrze, rozdzielone spawny. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/ring_island.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Obrzeże ma faktyczny spadek, spawny mają podpory; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-462"
+  },
+  {
+    "title": "Fabryka trzech pasów",
+    "description": "Trzy pasy rozdzielone metalem z niszczalnymi przejściami. Jedno zadanie obejmuje kompletny TOML, registry i test charakterystycznej geometrii.",
+    "files": [
+      "game/maps/three_lane_foundry.toml",
+      "game/scripts/core/maps/map_registry.gd"
+    ],
+    "acceptance": "Separatory i poprzeczne przejścia mają zadeklarowane materiały; generowanie poprawne, oba zespoły dla2–10 graczy; deterministyczny terrain hash.",
+    "group": "core",
+    "id": "TB-463"
+  },
+  {
+    "title": "Klasyfikator wyniku pocisku bez zmiany fizyki",
+    "description": "Nowy TrajectoryAnalysis.classify(result)->{valid,complete,terminal_reason}; odróżnia impact/fuse/miss od invalid/simulation_budget. Nie zmienia simulate ani submit.",
+    "files": [
+      "game/scripts/core/projectiles/trajectory_analysis.gd"
+    ],
+    "acceptance": "Każdy obecny reason klasyfikowany; brak pola/nieprawidłowy path daje kontrolowany invalid.",
+    "group": "core",
+    "id": "TB-464"
+  },
+  {
+    "title": "Walidacja kontraktu śladu pocisku",
+    "description": "TrajectoryAnalysis.validate_result(result)->Array[String] kontroluje finite path/position, końcowy punkt, deltas i zgodność hit/reason.",
+    "files": [
+      "game/scripts/core/projectiles/trajectory_analysis.gd"
+    ],
+    "acceptance": "Uszkodzone ślady odrzucone; rzeczywiste wyniki wszystkich3 broni poprawne; świat nietknięty.",
+    "group": "core",
+    "id": "TB-465"
+  },
+  {
+    "title": "DDA odcinka do analizy geometrii",
+    "description": "VoxelRaycast.segment_hit(world,start,end,materials={})->{hit,position,voxel,normal,distance}; nowe API nie jest używane przez simulate.",
+    "files": [
+      "game/scripts/core/voxels/voxel_raycast.gd"
+    ],
+    "acceptance": "Oś/ukośna/granica/zero length/nonfinite sprawdzone; istniejący first_solid i trajektorie pozostają identyczne.",
+    "group": "core",
+    "id": "TB-466"
+  },
+  {
+    "title": "Diagnostyka przecięć próbkowanej trajektorii",
+    "description": "TrajectoryAnalysis.trace_intersections(world,path,materials={},max_segments=4096) używa segment_hit do raportowania przeszkód; jawny truncated, bez zmiany trajektorii.",
+    "files": [
+      "game/scripts/core/projectiles/trajectory_analysis.gd"
+    ],
+    "acceptance": "Wykrywa ścianę pomiędzy dwoma punktami i raportuje segment; budżet działa; world niezmieniony.",
+    "group": "core",
+    "id": "TB-467"
+  },
+  {
+    "title": "Regresje granicznych trajektorii wszystkich broni",
+    "description": "Nowa tabela testów zachowująca obecne wyniki na małych światach: start w powietrzu/solid, styczna, narożnik, wyjście poza świat.",
+    "files": [
+      "game/tests/unit/trajectory_boundaries_250_tests.gd"
+    ],
+    "acceptance": "Fixtures utrwalają reason/hit/terminal position/path hash oraz deltas; żadnej zmiany obecnego integratora.",
+    "group": "core",
+    "id": "TB-468"
+  },
+  {
+    "title": "Regresje granatu z dokładnym fuse",
+    "description": "Testy bounce0/bounce1, floor/wall/corner, fuse niebędącego wielokrotnością kroku, spoczynku i miss poza światem.",
+    "files": [
+      "game/tests/unit/grenade_250_tests.gd"
+    ],
+    "acceptance": "Utrwalony wynik obecnej fizyki; deterministyczne powtórzenia i brak mutacji świata.",
+    "group": "core",
+    "id": "TB-469"
+  },
+  {
+    "title": "Regresje drill i granic penetracji",
+    "description": "Testy drill_voxels0/1/max, powtórnego przecięcia tej samej komórki, metalowej bariery i późniejszego miss.",
+    "files": [
+      "game/tests/unit/drill_250_tests.gd"
+    ],
+    "acceptance": "Deltas bez duplikatów, ograniczona penetracja, metal nietknięty, oczekiwane terminal reasons.",
+    "group": "core",
+    "id": "TB-470"
+  },
+  {
+    "title": "Regresje preview i wykonania strzału",
+    "description": "Na małym runnerze porównać Simulation.simulate z MatchRunner.submit dla trzech broni, oddzielając czysty preview od aplikacji delt.",
+    "files": [
+      "game/tests/unit/shot_preview_250_tests.gd"
+    ],
+    "acceptance": "Preview nie mutuje terenu/ammo; submit zwraca identyczny path/reason; zmiany stanu są oczekiwane.",
+    "group": "core",
+    "id": "TB-471"
+  },
+  {
+    "title": "Analiza kształtu trajektorii",
+    "description": "TrajectoryAnalysis.summarize(result) zwraca apex, bounds, długość drogi, liczbę próbek, terminal position i klasyfikację. Nie zgaduje czasu z liczby punktów.",
+    "files": [
+      "game/scripts/core/projectiles/trajectory_analysis.gd"
+    ],
+    "acceptance": "Ręczne ścieżki dają dokładny apex/length/bounds; puste i niepoprawne ślady mają jawny błąd.",
+    "group": "core",
+    "id": "TB-472"
+  },
+  {
+    "title": "Ograniczony wybór strzału do punktu",
+    "description": "Nowy TrajectorySolver.solve(world,origin,target,weapon,rules,materials={},max_candidates=32) próbuje deterministycznej małej siatki yaw/pitch/power i rankuje końcowy błąd.",
+    "files": [
+      "game/scripts/core/projectiles/trajectory_solver.gd"
+    ],
+    "acceptance": "Rzeczywista liczba symulacji <=budżet; najlepszy wynik zgodny z brute-force tej samej siatki; brak mutacji, finite validation.",
+    "group": "core",
+    "id": "TB-473"
+  },
+  {
+    "title": "Czysty plan zniszczeń eksplozji",
+    "description": "VoxelDestruction.preview_explosion(center,radius,damage)->Array TerrainDelta; apply_explosion stosuje dokładnie ten plan, zachowując kolejność/dotychczasowe legalne wyniki.",
+    "files": [
+      "game/scripts/core/terrain/voxel_destruction.gd"
+    ],
+    "acceptance": "Preview nie mutuje świata; apply ma identyczne deltas i arrays jak referencyjna stara kalkulacja dla legalnych radius0–16.",
+    "group": "core",
+    "id": "TB-474"
+  },
+  {
+    "title": "Raport zniszczeń według materiału",
+    "description": "Nowy TerrainImpactAnalysis.summarize(world,deltas,materials)->Dictionary liczy zmienione/zniszczone voxele, ubytek HP, bounds i affected chunks.",
+    "files": [
+      "game/scripts/core/terrain/terrain_impact_analysis.gd"
+    ],
+    "acceptance": "Mały mieszany fixture ma ręcznie policzone wyniki; duplikaty pozycji nie zawyżają destroyed; dane wejściowe niezmienione.",
+    "group": "core",
+    "id": "TB-475"
+  },
+  {
+    "title": "Izolowane zasoby broni w każdym meczu",
+    "description": "WeaponCatalog.load_all/from_configs zwracają duplikaty valid WeaponConfig, nie cache Resource dzielony przez wszystkie runnery.",
+    "files": [
+      "game/scripts/core/weapons/weapon_catalog.gd"
+    ],
+    "acceptance": "Mutacja broni meczuA nie zmieniaB ani kolejnego load_all; nie zmienia wyjściowych właściwości i hashów.",
+    "group": "core",
+    "id": "TB-476"
+  },
+  {
+    "title": "Diagnostyka katalogu broni",
+    "description": "WeaponCatalog.validate_configs(configs)->Array[String] raportuje invalid resource/config, zduplikowane ID/code, zachowując dotychczasowe from_configs={} przy błędzie.",
+    "files": [
+      "game/scripts/core/weapons/weapon_catalog.gd"
+    ],
+    "acceptance": "Nie-Resource i błędne typy nie powodują wyjątku; wielokrotne błędy zgłoszone deterministycznie.",
+    "group": "core",
+    "id": "TB-477"
+  },
+  {
+    "title": "Podsumowanie charakterystyki broni",
+    "description": "WeaponCatalog.describe(config)->Dictionary z istniejących pól: zakres speed, ammo, behavior, promienie i próbki damage_at_distance; bez nowych exported properties.",
+    "files": [
+      "game/scripts/core/weapons/weapon_catalog.gd"
+    ],
+    "acceptance": "Opis zgodny z config i rzeczywistym damage_at_distance w środku/połowie/na granicy; kopia opisu izolowana.",
+    "group": "core",
+    "id": "TB-478"
+  },
+  {
+    "title": "Zestawy trzech broni bez zmian replay schema",
+    "description": "WeaponCatalog.load_loadout(id=\"classic\") i opcjonalny ostatni argument loadout w MatchFactory; ID nadal1/2/3, classic identyczny z dotychczasowym load_all.",
+    "files": [
+      "game/scripts/core/weapons/weapon_catalog.gd",
+      "game/scripts/core/rules/match_factory.gd"
+    ],
+    "acceptance": "Classic zachowuje właściwości/hash; nieznany loadout odrzucony; alternatywny zestaw nie mutuje classic. UI wybór poza zakresem.",
+    "group": "core",
+    "id": "TB-479"
+  },
+  {
+    "title": "Zestaw artyleryjski oparty o obecne zachowania",
+    "description": "Trzy zasoby istniejącego WeaponConfig: ciężki impact, dłuższy grenade i precyzyjny drill; rejestracja jako artillery w load_loadout.",
+    "files": [
+      "game/assets/config/weapons/artillery_bazooka.tres",
+      "game/assets/config/weapons/artillery_grenade.tres",
+      "game/assets/config/weapons/artillery_drill.tres",
+      "game/scripts/core/weapons/weapon_catalog.gd"
+    ],
+    "acceptance": "Wszystkie config.validate; ID1/2/3; ograniczone ammo i odrębne ślady na ballistics_range; żadnych nowych pól zachowania.",
+    "group": "core",
+    "id": "TB-480"
+  },
+  {
+    "title": "Akceptacja macierzy aren i zestawów",
+    "description": "Jeden bounded suite przechodzi wszystkie zarejestrowane areny i dwa loadouty, tworzy2-osobowy mecz, oddaje deterministyczny legalny strzał i sprawdza reset.",
+    "files": [
+      "game/tests/unit/core_content_250_tests.gd"
+    ],
+    "acceptance": "Brak null runnera, finite ślady, legalne deltas i dokładny powrót initial terrain po reset; standardowy istniejący replay suite nadal zielony.",
+    "group": "core",
+    "id": "TB-481"
+  },
+  {
+    "title": "Zapamiętanie ostatniej konfiguracji lokalnej",
+    "description": "Walidowany plik formularza mapa/liczba/preset/mode/difficulty/human_team; brak automatycznego rozpoczynania meczu.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Roundtrip pliku tymczasowego i odtworzenie formularza; malformed zachowuje defaults.",
+    "group": "client",
+    "id": "TB-382"
+  },
+  {
+    "title": "Wybór drużyny człowieka",
+    "description": "Udostępnić istniejące options.human_team=1|2 bez zmiany schematu session.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/local_session.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Solo czerwonej drużyny przekazuje niebieską botowi; zapis sesji zachowuje team.",
+    "group": "client",
+    "id": "TB-383"
+  },
+  {
+    "title": "Nazwane profile konfiguracji meczu",
+    "description": "Maksymalnie 12 profili pełnej konfiguracji; wybór w formularzu nie uruchamia gry.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Dwa różne profile przełączają pełny formularz; limit i nieznana mapa odrzucone.",
+    "group": "client",
+    "id": "TB-384"
+  },
+  {
+    "title": "Zapis i usunięcie profilu w formularzu",
+    "description": "Kontrolki nazwy, zapisu i usunięcia z potwierdzeniem konkretnej nazwy; bez nazw graczy i zmian roster.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Usunięcie wybranego profilu nie usuwa innych; błąd zapisu widoczny.",
+    "group": "client",
+    "id": "TB-385"
+  },
+  {
+    "title": "Szybkie konfiguracje hotseat i solo",
+    "description": "Trzy jawne konfiguracje startowe hotseat, solo easy, solo normal; wypełniają formularz i pozostają edytowalne.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Wybrany template ustawia spójnie mode/difficulty/team; ręczna edycja nadal działa.",
+    "group": "client",
+    "id": "TB-386"
+  },
+  {
+    "title": "Limit graczy według mapy",
+    "description": "Formularz ogranicza liczbę graczy do istniejącego registry capacity, bez zmian map.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zmiana mapy aktualizuje maksymalną liczbę i koryguje niemożliwy wybór.",
+    "group": "client",
+    "id": "TB-387"
+  },
+  {
+    "title": "Opis reguł presetu w konfiguracji",
+    "description": "Pokazać HP, czas tury i limit tur z istniejącego RulePresets.create.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Opis odpowiada rules dla classic/quick/training; bez modyfikacji core rules.",
+    "group": "client",
+    "id": "TB-388"
+  },
+  {
+    "title": "Podsumowanie konfiguracji przed startem",
+    "description": "Czytelny opis mapy, graczy, trybu i zespołu człowieka oraz disabled Start dla invalid config.",
+    "files": [
+      "game/scripts/client/session/local_match_profiles.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Niepoprawny profil nie pozwala emitować start; poprawny summary odpowiada argumentom.",
+    "group": "client",
+    "id": "TB-389"
+  },
+  {
+    "title": "Potwierdzenie porzucenia lokalnego meczu",
+    "description": "Wspólny modal start-new z zapisanym żądaniem i bezpiecznym Cancel.",
+    "files": [
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Cancel zachowuje hash; Confirm wykonuje dokładnie jedno żądanie nowego meczu.",
+    "group": "client",
+    "id": "TB-390"
+  },
+  {
+    "title": "Potwierdzenie restartu",
+    "description": "Klawisz i przycisk kierują do wspólnego request_restart; nie zmieniać autorytetu online.",
+    "files": [
+      "game/scripts/client/input/desktop_input.gd",
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "R nie restartuje bez potwierdzenia; confirm nie przecieka do gameplay.",
+    "group": "client",
+    "id": "TB-391"
+  },
+  {
+    "title": "Potwierdzenie poddania gracza",
+    "description": "Modal wiąże żądanie z generation/turn/player; nieaktualny intent odrzucony.",
+    "files": [
+      "game/scripts/client/ui/confirmation_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zmiana tury przed potwierdzeniem nie poddaje kolejnego gracza.",
+    "group": "client",
+    "id": "TB-392"
+  },
+  {
+    "title": "Przekazanie sterowania hotseat",
+    "description": "Opcjonalny ekran Gotowy przy zmianie lokalnego gracza, z pauzą zegara.",
+    "files": [
+      "game/scripts/client/session/local_session.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Brak tick/ruchu przed Ready; działa tylko w hotseat, nie replay/online.",
+    "group": "client",
+    "id": "TB-393"
+  },
+  {
+    "title": "Rotacyjne autosave lokalne",
+    "description": "Dedykowany katalog user://autosaves z trzema slotami SessionStore; opt-in po stabilnej granicy tury; bez library.",
+    "files": [
+      "game/scripts/client/session/local_autosave.gd",
+      "game/scripts/client/session/local_session.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Cztery zapisy zostawiają trzy sloty; projectile/replay/online blokują zapis; test tmp.",
+    "group": "client",
+    "id": "TB-394"
+  },
+  {
+    "title": "Wznowienie ostatniego autosave",
+    "description": "Przycisk Continue wybiera najnowszy poprawny slot i jawnie raportuje uszkodzony nowszy.",
+    "files": [
+      "game/scripts/client/session/local_autosave.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Uszkodzony slot nie podmienia runnera; fallback do poprzedniego poprawnego widoczny.",
+    "group": "client",
+    "id": "TB-395"
+  },
+  {
+    "title": "Lokalna seria best-of",
+    "description": "Mały model serii 1/3/5 meczów, deduplikacja zakończeń po generation i jawny Next round.",
+    "files": [
+      "game/scripts/client/session/match_series.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Wynik generacji liczony raz; remis bez punktu; zakończona seria nie otwiera kolejnej rundy.",
+    "group": "client",
+    "id": "TB-396"
+  },
+  {
+    "title": "Kontroler prób treningowych",
+    "description": "Odrębny stan treningu z kopią początkowego SessionStore payload; start/retry/exit zachowuje live sesję.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Retry odtwarza hash i velocities; exit przywraca live runner; online odrzucony.",
+    "group": "client",
+    "id": "TB-397"
+  },
+  {
+    "title": "Lekcja poruszania",
+    "description": "Uporządkowane cele przemieszczenia względem pozycji startowej, bez zmian map.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zaliczenie wymaga rzeczywistego ruchu; samo naciśnięcie klawisza nie wystarcza.",
+    "group": "client",
+    "id": "TB-398"
+  },
+  {
+    "title": "Lekcja skoku",
+    "description": "Obserwacja zaakceptowanego skoku i późniejszego lądowania.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Rejected jump nie zalicza; zaakceptowany skok+lądowanie zalicza raz.",
+    "group": "client",
+    "id": "TB-399"
+  },
+  {
+    "title": "Lekcja anulowania celowania",
+    "description": "Maszyna kroków aim-charge-cancel bez wystrzelenia pocisku.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Anulowanie nie zużywa ammo; wystrzał nie zalicza ćwiczenia cancel.",
+    "group": "client",
+    "id": "TB-400"
+  },
+  {
+    "title": "Ćwiczenie celności",
+    "description": "Cel to wybrany istniejący przeciwnik; punktacja odległości rzeczywistego impact.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Miss i hit dają różne wyniki; nieaktywny trening nie gromadzi prób.",
+    "group": "client",
+    "id": "TB-401"
+  },
+  {
+    "title": "Ćwiczenie kontrolowania siły",
+    "description": "Cele lekcji obejmują poprawny strzał w zadanym przedziale rzeczywistej shot_power.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Klasa siły oceniana z command, nie czasu UI; poza przedziałem brak zaliczenia.",
+    "group": "client",
+    "id": "TB-402"
+  },
+  {
+    "title": "Ćwiczenie odczytywania wiatru",
+    "description": "Lekcja pokazuje istniejący rules.wind i wymaga próby oraz oceny trafienia; nie edytuje rules.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Wskazanie kierunku/siły zgadza się z runner; zero wind opisane jako cisza.",
+    "group": "client",
+    "id": "TB-403"
+  },
+  {
+    "title": "Ćwiczenie dostępnych broni",
+    "description": "Sekwencja prób każdą dostępną bronią z catalog runnera; bez tworzenia nowej broni.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Bronie z zerowym ammo pomijane; zmiana selection bez strzału nie zalicza.",
+    "group": "client",
+    "id": "TB-404"
+  },
+  {
+    "title": "Ćwiczenie bezpiecznego ostrzału",
+    "description": "Zaliczenie trafienia przeciwnika bez obrażeń własnej drużyny z result events.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Friendly damage dyskwalifikuje próbę; bezpośrednie self damage także.",
+    "group": "client",
+    "id": "TB-405"
+  },
+  {
+    "title": "Powtórzenie ostatniej próby",
+    "description": "Snapshot przed zaakceptowanym strzałem umożliwia retry bez cofania całej lekcji.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Retry przywraca dokładnie pre-shot stan; brak checkpointu daje błąd zamiast reset.",
+    "group": "client",
+    "id": "TB-406"
+  },
+  {
+    "title": "Historia prób i najlepszy wynik",
+    "description": "Ograniczona do 50 historia z impact/distance/damage/power i deterministycznym best.",
+    "files": [
+      "game/scripts/core/training/attempt_history.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Limit zachowany; tie-break stabilny; retry nie dubluje wpisów.",
+    "group": "client",
+    "id": "TB-407"
+  },
+  {
+    "title": "Markery ostatnich trafień treningowych",
+    "description": "Maksymalnie 10 wizualnych znaczników impact; usuwane na exit/retry lesson.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Markery nie zmieniają świata; cleanup po exit; brak markerów online.",
+    "group": "client",
+    "id": "TB-408"
+  },
+  {
+    "title": "Wskazówka trenera",
+    "description": "Istniejący BotPlanner wylicza sugestię kierunku/siły; niczego nie submituje.",
+    "files": [
+      "game/scripts/core/training/training_coach.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Hint nie zmienia hash/revision/ammo; po zmianie revision hint invalid.",
+    "group": "client",
+    "id": "TB-409"
+  },
+  {
+    "title": "Stopnie pomocy treningowej",
+    "description": "Pełny tor, pierwsza część toru, brak toru; lokalny wybór prezentacji.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Identyczna komenda daje ten sam wynik niezależnie od pomocy; wyjście przywraca preferencje.",
+    "group": "client",
+    "id": "TB-410"
+  },
+  {
+    "title": "Trwały postęp lekcji",
+    "description": "Wersjonowany ograniczony plik ukończonych lesson IDs, atomowy zapis, Reset progress.",
+    "files": [
+      "game/scripts/core/training/training_progress.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Roundtrip tmp; unknown ID/version odrzucone; reset nie zmienia preferencji.",
+    "group": "client",
+    "id": "TB-411"
+  },
+  {
+    "title": "Podsumowanie treningu",
+    "description": "Próby, trafienia, damage, friendly damage i czas aktywny, bez liczenia pauzy.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Te same eventy nie podwajają licznika; pauza/overlay nie zwiększają czasu.",
+    "group": "client",
+    "id": "TB-412"
+  },
+  {
+    "title": "Ćwiczenie walki bez trajektorii",
+    "description": "Osobny challenge trafienia z wyłączoną pomocą, ocena na rzeczywistym wyniku.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Warunek zaliczenia wymaga braku pomocy przez całą próbę; wyjście przywraca show_trajectory.",
+    "group": "client",
+    "id": "TB-413"
+  },
+  {
+    "title": "Ćwiczenie serii trafień",
+    "description": "Challenge trzech kolejnych trafień z jawnym zerowaniem streak po miss.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Hit-hit-miss-hit daje streak1; duplikat wyniku nie zwiększa streak.",
+    "group": "client",
+    "id": "TB-414"
+  },
+  {
+    "title": "Ćwiczenie gospodarowania amunicją",
+    "description": "Cel punktowy z ograniczoną liczbą prób i zakazem powtarzania drogiej broni w ramach challenge; bez zmiany core inventory.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Limit prób zatrzymuje challenge; wynik oparty na zarejestrowanych komendach.",
+    "group": "client",
+    "id": "TB-415"
+  },
+  {
+    "title": "Katalog i wybór lekcji",
+    "description": "Panel listy lesson IDs z opisem celu, wymaganiami i stanem ukończenia.",
+    "files": [
+      "game/scripts/core/training/training_lessons.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Każda lekcja ma unikalne ID i implementowaną ocenę; invalid ID nie rozpoczyna treningu.",
+    "group": "client",
+    "id": "TB-416"
+  },
+  {
+    "title": "Przejście do następnej lekcji",
+    "description": "Po zaliczeniu jawny Next; zapis progresu i reset stanu próby bez samoczynnego strzału.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Next zmienia lesson dokładnie raz; ostatnia lekcja pokazuje completion.",
+    "group": "client",
+    "id": "TB-417"
+  },
+  {
+    "title": "Obserwowanie wzorcowego strzału",
+    "description": "Trener proponuje command, użytkownik jawnie zatwierdza Demonstrate w treningu; wykorzystuje recorder i aktualność komendy.",
+    "files": [
+      "game/scripts/core/training/training_coach.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Stary hint odrzucony; demonstracja nie zalicza próby użytkownikowi; playback pozostaje zgodny.",
+    "group": "client",
+    "id": "TB-418"
+  },
+  {
+    "title": "Pauza i pojedyncza próba treningu",
+    "description": "Panel kontroluje wyraźny armed/waiting/result state i blokuje kolejną próbę do Continue.",
+    "files": [
+      "game/scripts/core/training/training_session.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Przy waiting kolejne LMB nie strzela; Continue uzbraja tylko jedną próbę.",
+    "group": "client",
+    "id": "TB-419"
+  },
+  {
+    "title": "Ograniczenie animacji",
+    "description": "Preferencja reduced_motion skraca przejścia kamery i ogranicza animowane eksplozje.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/vfx/match_effects.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zmienia wyłącznie prezentację; reset/replay nie zostawiają efektów/tweenów.",
+    "group": "client",
+    "id": "TB-420"
+  },
+  {
+    "title": "Rozróżnialne schematy drużyn",
+    "description": "Spójne palety standard/accessible plus tekstowe oznaczenie drużyny na markerze i HUD.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/ui/team_visual_scheme.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zmiana odświeża istniejące markery; identyfikacja działa bez polegania wyłącznie na kolorze.",
+    "group": "client",
+    "id": "TB-421"
+  },
+  {
+    "title": "Konfigurowalny celownik",
+    "description": "Edytor rozmiaru i kontrastu z podglądem i ograniczonymi wartościami.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/ui/crosshair.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Persistence/reset odtwarza wygląd; skrajne wartości nie zasłaniają widoku.",
+    "group": "client",
+    "id": "TB-422"
+  },
+  {
+    "title": "Przełączane celowanie",
+    "description": "Preferencja hold/toggle dla RMB; wszystkie cancel guards pozostają.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/input/desktop_input.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Toggle działa; Esc/menu/focusout kończą aim; hold nadal zgodny.",
+    "group": "client",
+    "id": "TB-423"
+  },
+  {
+    "title": "Ładowanie strzału dwoma kliknięciami",
+    "description": "Opcjonalny click-start/click-fire zamiast hold-release.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/input/desktop_input.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Pierwszy release nie strzela; menu/focusout anuluje; capture blokuje oba tryby.",
+    "group": "client",
+    "id": "TB-424"
+  },
+  {
+    "title": "Tekstowe podpisy zdarzeń",
+    "description": "Kolejka podpisów TurnStarted/PlayerDamaged/MatchEnded niezależna od mute.",
+    "files": [
+      "game/scripts/client/ui/event_captions.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Kolejka bounded, eventy nie dublują się; captions przy mute i disabled nie zostają.",
+    "group": "client",
+    "id": "TB-425"
+  },
+  {
+    "title": "Kategorie głośności i próbka",
+    "description": "Dwa mnożniki effects/cues pod master volume; preview ustawień bez symulacji.",
+    "files": [
+      "game/scripts/client/settings/client_settings.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/vfx/match_effects.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Master mute ma pierwszeństwo; preview nie wycieka AudioStreamPlayer.",
+    "group": "client",
+    "id": "TB-426"
+  },
+  {
+    "title": "Fokus klawiatury w panelach",
+    "description": "Wspólny kontroler focus initial/restore i pętli Tab w widocznym panelu.",
+    "files": [
+      "game/scripts/client/ui/panel_focus_controller.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Tab nie przechodzi do ukrytych paneli; modal restore poprawny; capture ma pierwszeństwo.",
+    "group": "client",
+    "id": "TB-427"
+  },
+  {
+    "title": "Dopasowanie paneli do małych okien",
+    "description": "Wspólny sizing dla ustawień, match panels i treningu, bez zmian panelu library.",
+    "files": [
+      "game/scripts/client/ui/panel_layout.gd",
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/ui/settings_panel.gd",
+      "game/scripts/client/ui/training_panel.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "W 800x600 oraz HUD125 wszystkie przyciski osiągalne przez scroll; brak overflow poziomego.",
+    "group": "client",
+    "id": "TB-428"
+  },
+  {
+    "title": "Kontekstowe przyczyny blokady sterowania",
+    "description": "HUD pokazuje bot turn/no ammo/projectile/menu/match ended na podstawie wspólnego statusu.",
+    "files": [
+      "game/scripts/client/ui/control_status.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Wskazana przyczyna odpowiada realnemu guardowi i znika po jego usunięciu.",
+    "group": "client",
+    "id": "TB-429"
+  },
+  {
+    "title": "Karta aktualnej broni",
+    "description": "Osobny widget nazwy/ammo/ładowania z danych istniejącego runnera.",
+    "files": [
+      "game/scripts/client/ui/weapon_hud.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Zmiana gracza/broni i wystrzał odświeżają dane; ammo0 wyraźnie oznaczone.",
+    "group": "client",
+    "id": "TB-430"
+  },
+  {
+    "title": "Rozbudowane podsumowanie lokalnego meczu",
+    "description": "Tabela shots/hits/damage/kills z runner.statistics oraz przyciski Next round/Restart; bez funkcji library/replay.",
+    "files": [
+      "game/scripts/client/ui/match_panels.gd",
+      "game/scripts/client/debug/voxel_debug.gd",
+      "game/scripts/client/session/match_series.gd",
+      "game/tests/unit/client_training250_tests.gd"
+    ],
+    "acceptance": "Wiersze zgodne ze statystykami; refresh nie dubluje wyniku serii; disabled actions zgodne z trybem.",
+    "group": "client",
+    "id": "TB-431"
+  },
+  {
+    "title": "Walidowany model profilu połączenia",
+    "description": "Nowy ConnectionProfiles: rekord id,title,host,port,backend_url; jawne limity i walidacja endpointów. Profil nie zawiera tokenów ani server_key.",
+    "files": [
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Odrzuca puste i nadmierne nazwy, host ze schematem lub ścieżką, port poza zakresem oraz URL inny niż HTTP/HTTPS; poprawne localhost, DNS i IPv6 przechodzą.",
+    "group": "network",
+    "id": "TB-482"
+  },
+  {
+    "title": "Odczyt wersjonowanego magazynu profili",
+    "description": "load_from(path) czyta bounded JSON do kandydata i podmienia stan dopiero po pełnej walidacji; limit20 profili i64KiB.",
+    "files": [
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Uszkodzony plik, duplikaty ID, nadmiar rekordów i nieznana wersja pozostawiają wcześniejszy stan; brak pliku daje jawny wynik.",
+    "group": "network",
+    "id": "TB-483"
+  },
+  {
+    "title": "Atomowy zapis magazynu profili",
+    "description": "save_to(path) zapisuje kompletny dokument przez unikalny plik tymczasowy i rename; raportuje błąd bez pozornego sukcesu.",
+    "files": [
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Roundtrip wszystkich rekordów; zapis do niedostępnego katalogu nie niszczy poprzedniego pliku i nie zostawia tmp.",
+    "group": "network",
+    "id": "TB-484"
+  },
+  {
+    "title": "Operacje nazwanych ulubionych endpointów",
+    "description": "add/update/remove/list obsługują niezależne losowe ID; aktualizacja zachowuje ID, usunięcie czyści zależne odwołania.",
+    "files": [
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Dwa profile mogą mieć ten sam host; limit20, nieznane ID i błędny update nie mutują stanu; remove nie usuwa innego profilu.",
+    "group": "network",
+    "id": "TB-485"
+  },
+  {
+    "title": "Oddzielne ostatnio udane połączenie",
+    "description": "remember_success(host,port,backend_url) zapisuje ostatni działający endpoint niezależnie od wybranego ulubionego; tylko jawny callback sukcesu.",
+    "files": [
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Nieudana próba nie nadpisuje last_success; rekord przeżywa roundtrip; brak poświadczeń w JSON.",
+    "group": "network",
+    "id": "TB-486"
+  },
+  {
+    "title": "Wybór ulubionego profilu w menu",
+    "description": "Menu ładuje magazyn i pozwala wybrać profil, ustawiając host/port/backendURL bez automatycznego łączenia; dependency injection ścieżki dla testów.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Wybór poprawnie uzupełnia pola; brak/uszkodzony magazyn nie blokuje direct connect; CLI host/port nie są przypadkowo nadpisywane przy starcie.",
+    "group": "network",
+    "id": "TB-487"
+  },
+  {
+    "title": "Zarządzanie ulubionymi z menu",
+    "description": "Dodanie, aktualizacja nazwy/endpointu i usuwanie wybranego profilu z potwierdzeniem; błędy walidacji i persist widoczne.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Pełny add-edit-delete na tymczasowym magazynie; cancel nie usuwa; nieudany zapis jest komunikowany.",
+    "group": "network",
+    "id": "TB-488"
+  },
+  {
+    "title": "Przywrócenie ostatniego udanego endpointu",
+    "description": "Menu udostępnia Use last successful oraz record_connection_success hook; samo rozpoczęcie połączenia nie aktualizuje historii.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/connection_profiles.gd"
+    ],
+    "acceptance": "Przycisk disabled bez historii; udana synchronizacja przez hook zapisuje dane; późniejszy błąd ich nie zmienia.",
+    "group": "network",
+    "id": "TB-489"
+  },
+  {
+    "title": "Bezpieczna trwała tożsamość gościa",
+    "description": "Wydzielić GuestIdentity z bounded read, walidacją i atomowym create; naprawić pusty/uszkodzony guest_id.txt bez nieskończonej pętli błędnego loginu.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/guest_identity.gd"
+    ],
+    "acceptance": "Testy missing/empty/oversize/invalid/store failure; istniejący prawidłowy ID stabilny; jawny --guest-id nie nadpisuje pliku.",
+    "group": "network",
+    "id": "TB-490"
+  },
+  {
+    "title": "Przewijane menu multiplayer",
+    "description": "Obecny VBox ma stałą minimalną wysokość i brak scroll; dodać przewijanie i dopasowanie wysokości do viewport.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd"
+    ],
+    "acceptance": "Wszystkie kontrolki dostępne przy720p i HUD125%; poprawne zachowanie po resize; brak zakrytego przycisku connect.",
+    "group": "network",
+    "id": "TB-491"
+  },
+  {
+    "title": "Przyciski backendu zgodne ze stanem operacji",
+    "description": "Zachować referencje do przycisków i centralnie wyliczać enabled z busy/auth/socket/searching; użytkownik widzi dozwolone operacje.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd"
+    ],
+    "acceptance": "Bez loginu create/join/search disabled; podczas wyszukiwania cancel dostępny; completion/error odblokowuje właściwe akcje.",
+    "group": "network",
+    "id": "TB-492"
+  },
+  {
+    "title": "Jawne anulowanie i rozłączenie backendu",
+    "description": "Dodać Cancel operation/Disconnect backend; generacja operacji menu blokuje późne coroutines przed nadpisaniem statusu po anulowaniu.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Cancel podczas login/connect/create nie pozostawia busy; późny wynik nie odtwarza zamkniętej sesji; gameplay connection niezależne.",
+    "group": "network",
+    "id": "TB-493"
+  },
+  {
+    "title": "Walidowany join lobby z klawiatury",
+    "description": "Wspólna walidacja lobby ID i obsługa text_submitted; odrzuca puste/nadmierne/control characters przed requestem.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Enter i przycisk prowadzą do tego samego żądania; błędny ID nie wysyła nic i pokazuje czytelny komunikat.",
+    "group": "network",
+    "id": "TB-494"
+  },
+  {
+    "title": "Kopiowanie ID lobby i endpointu",
+    "description": "Jawne przyciski Copy lobby ID i Copy server endpoint, poprawny zapis IPv6; kopiowanie dopiero po kliknięciu.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd"
+    ],
+    "acceptance": "Format host:port/bracketedIPv6:port jednoznaczny; puste lobby nie nadpisuje schowka; nigdy nie kopiowane tokeny.",
+    "group": "network",
+    "id": "TB-495"
+  },
+  {
+    "title": "Status gameplay i ręczne retry w menu",
+    "description": "present_game_connection(status) wyświetla connecting/sync/connected/error, postęp, endpoint i aktualne RTT; retry_requested emituje intent.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Aktualizacja UI nie uruchamia połączenia; retry disabled podczas connect/sync; error pozostaje widoczny z ostatnim endpointem.",
+    "group": "network",
+    "id": "TB-496"
+  },
+  {
+    "title": "Edytowalny endpoint Nakama",
+    "description": "Pole backendURL oraz Apply z walidacją; zmiana endpointu zamyka starą sesję i czyści token po potwierdzonym apply.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd",
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Błędny URL nie niszczy działającej sesji; poprawna zmiana nie przenosi credential do nowego hosta; profil uzupełnia pole.",
+    "group": "network",
+    "id": "TB-497"
+  },
+  {
+    "title": "Oczekiwanie na autorytatywne potwierdzenie Ready",
+    "description": "Lobby oznacza wysłany ready jako pending, blokuje powtórki do potwierdzenia lub bounded timeout; nie ustawia optymistycznie readiness.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Szybkie wielokrotne kliknięcie wysyła jedną intencję; snapshot potwierdza, reject/timeout odblokowuje bez fałszywej zmiany ready.",
+    "group": "network",
+    "id": "TB-498"
+  },
+  {
+    "title": "Potwierdzanie zmiany nazwy w lobby",
+    "description": "Walidacja Protocol.valid_display_name przed emisją, pending name i tekst błędu; zachowanie lokalnego draftu przy refresh.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Niepoprawna nazwa nie wysyła requestu; update roster nie kasuje edytowanego draftu; ack aktualizuje nazwę, reject pozwala poprawić.",
+    "group": "network",
+    "id": "TB-499"
+  },
+  {
+    "title": "Potwierdzanie głosu rematch",
+    "description": "Pending vote z blokadą powtórzeń, czyszczeniem przy nowej generation i timeout/reject; źródłem głosu nadal server roster.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Nie można spamować vote; restart generacji usuwa pending; brak lokalnego przedwczesnego rematch.",
+    "group": "network",
+    "id": "TB-500"
+  },
+  {
+    "title": "Potwierdzenie opuszczenia meczu online",
+    "description": "Przycisk Disconnect w lobby otwiera confirmation z informacją o rezerwacji/retry; emit dopiero po potwierdzeniu.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Cancel nic nie emituje; confirm emituje raz; schowanie panelu zamyka stary dialog.",
+    "group": "network",
+    "id": "TB-501"
+  },
+  {
+    "title": "Diagnostyka synchronizacji w lobby",
+    "description": "Dodatkowe present_connection(status) i retry_requested; wyświetla postęp oraz ostatni błąd bez zastępowania roster/status meczu.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Sync pokazuje completed/total; stale RTT jako niedostępne; retry z błędu emituje jedną intencję, a connected ukrywa błąd.",
+    "group": "network",
+    "id": "TB-502"
+  },
+  {
+    "title": "Walidowana konfiguracja runtime transportu",
+    "description": "Nowy ServerRuntimeOptions z limitami reservation/handshake timeout/packet budget/snapshot budget; apply_options(candidate) atomowo przed start, bez przejęcia globalnego CLI.",
+    "files": [
+      "game/scripts/networking/transport/server_runtime_options.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/server/server_main.gd"
+    ],
+    "acceptance": "NaN, infinity i wartości poza bezpiecznym zakresem odrzucane; defaults zachowują obecną zgodność; invalid candidate nie zmienia options.",
+    "group": "network",
+    "id": "TB-503"
+  },
+  {
+    "title": "Migawka stanu połączenia klienta",
+    "description": "status_snapshot() zwraca bounded dictionary connection_state,endpoint,phase,progress,latency,error i can_retry; bez tokenu lub runnera.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Wszystkie przejścia connect/sync/connected/fail/close mają spójny wynik; caller nie może mutować wnętrza; służy menu/lobby hooks.",
+    "group": "network",
+    "id": "TB-504"
+  },
+  {
+    "title": "Ochrona przed przeterminowanym logowaniem Nakama",
+    "description": "guest_login sprawdza connection/auth generation po await; zamknięcie lub nowy login unieważnia stary wynik.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Późna odpowiedź nie nadpisuje tokenu/statusu nowej sesji; deterministyczny mock HTTP test.",
+    "group": "network",
+    "id": "TB-505"
+  },
+  {
+    "title": "Anulowanie aktywnego HTTP logowania",
+    "description": "Zachować aktywny HTTPRequest i anulować/free przy close lub kolejnym loginie; zakończyć czekający flow bez zawieszenia.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Cancel i exit usuwają request; brak późnych sygnałów i stale busy; test z kontrolowanym opóźnieniem.",
+    "group": "network",
+    "id": "TB-506"
+  },
+  {
+    "title": "Limity i walidacja odpowiedzi logowania",
+    "description": "Ustawić body_size_limit, bounded token i ścisłe typy odpowiedzi przed commit sesji.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Oversize,pusty token,błędny JSON nie podmieniają stanu i nie powodują błędów skryptu.",
+    "group": "network",
+    "id": "TB-507"
+  },
+  {
+    "title": "Walidacja URL i identyfikatora gościa w API",
+    "description": "Publiczne guest_login/connect_socket walidują adres i ID niezależnie od UI; obsługują HTTP/HTTPS i odrzucają control chars.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Nieprawidłowy URL/ID nie inicjuje sieci; poprawne parametry kompatybilne z lokalnym Nakama.",
+    "group": "network",
+    "id": "TB-508"
+  },
+  {
+    "title": "Budżet odbioru WebSocket na klatkę",
+    "description": "Zastąpić unbounded while limitem pakietów i bajtów, limit pojedynczej wiadomości; preserve queued input.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Duża kolejka nie opróżnia się w jednej klatce; poprawne odpowiedzi docierają w kolejnych; malformed nie blokuje reszty.",
+    "group": "network",
+    "id": "TB-509"
+  },
+  {
+    "title": "Korelacja wyłącznie aktywnych requestów Nakama",
+    "description": "Ograniczona mapa pending cid; unknown/late cid ignorowane, timeout usuwa wpis; limit równoległych requestów.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Zalew nieznanych cid nie rośnie w pamięci; odpowiedź wraca do właściwego requestu; close czyści całość.",
+    "group": "network",
+    "id": "TB-510"
+  },
+  {
+    "title": "Walidacja kopert odpowiedzi Nakama",
+    "description": "Wspólne walidatory error/match/ticket/matched; nie zakładać Dictionary w zagnieżdżonych polach.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "error jako String,match jako Array,błędny ticket kończą się kontrolowanym błędem bez SCRIPT ERROR.",
+    "group": "network",
+    "id": "TB-511"
+  },
+  {
+    "title": "Obsługa błędów wysyłki WebSocket",
+    "description": "Sprawdzać send_text i connect_to_url; request kończy się natychmiast przy błędzie, socket jest sprzątany.",
+    "files": [
+      "game/scripts/client/backend/nakama_client.gd"
+    ],
+    "acceptance": "Błąd wysłania nie czeka5s i nie zostawia searching; retry po błędzie działa.",
+    "group": "network",
+    "id": "TB-512"
+  },
+  {
+    "title": "Całkowity deadline synchronizacji gameplay",
+    "description": "Oddzielić czas całej próby od resetowanego timeout dla begin; wielokrotne begin nie wydłużają próby bez końca.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Powtarzane begin kończą próbę po limicie; live runner nie podmieniony przed poprawnym end.",
+    "group": "network",
+    "id": "TB-513"
+  },
+  {
+    "title": "Timeout bezczynności transferu snapshotu",
+    "description": "Aktualizować progress timer tylko przy prawidłowym nowym chunku, niezależnie od overall deadline.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Postępujący transfer działa; zastój ma własny error code; duplikaty nie przedłużają deadline.",
+    "group": "network",
+    "id": "TB-514"
+  },
+  {
+    "title": "Ograniczone recovery snapshotu",
+    "description": "Koaleskować request_snapshot, retry z bounded attempts/backoff; invalid packets nie zerują całej próby.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Zalew invalid chunk nie powoduje request storm; wyczerpanie prób kończy error; poprawny snapshot resetuje licznik.",
+    "group": "network",
+    "id": "TB-515"
+  },
+  {
+    "title": "Ignorowanie starych transferów snapshotu",
+    "description": "Oddzielić stale transfer_id od uszkodzenia aktywnego transferu; stare chunk/end nie niszczą staging.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Stary chunk/end po nowym begin ignorowany; błędny aktualny chunk powoduje kontrolowane recovery.",
+    "group": "network",
+    "id": "TB-516"
+  },
+  {
+    "title": "Walidacja wiadomości sterujących gameplay",
+    "description": "Walidatory pong/phase/server_shutdown/rejected z typami i limitami tekstu, użyte przed zmianą stanu.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Malformed control packets nie zmieniają stanu i nie crashują; poprawne legacy envelopes nadal działają.",
+    "group": "network",
+    "id": "TB-517"
+  },
+  {
+    "title": "Weryfikacja peer źródłowego klienta",
+    "description": "Sprawdzić get_packet_peer przed unpack; tylko server peer1 ma prawo aktualizować runner i sterować shutdown.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Pakiety od innego peer nie są stosowane; poprawne source1 przechodzą; test injection bez portów.",
+    "group": "network",
+    "id": "TB-518"
+  },
+  {
+    "title": "Obsługa błędów wysyłki gameplay client",
+    "description": "_send zwraca bool/Error i zapisuje bounded reason; command nie udaje accepted, brak lokalnej mutacji runner.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Błąd put_packet raportowany; brak połączenia daje kontrolowany wynik; valid send zachowuje protokół.",
+    "group": "network",
+    "id": "TB-519"
+  },
+  {
+    "title": "Wygaszanie nieaktualnego RTT",
+    "description": "Śledzić last_pong i wygaszać latency po deadline; pending nonce nadal wiąże odpowiedź z pomiarem.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Brak pong ustawia latency=-1; stare nonce ignorowane; następny poprawny pong odtwarza pomiar.",
+    "group": "network",
+    "id": "TB-520"
+  },
+  {
+    "title": "Jawny cykl życia resume tokenu",
+    "description": "Oddzielić retry disconnect od leave()/forget_resume; endpoint change czyści token, retry tego samego zachowuje.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Close/retry zachowuje slot, świadome leave usuwa token; zmiana endpointu nigdy nie wysyła wcześniejszego tokenu.",
+    "group": "network",
+    "id": "TB-521"
+  },
+  {
+    "title": "Walidacja connect API przed close",
+    "description": "Walidować host/port przed zamknięciem działającego transportu; funkcja dostępna niezależnie od CLI.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Błędny endpoint zwraca ERR_INVALID_PARAMETER bez utraty peer/token; valid connect zachowuje wcześniejsze scenariusze.",
+    "group": "network",
+    "id": "TB-522"
+  },
+  {
+    "title": "Wysyłka snapshotu rozłożona na klatki",
+    "description": "Kolejka per-peer i budget chunk/bytes na frame zamiast synchronicznej pętli całej mapy.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Duża mapa wysyła bounded liczbę fragmentów per tick; drugi peer nadal obsługiwany; kolejność begin/chunks/end zachowana.",
+    "group": "network",
+    "id": "TB-523"
+  },
+  {
+    "title": "Spójny snapshot przy kolejkowanej wysyłce",
+    "description": "Utrwalić dane world/state/config/checksum oraz revisions dla całego transferu; zmiany meczu nie zmieniają jego zawartości.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Strzał/reset w trakcie transferu nie miesza chunków i state różnych revisions; snapshot weryfikuje checksum.",
+    "group": "network",
+    "id": "TB-524"
+  },
+  {
+    "title": "Anulowanie kolejek transferu",
+    "description": "Disconnect/close/reset/nowy transfer czyszczą lub zastępują kolejkę; bounded liczba transferów per-peer.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Brak wysyłki do odłączonego peer; seria resync nie powiększa kolejki; nowa generation odrzuca stare transfery.",
+    "group": "network",
+    "id": "TB-525"
+  },
+  {
+    "title": "Diagnostyka błędów wysyłki serwera",
+    "description": "_send raportuje sukces i liczniki outgoing packet/bytes/failures; błąd chunku unieważnia transfer zamiast wysyłać pozorne end.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Mock put_packet failure wykryty; counters bounded; failed transfer nie emituje udanego zakończenia.",
+    "group": "network",
+    "id": "TB-526"
+  },
+  {
+    "title": "Walidacja hello i zwalnianie odrzuconych peerów",
+    "description": "Ścisły pusty lub hex64 resume token; fatal rejection z krótkim kontrolowanym disconnect, zamiast pełnego pending timeout.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Nieprawidłowy hello nie rezerwuje slotu; valid reconnect działa; odrzuceni peerzy zwalniani i czyszczeni.",
+    "group": "network",
+    "id": "TB-527"
+  },
+  {
+    "title": "Ciągły budżet pakietów i bajtów",
+    "description": "Token bucket zastępuje resetujące się sekundowe okna _allow_packet; konfigurowane rate/burst z safe defaults.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/server_runtime_options.gd"
+    ],
+    "acceptance": "Podwójny burst na granicy sekundy odrzucany; normalne60Hz move przechodzi; deterministyczne testy z podanym czasem.",
+    "group": "network",
+    "id": "TB-528"
+  },
+  {
+    "title": "Budżet odbioru serwera na klatkę",
+    "description": "Obok max256 packets dodać max received bytes per-frame i przejść do symulacji po budżecie.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Zalew dużych pakietów nie opróżnia nieograniczonej kolejki; tick jest wykonywany; normalny ruch nie głodzony.",
+    "group": "network",
+    "id": "TB-529"
+  },
+  {
+    "title": "Bezpieczny raport diagnostyczny serwera",
+    "description": "diagnostic_snapshot() zawiera uptime,phase,counts,transfer queue i counters; opcjonalna metoda JSON w server_main bez logowania credentials.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/server/server_main.gd"
+    ],
+    "acceptance": "Raport bounded,serializowalny i bez resume token/adresów; caller nie mutuje diagnostics; wartości po close spójne.",
+    "group": "network",
+    "id": "TB-530"
+  },
+  {
+    "title": "Spięty lifecycle graceful shutdown serwera",
+    "description": "server_main request_shutdown(reason) korzysta z graceful_shutdown, czeka bounded grace i kończy tree; hook do native close notification i root CLI później.",
+    "files": [
+      "game/scripts/server/server_main.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Shutdown odrzuca nowe działania, wysyła komunikat, opróżnia/kończy peer i proces w bounded czasie; ponowne wywołanie idempotentne.",
+    "group": "network",
+    "id": "TB-531"
+  }
+]

@@ -102,6 +102,8 @@ func wait_until(predicate: Callable) -> bool:
 	return false
 
 func real_lobby_flow(scene: Node) -> void:
+	var profile_path := ("/private/tmp" if OS.get_name()=="macOS" else "/tmp").path_join("tb-lobby-profile-%d.json") % OS.get_process_id()
+	scene.backend_menu.setup_profiles(load("res://scripts/client/backend/connection_profiles.gd").new(profile_path))
 	var server = load("res://scripts/networking/transport/match_server.gd").new()
 	root.add_child(server)
 	var port := 28000 + OS.get_process_id() % 10000
@@ -144,4 +146,5 @@ func real_lobby_flow(scene: Node) -> void:
 		c.queue_free()
 	server.close()
 	server.queue_free()
+	DirAccess.remove_absolute(profile_path)
 	await process_frame

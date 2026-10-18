@@ -1,0 +1,352 @@
+[
+  {
+    "id": "TB-482",
+    "title": "Walidowany model profilu połączenia",
+    "implementation": "game/scripts/client/backend/connection_profiles.gd: validation/load_from/save_to/add_profile/update_profile/remove_profile/remember_success",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: profile roundtrip, invalid update atomic, capacity, persistence failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-483",
+    "title": "Odczyt wersjonowanego magazynu profili",
+    "implementation": "game/scripts/client/backend/connection_profiles.gd: validation/load_from/save_to/add_profile/update_profile/remove_profile/remember_success",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: profile roundtrip, invalid update atomic, capacity, persistence failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-484",
+    "title": "Atomowy zapis magazynu profili",
+    "implementation": "game/scripts/client/backend/connection_profiles.gd: validation/load_from/save_to/add_profile/update_profile/remove_profile/remember_success",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: profile roundtrip, invalid update atomic, capacity, persistence failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-485",
+    "title": "Operacje nazwanych ulubionych endpointów",
+    "implementation": "game/scripts/client/backend/connection_profiles.gd: validation/load_from/save_to/add_profile/update_profile/remove_profile/remember_success",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: profile roundtrip, invalid update atomic, capacity, persistence failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-486",
+    "title": "Oddzielne ostatnio udane połączenie",
+    "implementation": "game/scripts/client/backend/connection_profiles.gd: validation/load_from/save_to/add_profile/update_profile/remove_profile/remember_success",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: profile roundtrip, invalid update atomic, capacity, persistence failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-487",
+    "title": "Wybór ulubionego profilu w menu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _setup_profiles/_select_profile/_add_profile/_update_profile/_use_last",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-488",
+    "title": "Zarządzanie ulubionymi z menu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _setup_profiles/_select_profile/_add_profile/_update_profile/_use_last",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-489",
+    "title": "Przywrócenie ostatniego udanego endpointu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _setup_profiles/_select_profile/_add_profile/_update_profile/_use_last",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-490",
+    "title": "Bezpieczna trwała tożsamość gościa",
+    "implementation": "game/scripts/client/backend/guest_identity.gd: load_or_create",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: stable identity, corrupt repair, write failure",
+    "limitations": ""
+  },
+  {
+    "id": "TB-491",
+    "title": "Przewijane menu multiplayer",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-492",
+    "title": "Przyciski backendu zgodne ze stanem operacji",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-493",
+    "title": "Jawne anulowanie i rozłączenie backendu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-494",
+    "title": "Walidowany join lobby z klawiatury",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-495",
+    "title": "Kopiowanie ID lobby i endpointu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-496",
+    "title": "Status gameplay i ręczne retry w menu",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-497",
+    "title": "Edytowalny endpoint Nakama",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: _ready/_process/_join/_disconnect_backend/_copy_lobby/_copy_endpoint/present_game_connection",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client integration hooks inspected",
+    "limitations": ""
+  },
+  {
+    "id": "TB-498",
+    "title": "Oczekiwanie na autorytatywne potwierdzenie Ready",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: pending confirmations, update/status/retry, leave confirmation",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client_oct17_next_tests real_lobby_flow",
+    "limitations": ""
+  },
+  {
+    "id": "TB-499",
+    "title": "Potwierdzanie zmiany nazwy w lobby",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: pending confirmations, update/status/retry, leave confirmation",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client_oct17_next_tests real_lobby_flow",
+    "limitations": ""
+  },
+  {
+    "id": "TB-500",
+    "title": "Potwierdzanie głosu rematch",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: pending confirmations, update/status/retry, leave confirmation",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client_oct17_next_tests real_lobby_flow",
+    "limitations": ""
+  },
+  {
+    "id": "TB-501",
+    "title": "Potwierdzenie opuszczenia meczu online",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: pending confirmations, update/status/retry, leave confirmation",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client_oct17_next_tests real_lobby_flow",
+    "limitations": ""
+  },
+  {
+    "id": "TB-502",
+    "title": "Diagnostyka synchronizacji w lobby",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: pending confirmations, update/status/retry, leave confirmation",
+    "evidence": "game/tests/integration/backend_profiles_next_tests.gd; client_oct17_next_tests real_lobby_flow",
+    "limitations": ""
+  },
+  {
+    "id": "TB-503",
+    "title": "Walidowana konfiguracja runtime transportu",
+    "implementation": "game/scripts/networking/transport/server_runtime_options.gd: apply; server_main runtime CLI application",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: runtime options validation; actual bounded server subprocess report",
+    "limitations": ""
+  },
+  {
+    "id": "TB-504",
+    "title": "Migawka stanu połączenia klienta",
+    "implementation": "game/scripts/networking/transport/match_client.gd: status_snapshot",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: status excludes resume secret",
+    "limitations": ""
+  },
+  {
+    "id": "TB-505",
+    "title": "Ochrona przed przeterminowanym logowaniem Nakama",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-506",
+    "title": "Anulowanie aktywnego HTTP logowania",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-507",
+    "title": "Limity i walidacja odpowiedzi logowania",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-508",
+    "title": "Walidacja URL i identyfikatora gościa w API",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-509",
+    "title": "Budżet odbioru WebSocket na klatkę",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-510",
+    "title": "Korelacja wyłącznie aktywnych requestów Nakama",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-511",
+    "title": "Walidacja kopert odpowiedzi Nakama",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-512",
+    "title": "Obsługa błędów wysyłki WebSocket",
+    "implementation": "game/scripts/client/backend/nakama_client.gd: login/cancel/_process/response correlation/send failure cleanup",
+    "evidence": "game/tests/unit/network_backend250_tests.gd; game/tests/integration/backend_profiles_next_tests.gd; network_review250_tests.gd send failure invalidation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-513",
+    "title": "Całkowity deadline synchronizacji gameplay",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-514",
+    "title": "Timeout bezczynności transferu snapshotu",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-515",
+    "title": "Ograniczone recovery snapshotu",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-516",
+    "title": "Ignorowanie starych transferów snapshotu",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-517",
+    "title": "Walidacja wiadomości sterujących gameplay",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-518",
+    "title": "Weryfikacja peer źródłowego klienta",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-519",
+    "title": "Obsługa błędów wysyłki gameplay client",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-520",
+    "title": "Wygaszanie nieaktualnego RTT",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-521",
+    "title": "Jawny cykl życia resume tokenu",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-522",
+    "title": "Walidacja connect API przed close",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _sync_watchdog/_handle/request_snapshot/_send/connect_to_server/leave; match_protocol.gd validation",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: deadlines, recovery, stale transfer/control, peer, token, invalid connect; game/tests/integration/network_backend_next_tests.gd",
+    "limitations": ""
+  },
+  {
+    "id": "TB-523",
+    "title": "Wysyłka snapshotu rozłożona na klatki",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_snapshot/_drain_snapshots/_broadcast/_disconnected/close",
+    "evidence": "game/tests/integration/network_backend_next_tests.gd: simultaneous queued transfer mutations, ordered catchup and stale cancellation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-524",
+    "title": "Spójny snapshot przy kolejkowanej wysyłce",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_snapshot/_drain_snapshots/_broadcast/_disconnected/close",
+    "evidence": "game/tests/integration/network_backend_next_tests.gd: simultaneous queued transfer mutations, ordered catchup and stale cancellation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-525",
+    "title": "Anulowanie kolejek transferu",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_snapshot/_drain_snapshots/_broadcast/_disconnected/close",
+    "evidence": "game/tests/integration/network_backend_next_tests.gd: simultaneous queued transfer mutations, ordered catchup and stale cancellation",
+    "limitations": ""
+  },
+  {
+    "id": "TB-526",
+    "title": "Diagnostyka błędów wysyłki serwera",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_packet/_fatal_hello/_allow_packet/_process",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: rate budget/hello/diagnostic checks; network_review250_tests.gd wire-size budgets",
+    "limitations": ""
+  },
+  {
+    "id": "TB-527",
+    "title": "Walidacja hello i zwalnianie odrzuconych peerów",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_packet/_fatal_hello/_allow_packet/_process",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: rate budget/hello/diagnostic checks; network_review250_tests.gd wire-size budgets",
+    "limitations": ""
+  },
+  {
+    "id": "TB-528",
+    "title": "Ciągły budżet pakietów i bajtów",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_packet/_fatal_hello/_allow_packet/_process",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: rate budget/hello/diagnostic checks; network_review250_tests.gd wire-size budgets",
+    "limitations": ""
+  },
+  {
+    "id": "TB-529",
+    "title": "Budżet odbioru serwera na klatkę",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_packet/_fatal_hello/_allow_packet/_process",
+    "evidence": "game/tests/unit/network_backend250_tests.gd: rate budget/hello/diagnostic checks; network_review250_tests.gd wire-size budgets",
+    "limitations": ""
+  },
+  {
+    "id": "TB-530",
+    "title": "Bezpieczny raport diagnostyczny serwera",
+    "implementation": "game/scripts/networking/transport/match_server.gd: diagnostic_snapshot/graceful_shutdown; game/scripts/server/server_main.gd: request_shutdown/report",
+    "evidence": "network_backend250_tests.gd + network_backend_next_tests.gd; actual subprocess --shutdown-after --server-report validated JSON, redacted token, lifecycle",
+    "limitations": ""
+  },
+  {
+    "id": "TB-531",
+    "title": "Spięty lifecycle graceful shutdown serwera",
+    "implementation": "game/scripts/networking/transport/match_server.gd: diagnostic_snapshot/graceful_shutdown; game/scripts/server/server_main.gd: request_shutdown/report",
+    "evidence": "network_backend250_tests.gd + network_backend_next_tests.gd; actual subprocess --shutdown-after --server-report validated JSON, redacted token, lifecycle",
+    "limitations": ""
+  }
+]

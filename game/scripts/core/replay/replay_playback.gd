@@ -169,3 +169,50 @@ func next_shot() -> bool:
 			return seek(shot_index + 1)
 	last_error = "no_next_shot"
 	return false
+
+func previous_shot() -> bool:
+	if _recording == null:
+		last_error = "not_loaded"
+		return false
+	for i in range(_shots.size()-1,-1,-1):
+		if _shots[i]+1 < index: return seek(_shots[i]+1)
+	last_error = "no_previous_shot"
+	return false
+
+func next_turn() -> bool:
+	if _recording == null:
+		last_error = "not_loaded"
+		return false
+	var candidate: RefCounted = _recording.initial_runner()
+	for i in index:
+		if not Replay.execute_action(candidate,_recording.data.actions[i]).ok:
+			last_error = "invalid_action"
+			return false
+	var turn: int = candidate.state.turn_id
+	var generation: int = candidate.state.generation
+	for i in range(index,action_count):
+		if not Replay.execute_action(candidate,_recording.data.actions[i]).ok:
+			last_error = "invalid_action"
+			return false
+		if candidate.state.turn_id!=turn or candidate.state.generation!=generation: return seek(i+1)
+	last_error = "no_next_turn"
+	return false
+
+func action_description() -> String:
+	if _recording == null or index==0: return "Initial state"
+	var action: Dictionary = _recording.data.actions[index-1]
+	var actor: String = str(action.get("player_id",""))
+	for player in runner.state.players:
+		if player.player_id==actor: actor = player.display_name; break
+	match action.type:
+		"tick": return "Advance simulation %.3f s" % action.delta
+		"move": return "Move active player (%.3f s)" % action.delta
+		"shot": return "%s — %s (power %.2f)" % [actor,runner.weapons[int(action.weapon_id)].display_name,action.power]
+		"surrender": return "%s surrendered" % actor
+	return str(action.type)
+
+func recording_copy() -> RefCounted:
+	if _recording == null: return null
+	var copy := Replay.new()
+	copy.data = _recording.data.duplicate(true)
+	return copy

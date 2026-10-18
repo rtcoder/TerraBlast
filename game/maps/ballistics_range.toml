@@ -1,0 +1,89 @@
+id = "ballistics_range"
+name = "Ballistics Range"
+theme = "training"
+size = [64, 20, 48]
+
+[[spawns]]
+team = 1
+slot = 0
+position = [6, 4, 8]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 0
+position = [57, 4, 8]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 1
+position = [6, 4, 16]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 1
+position = [57, 4, 16]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 2
+position = [6, 4, 24]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 2
+position = [57, 4, 24]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 3
+position = [6, 4, 32]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 3
+position = [57, 4, 32]
+yaw = -90
+
+[[spawns]]
+team = 1
+slot = 4
+position = [6, 4, 40]
+yaw = 90
+
+[[spawns]]
+team = 2
+slot = 4
+position = [57, 4, 40]
+yaw = -90
+
+[[boxes]]
+position = [0, 0, 0]
+size = [64, 3, 48]
+material = "stone"
+
+[[boxes]]
+position = [0, 3, 0]
+size = [64, 1, 48]
+material = "dirt"
+
+[[boxes]]
+position = [24, 4, 5]
+size = [1, 6, 8]
+material = "dirt"
+
+[[boxes]]
+position = [32, 4, 20]
+size = [2, 6, 8]
+material = "stone"
+
+[[boxes]]
+position = [40, 4, 35]
+size = [3, 6, 8]
+material = "metal"

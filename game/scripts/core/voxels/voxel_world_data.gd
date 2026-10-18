@@ -54,7 +54,7 @@ func get_local_position(position: Vector3i) -> Vector3i:
 	return ChunkPositionScript.local_from_voxel(position, chunk_size)
 
 func fill_box(from_position: Vector3i, to_position: Vector3i, material_id: int, health: int) -> void:
-	for z in range(from_position.z, to_position.z):
-		for y in range(from_position.y, to_position.y):
-			for x in range(from_position.x, to_position.x):
+	for z in range(maxi(0,from_position.z), mini(size.z,to_position.z)):
+		for y in range(maxi(0,from_position.y), mini(size.y,to_position.y)):
+			for x in range(maxi(0,from_position.x), mini(size.x,to_position.x)):
 				set_voxel(Vector3i(x, y, z), material_id, health)

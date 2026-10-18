@@ -1,6 +1,8 @@
 class_name MatchClient
 extends Node
 signal snapshot_progress_changed(completed: int, total: int)
+signal metrics_changed
+signal rejected(reason: String)
 signal lobby_changed
 var lobby_state: Dictionary = {}
 signal synchronized
@@ -34,6 +36,15 @@ var last_host := "127.0.0.1"
 var last_port := 19170
 var recovery_wait := 0.0
 var hello_sent := false
+const Endpoints = preload("res://scripts/client/backend/connection_profiles.gd")
+const SYNC_DEADLINE := 45.0
+const SYNC_IDLE := 10.0
+var sync_age := 0.0
+var sync_idle := 0.0
+var recovery_attempts := 0
+var last_pong_at := -1
+var last_send_error := OK
+var newest_transfer := -1
 
 func _status(state: String, message: String) -> void:
 	connection_state = state
@@ -46,7 +57,13 @@ func _fail(message: String) -> void:
 	_status("error", message)
 
 func connect_to_server(host: String = "127.0.0.1", port: int = 19170) -> Error:
+	if not Endpoints.valid_host(host) or port<1 or port>65535:
+		return ERR_INVALID_PARAMETER
 	close()
+	sync_age=0.0
+	sync_idle=0.0
+	recovery_attempts=0
+	newest_transfer=-1
 	if host != last_host or port != last_port:
 		resume_token = ""
 	last_host = host
@@ -81,9 +98,13 @@ func _process(delta: float) -> void:
 	if had_connection and not hello_sent:
 		hello_sent = true
 		_send({"type": "hello", "resume_token": resume_token})
-	if not ready_for_match and timeout > 15:
+	if had_connection and _sync_watchdog(delta): return
+	if not ready_for_match and not had_connection and timeout > 15:
 		_fail("Server snapshot timed out. Retry connection.")
 		return
+	if latency_ms>=0 and last_pong_at>=0 and Time.get_ticks_msec()-last_pong_at>5000:
+		latency_ms=-1
+		metrics_changed.emit()
 	ping_elapsed += delta
 	if had_connection and ping_elapsed >= 1.0:
 		ping_elapsed = 0.0
@@ -94,13 +115,16 @@ func _process(delta: float) -> void:
 	if recovery_wait > 0:
 		recovery_wait -= delta
 		if recovery_wait <= 0:
-			_send({"type": "snapshot"})
+			request_snapshot()
 	for index in range(mini(peer.get_available_packet_count(), 128)):
-		_handle(Protocol.unpack(peer.get_packet()))
+		var source := peer.get_packet_peer()
+		var bytes := peer.get_packet()
+		if source == 1: _handle(Protocol.unpack(bytes))
 		if peer == null:
 			break
 
 func _handle(data: Dictionary) -> void:
+	if data.get("type") in ["pong","phase","server_shutdown","rejected"] and not Protocol.valid_control(data): return
 	match data.get("type", ""):
 		"lobby_state":
 			_accept_lobby(data.get("lobby"))
@@ -110,6 +134,8 @@ func _handle(data: Dictionary) -> void:
 			if ping_pending >= 0 and data.get("nonce") == ping_pending:
 				latency_ms = clampi(Time.get_ticks_msec() - ping_sent_at, 0, 60000)
 				ping_pending = -1
+				last_pong_at = Time.get_ticks_msec()
+				metrics_changed.emit()
 		"phase":
 			_set_phase(data.get("phase"))
 		"snapshot_begin":
@@ -124,6 +150,9 @@ func _handle(data: Dictionary) -> void:
 			if configuration.is_empty():
 				request_snapshot()
 				return
+			if int(data.transfer_id)<newest_transfer or (int(data.transfer_id)==newest_transfer and staging!=null): return
+			newest_transfer=int(data.transfer_id)
+			if ready_for_match: sync_age=0.0; sync_idle=0.0; recovery_attempts=0
 			ready_for_match = false
 			player_id = data.player_id
 			resume_token = data.get("resume_token", resume_token)
@@ -138,13 +167,16 @@ func _handle(data: Dictionary) -> void:
 			recovery_wait = 0.0
 			_status("synchronizing", "Synchronizing arena…")
 		"chunk":
+			if Protocol.integer(data.get("transfer_id"),0,2147483647) and data.transfer_id<newest_transfer: return
 			var chunk = data.get("chunk")
 			if staging == null or not chunk is Dictionary or data.get("transfer_id") != snapshot_metadata.get("transfer_id") or chunks.has(str(chunk.get("chunk"))) or not Protocol.apply_chunk(staging.world, chunk):
 				request_snapshot()
 				return
 			chunks[str(chunk.chunk)] = true
+			sync_idle=0.0
 			_progress(chunks.size(), int(snapshot_metadata.chunk_count))
 		"snapshot_end":
+			if Protocol.integer(data.get("transfer_id"),0,2147483647) and data.transfer_id<newest_transfer: return
 			var state = Protocol.decode_state(data.get("state"))
 			if staging == null or state == null or data.get("transfer_id") != snapshot_metadata.get("transfer_id") or chunks.size() != snapshot_metadata.get("chunk_count", -1) or data.get("checksum") != Protocol.terrain_checksum(staging.world) or data.get("terrain_revision") != snapshot_metadata.get("terrain_revision") or state.generation != snapshot_metadata.get("generation") or state.revision != snapshot_metadata.get("revision"):
 				request_snapshot()
@@ -167,6 +199,7 @@ func _handle(data: Dictionary) -> void:
 			staging = null
 			terrain_revision = int(data.terrain_revision)
 			ready_for_match = true
+			sync_age=0.0; sync_idle=0.0; recovery_attempts=0
 			recovery_wait = 0.0
 			last_error = ""
 			synchronized.emit()
@@ -224,6 +257,7 @@ func _handle(data: Dictionary) -> void:
 					resume_token = ""
 				_fail(reason)
 			else:
+				rejected.emit(reason)
 				status_changed.emit(reason)
 
 func send_command(command: RefCounted) -> void:
@@ -231,26 +265,38 @@ func send_command(command: RefCounted) -> void:
 		_send({"type": "command", "command": Protocol.encode_command(command)})
 
 func request_snapshot() -> void:
-	timeout = 0.0
-	ready_for_match = false
-	staging = null
+	if ready_for_match: sync_age=0.0; sync_idle=0.0
+	ready_for_match=false
+	staging=null
 	chunks.clear()
-	_progress(0, 0)
-	_status("synchronizing", "Recovering arena snapshot…")
-	_send({"type": "snapshot"})
-	# If the server's snapshot rate limit rejected this request, retry once the window expires.
-	recovery_wait = 1.2
+	timeout=0.0
+	if recovery_wait>0: return
+	if recovery_attempts>=5:
+		_fail("snapshot_retries_exhausted")
+		return
+	recovery_attempts+=1
+	ready_for_match=false
+	staging=null
+	chunks.clear()
+	_progress(0,0)
+	_status("synchronizing","Recovering arena snapshot…")
+	_send({"type":"snapshot"})
+	recovery_wait=minf(5.0,1.2*recovery_attempts)
 
 func restart_match() -> void:
 	_send({"type": "restart"})
 
-func _send(data: Dictionary) -> void:
+func _send(data: Dictionary) -> Error:
 	if peer == null or peer.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
-		return
+		return ERR_UNCONFIGURED
 	data.version = Protocol.VERSION
 	peer.set_target_peer(1)
 	peer.transfer_mode = MultiplayerPeer.TRANSFER_MODE_RELIABLE
-	peer.put_packet(Protocol.packet(data))
+	last_send_error=peer.put_packet(Protocol.packet(data))
+	if last_send_error!=OK:
+		last_error="send_failed: " + error_string(last_send_error)
+		status_changed.emit(last_error)
+	return last_send_error
 
 func close() -> void:
 	if peer != null:
@@ -264,6 +310,7 @@ func close() -> void:
 	connection_state = "disconnected"
 	match_phase = "waiting"
 	latency_ms = -1
+	last_pong_at=-1
 	ping_pending = -1
 	ping_elapsed = 0.0
 	_progress(0, 0)
@@ -314,3 +361,22 @@ func set_display_name(value: String) -> void:
 
 func vote_rematch(value: bool) -> void:
 	_send({"type": "rematch", "vote": value, "generation": lobby_state.get("generation", -1)})
+
+func forget_resume() -> void: resume_token=""
+func leave() -> void:
+	close()
+	forget_resume()
+func status_snapshot() -> Dictionary:
+	return {"state":connection_state,"host":last_host,"port":last_port,"phase":match_phase,"progress":snapshot_progress.duplicate(),"latency_ms":latency_ms,"last_error":last_error,"can_retry":connection_state in ["error","disconnected"],"recovery_attempts":recovery_attempts}
+
+func _sync_watchdog(delta: float) -> bool:
+	if ready_for_match: return false
+	sync_age+=delta
+	sync_idle+=delta
+	if sync_age>SYNC_DEADLINE:
+		_fail("snapshot_overall_timeout")
+		return true
+	if sync_idle>SYNC_IDLE:
+		_fail("snapshot_idle_timeout")
+		return true
+	return false

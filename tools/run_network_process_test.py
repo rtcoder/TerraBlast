@@ -6,12 +6,12 @@ from pathlib import Path
 import socket
 import tempfile
 import time
-from devtools import ROOT, godot_binary, spawn, stop
+from devtools import ROOT, godot_binary, spawn, stop, valid_timeout, bounded_text
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=0)
-    parser.add_argument('--timeout', type=float, default=30)
+    parser.add_argument('--timeout', type=valid_timeout, default=30)
     parser.add_argument('--log-dir', type=Path)
     args = parser.parse_args()
     def interrupted(_signum, _frame):
@@ -37,7 +37,7 @@ def main():
         path = directory / (name + '.out')
         if path.stat().st_size > 8 * 1024 * 1024:
             raise RuntimeError(name + ': log limit exceeded')
-        return path.read_text(errors='replace')
+        return bounded_text(path)
     try:
         server = start('server', ['--', '--mode', 'server', '--port', str(port)])
         deadline = time.monotonic() + args.timeout

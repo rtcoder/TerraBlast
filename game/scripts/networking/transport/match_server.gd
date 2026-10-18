@@ -2,7 +2,18 @@ class_name MatchServer
 extends Node
 const Factory := preload("res://scripts/core/rules/match_factory.gd")
 const Protocol := preload("res://scripts/networking/messages/match_protocol.gd")
-var diagnostics := {"packets": 0, "bytes": 0, "rejections": 0, "snapshots": 0}
+var diagnostics := {"packets": 0, "bytes": 0, "rejections": 0, "snapshots": 0,"sent_packets":0,"sent_bytes":0,"send_failures":0}
+const FrozenWorld=preload("res://scripts/core/voxels/voxel_world_data.gd")
+const Options=preload("res://scripts/networking/transport/server_runtime_options.gd")
+var runtime_options=Options.new()
+var snapshot_queues := {}
+var rejected_disconnects := {}
+var last_send_error := OK
+var _draining := false
+var _round_robin := 0
+var started_at := 0
+var last_receive_bytes := 0
+var last_receive_packets := 0
 var match_phase := "waiting"
 var capacity := 2
 var require_ready := false
@@ -47,13 +58,17 @@ func start(port: int = 19170, map_path: String = "res://maps/twin_forts.toml", p
 	peer = ENetMultiplayerPeer.new()
 	peer.peer_connected.connect(_connected)
 	peer.peer_disconnected.connect(_disconnected)
-	return peer.create_server(port, 16)
+	var error:=peer.create_server(port,16)
+	if error==OK: started_at=Time.get_ticks_msec()
+	return error
 
 func _connected(id: int) -> void:
 	transport_peers[id] = peer.get_peer(id)
 	pending[id] = Time.get_ticks_msec()
 
 func _disconnected(id: int) -> void:
+	snapshot_queues.erase(id)
+	rejected_disconnects.erase(id)
 	transport_peers.erase(id)
 	if peer_tokens.has(id):
 		var token: String = peer_tokens[id]
@@ -81,23 +96,29 @@ func _expire_reservations() -> void:
 	for token in reservations.keys():
 		if reservations[token].peer == 0 and reservations[token].expires <= now:
 			reservations.erase(token)
+	for id in rejected_disconnects.keys():
+		if now>=rejected_disconnects[id]:
+			peer.disconnect_peer(id)
+			_disconnected(id)
 	for id in pending.keys():
-		if now - int(pending[id]) > 5000:
+		if now - int(pending[id]) > runtime_options.values.hello_seconds*1000:
 			peer.disconnect_peer(id)
 			_disconnected(id)
 
 func _accept_hello(id: int, data: Dictionary) -> void:
-	if not pending.has(id) or not data.get("resume_token") is String:
+	if not pending.has(id) or rejected_disconnects.has(id): return
+	if not Protocol.valid_resume_token(data.get("resume_token")):
+		_fatal_hello(id,"invalid_or_expired_resume_token")
 		return
 	_expire_reservations()
 	var token: String = data.resume_token
 	var player_id := ""
 	if not token.is_empty():
 		if not reservations.has(token):
-			_send(id, {"type": "rejected", "reason": "invalid_or_expired_resume_token", "fatal": true})
+			_fatal_hello(id,"invalid_or_expired_resume_token")
 			return
 		if reservations[token].peer != 0:
-			_send(id, {"type": "rejected", "reason": "resume_token_in_use", "fatal": true})
+			_fatal_hello(id,"resume_token_in_use")
 			return
 		player_id = reservations[token].player
 	else:
@@ -109,7 +130,7 @@ func _accept_hello(id: int, data: Dictionary) -> void:
 				player_id = player.player_id
 				break
 		if player_id.is_empty():
-			_send(id, {"type": "rejected", "reason": "match_slots_reserved_or_full", "fatal": true})
+			_fatal_hello(id,"match_slots_reserved_or_full")
 			return
 		token = Crypto.new().generate_random_bytes(32).hex_encode()
 	reservations[token] = {"player": player_id, "peer": id, "expires": 0}
@@ -121,19 +142,23 @@ func _accept_hello(id: int, data: Dictionary) -> void:
 	_broadcast_lobby()
 	_send_snapshot(id)
 
-func _allow_packet(sender: int, byte_count: int) -> bool:
+func _allow_packet(sender: int, byte_count: int, clock_ms: int = -1) -> bool:
 	_count("packets")
-	_count("bytes", byte_count)
-	var now := Time.get_ticks_msec()
-	var budget: Dictionary = packet_budgets.get(sender, {"at": now, "packets": 0, "bytes": 0})
-	if now - int(budget.at) >= 1000:
-		budget = {"at": now, "packets": 0, "bytes": 0}
-	budget.packets += 1
-	budget.bytes += byte_count
-	packet_budgets[sender] = budget
-	var allowed: bool = byte_count <= 8192 and budget.packets <= MAX_PACKETS_PER_SECOND and budget.bytes <= MAX_BYTES_PER_SECOND
-	if not allowed:
-		_count("rejections")
+	_count("bytes",byte_count)
+	var now:=Time.get_ticks_msec() if clock_ms<0 else clock_ms
+	var rate: float=runtime_options.values.packets_per_second
+	var byte_rate: float=runtime_options.values.bytes_per_second
+	var budget: Dictionary=packet_budgets.get(sender,{"at":now,"packets":rate,"bytes":byte_rate})
+	var elapsed:=maxf(0.0,(now-int(budget.at))/1000.0)
+	budget.packets=minf(rate,float(budget.packets)+elapsed*rate)
+	budget.bytes=minf(byte_rate,float(budget.bytes)+elapsed*byte_rate)
+	budget.at=now
+	var allowed: bool=byte_count>=0 and byte_count<=8192 and budget.packets>=1.0 and budget.bytes>=byte_count
+	if allowed:
+		budget.packets-=1.0
+		budget.bytes-=byte_count
+	else: _count("rejections")
+	packet_budgets[sender]=budget
 	return allowed
 
 func _process(delta: float) -> void:
@@ -146,12 +171,18 @@ func _process(delta: float) -> void:
 			close()
 		return
 	_expire_reservations()
+	last_receive_bytes=0
+	last_receive_packets=0
 	for index in range(mini(peer.get_available_packet_count(), 256)):
+		if last_receive_bytes>=runtime_options.values.receive_bytes_per_frame: break
 		var sender := peer.get_packet_peer()
 		var bytes := peer.get_packet()
+		last_receive_bytes+=bytes.size()
+		last_receive_packets+=1
 		if not _allow_packet(sender, bytes.size()):
 			continue
 		_handle(sender, Protocol.unpack(bytes))
+	_drain_snapshots()
 	playback_remaining = maxf(0.0, playback_remaining - delta)
 	_update_phase()
 	if match_phase == "playing":
@@ -252,36 +283,91 @@ func _handle(sender: int, data: Dictionary) -> void:
 			_reject(sender, "unknown_message")
 
 func _send_snapshot(id: int) -> void:
+	if not slots.has(id) or not peer_tokens.has(id): return
 	_count("snapshots")
-	transfer_serial += 1
-	var size: Vector3i = runner.world.size
-	var edge: int = runner.world.chunk_size
-	var count := ceili(float(size.x) / edge) * ceili(float(size.y) / edge) * ceili(float(size.z) / edge)
-	_send(id, {"type": "snapshot_begin", "transfer_id": transfer_serial, "configuration": Protocol.encode_configuration(runner), "player_id": slots[id], "resume_token": peer_tokens[id], "size": [size.x, size.y, size.z], "chunk_size": edge, "chunk_count": count, "generation": runner.state.generation, "revision": runner.state.revision, "terrain_revision": terrain_revision, "phase": _phase(), "lobby": lobby_snapshot()})
-	for z in range(ceili(float(size.z) / edge)):
-		for y in range(ceili(float(size.y) / edge)):
-			for x in range(ceili(float(size.x) / edge)):
-				_send(id, {"type": "chunk", "transfer_id": transfer_serial, "chunk": Protocol.chunk_snapshot(runner.world, Vector3i(x, y, z))})
-	_send(id, {"type": "snapshot_end", "transfer_id": transfer_serial, "state": runner.state_snapshot(), "checksum": Protocol.terrain_checksum(runner.world), "terrain_revision": terrain_revision, "phase": _phase()})
+	transfer_serial+=1
+	var size: Vector3i=runner.world.size
+	var edge: int=runner.world.chunk_size
+	var count:=ceili(float(size.x)/edge)*ceili(float(size.y)/edge)*ceili(float(size.z)/edge)
+	# Copy terrain once; serialize only the bounded chunk batch on each frame.
+	var frozen=FrozenWorld.new(size,edge)
+	frozen.material_ids=runner.world.material_ids.duplicate()
+	frozen.health_values=runner.world.health_values.duplicate()
+	var messages: Array=[{"type":"snapshot_begin","transfer_id":transfer_serial,"configuration":Protocol.encode_configuration(runner),"player_id":slots[id],"resume_token":peer_tokens[id],"size":[size.x,size.y,size.z],"chunk_size":edge,"chunk_count":count,"generation":runner.state.generation,"revision":runner.state.revision,"terrain_revision":terrain_revision,"phase":_phase(),"lobby":lobby_snapshot()}]
+	for z in range(ceili(float(size.z)/edge)):
+		for y in range(ceili(float(size.y)/edge)):
+			for x in range(ceili(float(size.x)/edge)):
+				messages.append({"type":"queued_chunk","transfer_id":transfer_serial,"coordinate":Vector3i(x,y,z)})
+	messages.append({"type":"snapshot_end","transfer_id":transfer_serial,"state":runner.state_snapshot(),"checksum":Protocol.terrain_checksum(runner.world),"terrain_revision":terrain_revision,"phase":_phase()})
+	snapshot_queues[id]={"world":frozen,"messages":messages.duplicate(true),"cursor":0,"catchup":0,"catchup_bytes":0}
+
+func _drain_snapshots() -> void:
+	var ids:=snapshot_queues.keys()
+	if ids.is_empty(): return
+	var sent:=0
+	var byte_count:=0
+	var chunk_limit: int=runtime_options.values.snapshot_chunks_per_frame
+	var byte_limit: int=runtime_options.values.snapshot_bytes_per_frame
+	while sent<chunk_limit and not ids.is_empty():
+		var id: int=ids[_round_robin%ids.size()]
+		_round_robin+=1
+		if not snapshot_queues.has(id): ids.erase(id); continue
+		var queue: Dictionary=snapshot_queues[id]
+		var data: Dictionary=queue.messages[queue.cursor]
+		if data.type=="queued_chunk":
+			data={"type":"chunk","transfer_id":data.transfer_id,"chunk":Protocol.chunk_snapshot(queue.world,data.coordinate)}
+		var packet_size:=_wire_size(data)
+		# One indivisible packet may exceed the byte budget, never more than one.
+		if sent>0 and byte_count+packet_size>byte_limit: break
+		_draining=true
+		_send(id,data)
+		_draining=false
+		if last_send_error!=OK:
+			snapshot_queues.erase(id)
+			ids.erase(id)
+			continue
+		queue.cursor+=1
+		sent+=1
+		byte_count+=packet_size
+		if queue.cursor>=queue.messages.size(): snapshot_queues.erase(id); ids.erase(id)
+		if byte_count>=byte_limit: break
 
 func _broadcast(data: Dictionary) -> void:
 	for id in slots:
 		_send(id, data)
 
 func _send(id: int, data: Dictionary) -> void:
-	if peer == null or peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+	if not _draining and snapshot_queues.has(id) and data.get("type") in ["state","result","phase","lobby_state"]:
+		var queue: Dictionary=snapshot_queues[id]
+		var size:=_wire_size(data)
+		if queue.catchup>=128 or queue.catchup_bytes+size>8*1024*1024:
+			_send_snapshot(id)
+			return
+		queue.messages.append(data.duplicate(true))
+		queue.catchup+=1
+		queue.catchup_bytes+=size
 		return
-	# A second disconnect may already have reset its ENet channels while the
-	# first peer's disconnect callback is broadcasting the waiting phase.
-	var target: ENetPacketPeer = transport_peers.get(id)
-	if target == null or not target.is_active() or target.get_state() != ENetPacketPeer.STATE_CONNECTED or target.get_channels() <= 0:
-		return
-	data.version = Protocol.VERSION
+	last_send_error=_send_packet(id,data)
+	if last_send_error==OK:
+		_count("sent_packets")
+		_count("sent_bytes",_wire_size(data))
+	else: _count("send_failures")
+
+func _send_packet(id: int, data: Dictionary) -> Error:
+	if peer==null or peer.get_connection_status()==MultiplayerPeer.CONNECTION_DISCONNECTED: return ERR_UNCONFIGURED
+	var target: ENetPacketPeer=transport_peers.get(id)
+	if target==null or not target.is_active() or target.get_state()!=ENetPacketPeer.STATE_CONNECTED or target.get_channels()<=0: return ERR_UNCONFIGURED
+	var envelope:=data.duplicate()
+	envelope.version=Protocol.VERSION
 	peer.set_target_peer(id)
-	peer.transfer_mode = MultiplayerPeer.TRANSFER_MODE_RELIABLE
-	peer.put_packet(Protocol.packet(data))
+	peer.transfer_mode=MultiplayerPeer.TRANSFER_MODE_RELIABLE
+	return peer.put_packet(Protocol.packet(envelope))
 
 func close() -> void:
+	snapshot_queues.clear()
+	rejected_disconnects.clear()
+	started_at=0
+	last_send_error=OK
 	if peer != null:
 		peer.close()
 		peer = null
@@ -339,6 +425,7 @@ func _reject(sender: int, reason: String) -> void:
 func graceful_shutdown() -> void:
 	if peer == null or shutting_down:
 		return
+	snapshot_queues.clear()
 	shutting_down = true
 	shutdown_remaining = 0.25
 	_broadcast({"type": "server_shutdown"})
@@ -421,3 +508,19 @@ func _handle_lobby(sender: int, data: Dictionary) -> void:
 	_maybe_start()
 	_update_phase()
 	_broadcast_lobby()
+
+func apply_options(candidate: Dictionary) -> Dictionary:
+	if peer!=null: return {"ok":false,"reason":"server_running"}
+	var result: Dictionary=runtime_options.apply(candidate)
+	if result.ok: reservation_seconds=runtime_options.values.reservation_seconds
+	return result
+func diagnostic_snapshot() -> Dictionary:
+	return {"uptime_seconds":maxf(0.0,(Time.get_ticks_msec()-started_at)/1000.0) if started_at>0 else 0.0,"phase":match_phase,"peers":slots.size(),"pending":pending.size(),"reservations":reservations.size(),"transfers":snapshot_queues.size(),"counters":diagnostics.duplicate(),"last_receive_packets":last_receive_packets,"last_receive_bytes":last_receive_bytes,"shutting_down":shutting_down}
+func _fatal_hello(id: int, reason: String) -> void:
+	_send(id,{"type":"rejected","reason":reason,"fatal":true})
+	rejected_disconnects[id]=Time.get_ticks_msec()+250
+
+static func _wire_size(data: Dictionary) -> int:
+	var envelope := data.duplicate()
+	envelope.version = Protocol.VERSION
+	return Protocol.packet(envelope).size()
