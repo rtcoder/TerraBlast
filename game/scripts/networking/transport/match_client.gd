@@ -1,5 +1,17 @@
 class_name MatchClient
 extends Node
+signal chat_changed
+signal chat_rejected(nonce:String,reason:String)
+const Chat=preload("res://scripts/networking/messages/lobby_chat.gd")
+var requested_role:="player"
+var role:="player"
+var spectator_id:=""
+var chat_enabled:=false
+var chat_messages:Array=[]
+var chat_generation:=-1
+var chat_sequence:=0
+var chat_request_at:=-2000
+var chat_pending:Dictionary={}
 signal snapshot_progress_changed(completed: int, total: int)
 signal metrics_changed
 signal rejected(reason: String)
@@ -56,16 +68,19 @@ func _fail(message: String) -> void:
 	last_error = message
 	_status("error", message)
 
-func connect_to_server(host: String = "127.0.0.1", port: int = 19170) -> Error:
-	if not Endpoints.valid_host(host) or port<1 or port>65535:
+func connect_to_server(host: String = "127.0.0.1", port: int = 19170, connection_role:String="player") -> Error:
+	if connection_role not in ["player","spectator"] or not Endpoints.valid_host(host) or port<1 or port>65535:
 		return ERR_INVALID_PARAMETER
 	close()
 	sync_age=0.0
 	sync_idle=0.0
 	recovery_attempts=0
 	newest_transfer=-1
-	if host != last_host or port != last_port:
+	if host != last_host or port != last_port or connection_role!=requested_role:
 		resume_token = ""
+	requested_role=connection_role
+	role=connection_role
+	spectator_id=""
 	last_host = host
 	last_port = port
 	if runner == null:
@@ -82,9 +97,13 @@ func connect_to_server(host: String = "127.0.0.1", port: int = 19170) -> Error:
 	return error
 
 func retry_connection() -> Error:
-	return connect_to_server(last_host, last_port)
+	return connect_to_server(last_host, last_port, requested_role)
 
 func _process(delta: float) -> void:
+	if not chat_pending.is_empty() and Time.get_ticks_msec()-int(chat_pending.at)>5000:
+		var nonce:String=chat_pending.nonce
+		chat_pending.clear()
+		chat_rejected.emit(nonce,"chat_confirmation_timeout")
 	if peer == null:
 		return
 	if peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
@@ -92,12 +111,12 @@ func _process(delta: float) -> void:
 	timeout += delta
 	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 		if had_connection or timeout > 10:
-			_fail("Disconnected. Retry to resume your player slot.")
+			_fail("Disconnected. Retry to resume your %s slot." % requested_role)
 		return
 	had_connection = peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 	if had_connection and not hello_sent:
 		hello_sent = true
-		_send({"type": "hello", "resume_token": resume_token})
+		_send({"type": "hello", "resume_token": resume_token,"role":requested_role,"extensions":["spectators_v1","chat_v1"]})
 	if had_connection and _sync_watchdog(delta): return
 	if not ready_for_match and not had_connection and timeout > 15:
 		_fail("Server snapshot timed out. Retry connection.")
@@ -126,6 +145,14 @@ func _process(delta: float) -> void:
 func _handle(data: Dictionary) -> void:
 	if data.get("type") in ["pong","phase","server_shutdown","rejected"] and not Protocol.valid_control(data): return
 	match data.get("type", ""):
+		"chat_event":
+			_accept_chat_event(data.get("event"))
+		"chat_history":
+			if data.get("enabled") is bool: _accept_chat_history(data.get("history"),data.enabled)
+		"chat_rejected":
+			if data.get("nonce") is String and data.get("reason") is String and data.reason.length()<=64:
+				if chat_pending.get("nonce")==data.nonce: chat_pending.clear()
+				chat_rejected.emit(data.nonce,data.reason)
 		"lobby_state":
 			_accept_lobby(data.get("lobby"))
 		"server_shutdown":
@@ -139,6 +166,9 @@ func _handle(data: Dictionary) -> void:
 		"phase":
 			_set_phase(data.get("phase"))
 		"snapshot_begin":
+			if data.get("role","player")!=requested_role:
+				_fail("unsupported_spectator_server" if requested_role=="spectator" else "unexpected_server_role")
+				return
 			if not Protocol.valid_snapshot_metadata(data):
 				request_snapshot()
 				return
@@ -155,6 +185,10 @@ func _handle(data: Dictionary) -> void:
 			if ready_for_match: sync_age=0.0; sync_idle=0.0; recovery_attempts=0
 			ready_for_match = false
 			player_id = data.player_id
+			role=data.get("role","player")
+			spectator_id=data.get("spectator_id","")
+			if chat_generation!=int(data.generation): _clear_chat(int(data.generation))
+			chat_enabled=data.get("chat_enabled",false)==true
 			resume_token = data.get("resume_token", resume_token)
 			staging = Factory.create_match(2)
 			staging.rules = configuration.rules
@@ -181,7 +215,7 @@ func _handle(data: Dictionary) -> void:
 			if staging == null or state == null or data.get("transfer_id") != snapshot_metadata.get("transfer_id") or chunks.size() != snapshot_metadata.get("chunk_count", -1) or data.get("checksum") != Protocol.terrain_checksum(staging.world) or data.get("terrain_revision") != snapshot_metadata.get("terrain_revision") or state.generation != snapshot_metadata.get("generation") or state.revision != snapshot_metadata.get("revision"):
 				request_snapshot()
 				return
-			if not state.players.any(func(player): return player.player_id == player_id):
+			if role=="player" and not state.players.any(func(player): return player.player_id == player_id):
 				request_snapshot()
 				return
 			if not Protocol.valid_configured_state(state, staging):
@@ -203,7 +237,7 @@ func _handle(data: Dictionary) -> void:
 			recovery_wait = 0.0
 			last_error = ""
 			synchronized.emit()
-			_status("connected", "Connected as " + player_id)
+			_status("connected", "Connected as " + (spectator_id+" (spectator)" if role=="spectator" else player_id))
 		"state":
 			var state = Protocol.decode_state(data.get("state"))
 			if not ready_for_match or state == null:
@@ -261,7 +295,7 @@ func _handle(data: Dictionary) -> void:
 				status_changed.emit(reason)
 
 func send_command(command: RefCounted) -> void:
-	if ready_for_match and match_phase == "playing":
+	if role=="player" and ready_for_match and match_phase == "playing":
 		_send({"type": "command", "command": Protocol.encode_command(command)})
 
 func request_snapshot() -> void:
@@ -284,6 +318,7 @@ func request_snapshot() -> void:
 	recovery_wait=minf(5.0,1.2*recovery_attempts)
 
 func restart_match() -> void:
+	if role!="player": return
 	_send({"type": "restart"})
 
 func _send(data: Dictionary) -> Error:
@@ -299,6 +334,7 @@ func _send(data: Dictionary) -> Error:
 	return last_send_error
 
 func close() -> void:
+	_clear_chat(-1)
 	if peer != null:
 		peer.close()
 		peer = null
@@ -319,7 +355,7 @@ func _exit_tree() -> void:
 	close()
 
 func move_player(axis: Vector2, yaw: float, jump: bool = false) -> void:
-	if ready_for_match and match_phase == "playing":
+	if role=="player" and ready_for_match and match_phase == "playing":
 		_send({"type": "move", "axis": [axis.x, axis.y], "yaw": yaw, "jump": jump, "turn_id": runner.state.turn_id, "generation": runner.state.generation})
 
 func _progress(completed: int, total: int) -> void:
@@ -342,7 +378,7 @@ func _summary(data: Dictionary) -> void:
 			row[key] = int(row[key])
 
 func surrender() -> void:
-	if ready_for_match and match_phase in ["playing", "waiting"]:
+	if role=="player" and ready_for_match and match_phase in ["playing", "waiting"]:
 		_send({"type": "surrender"})
 
 func _accept_lobby(value: Variant) -> void:
@@ -354,20 +390,29 @@ func _accept_lobby(value: Variant) -> void:
 	lobby_changed.emit()
 
 func set_ready(value: bool) -> void:
+	if role!="player": return
 	_send({"type": "ready", "ready": value, "generation": lobby_state.get("generation", -1)})
 
 func set_display_name(value: String) -> void:
 	_send({"type": "display_name", "name": value, "generation": lobby_state.get("generation", -1)})
 
 func vote_rematch(value: bool) -> void:
+	if role!="player": return
 	_send({"type": "rematch", "vote": value, "generation": lobby_state.get("generation", -1)})
 
 func forget_resume() -> void: resume_token=""
 func leave() -> void:
+	if _send({"type":"leave"})==OK and peer!=null:
+		if is_inside_tree():
+			var delivery=preload("res://scripts/networking/transport/leave_delivery.gd").new()
+			get_tree().root.add_child(delivery)
+			delivery.begin(peer)
+			peer=null
+		else: peer.host.flush()
 	close()
 	forget_resume()
 func status_snapshot() -> Dictionary:
-	return {"state":connection_state,"host":last_host,"port":last_port,"phase":match_phase,"progress":snapshot_progress.duplicate(),"latency_ms":latency_ms,"last_error":last_error,"can_retry":connection_state in ["error","disconnected"],"recovery_attempts":recovery_attempts}
+	return {"role":role,"requested_role":requested_role,"spectator_id":spectator_id,"state":connection_state,"host":last_host,"port":last_port,"phase":match_phase,"progress":snapshot_progress.duplicate(),"latency_ms":latency_ms,"last_error":last_error,"can_retry":connection_state in ["error","disconnected"],"recovery_attempts":recovery_attempts}
 
 func _sync_watchdog(delta: float) -> bool:
 	if ready_for_match: return false
@@ -380,3 +425,51 @@ func _sync_watchdog(delta: float) -> bool:
 		_fail("snapshot_idle_timeout")
 		return true
 	return false
+
+func _clear_chat(generation:int)->void:
+	chat_generation=generation; chat_sequence=0; chat_enabled=false
+	chat_messages.clear(); chat_pending.clear(); chat_request_at=-2000
+	chat_changed.emit()
+
+func chat_snapshot()->Dictionary:
+	return {"generation":maxi(0,chat_generation),"first_sequence":chat_messages[0].sequence if not chat_messages.is_empty() else chat_sequence+1,"messages":chat_messages.duplicate(true),"enabled":chat_enabled,"pending_nonce":chat_pending.get("nonce","")}
+
+func send_chat(text:String)->Dictionary:
+	if not ready_for_match or not chat_enabled: return {"ok":false,"reason":"chat_unavailable"}
+	if not Chat.valid_text(text): return {"ok":false,"reason":"invalid_chat"}
+	if not chat_pending.is_empty(): return {"ok":false,"reason":"chat_pending"}
+	var nonce:String=Crypto.new().generate_random_bytes(16).hex_encode()
+	var error:Error=_send({"type":"chat_send","text":text,"nonce":nonce,"generation":runner.state.generation})
+	if error!=OK: return {"ok":false,"reason":"chat_send_failed"}
+	chat_pending={"nonce":nonce,"at":Time.get_ticks_msec()}
+	return {"ok":true,"reason":"","nonce":nonce}
+
+func _request_chat_history()->void:
+	var now:int=Time.get_ticks_msec()
+	if now-chat_request_at<1000: return
+	chat_request_at=now
+	_send({"type":"chat_history_request"})
+
+func _accept_chat_history(value:Variant,enabled:bool)->void:
+	if not ready_for_match or not Chat.valid_history(value) or value.generation!=runner.state.generation: return
+	var latest:int=int(value.first_sequence)+value.messages.size()-1
+	if value.generation==chat_generation and latest<chat_sequence: return
+	chat_generation=int(value.generation); chat_sequence=latest
+	chat_messages=value.messages.duplicate(true); chat_enabled=enabled
+	for row in chat_messages: _ack_chat(row)
+	chat_changed.emit()
+
+func _ack_chat(event:Dictionary)->void:
+	var own:String=spectator_id if role=="spectator" else player_id
+	if event.author_id==own and event.nonce==chat_pending.get("nonce",""): chat_pending.clear()
+
+func _accept_chat_event(value:Variant)->void:
+	if not ready_for_match or not Chat.valid_event(value) or value.generation!=runner.state.generation: return
+	_ack_chat(value)
+	if value.sequence<=chat_sequence: return
+	if chat_generation!=int(value.generation) or value.sequence!=chat_sequence+1:
+		_request_chat_history(); return
+	chat_sequence=int(value.sequence)
+	chat_messages.append(value.duplicate(true))
+	while chat_messages.size()>Chat.MAX_MESSAGES or JSON.stringify(chat_messages).to_utf8_buffer().size()>Chat.MAX_BYTES: chat_messages.pop_front()
+	chat_changed.emit()

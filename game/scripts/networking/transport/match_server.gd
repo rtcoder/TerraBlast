@@ -2,6 +2,13 @@ class_name MatchServer
 extends Node
 const Factory := preload("res://scripts/core/rules/match_factory.gd")
 const Protocol := preload("res://scripts/networking/messages/match_protocol.gd")
+const Chat=preload("res://scripts/networking/messages/lobby_chat.gd")
+var chat=Chat.new()
+var spectators:Dictionary={}
+var spectator_reservations:Dictionary={}
+var peer_extensions:Dictionary={}
+var chat_history_times:Dictionary={}
+var spectator_capacity:=0
 var diagnostics := {"packets": 0, "bytes": 0, "rejections": 0, "snapshots": 0,"sent_packets":0,"sent_bytes":0,"send_failures":0}
 const FrozenWorld=preload("res://scripts/core/voxels/voxel_world_data.gd")
 const Options=preload("res://scripts/networking/transport/server_runtime_options.gd")
@@ -49,6 +56,7 @@ const Motion := preload("res://scripts/core/rules/player_motion.gd")
 func start(port: int = 19170, map_path: String = "res://maps/twin_forts.toml", preset: String = "classic", player_count: int = 2, lobby_required: bool = false) -> Error:
 	close()
 	capacity = player_count
+	spectator_capacity=int(runtime_options.values.spectator_capacity)
 	require_ready = lobby_required
 	if capacity < 2 or capacity > 10:
 		return ERR_INVALID_PARAMETER
@@ -58,11 +66,14 @@ func start(port: int = 19170, map_path: String = "res://maps/twin_forts.toml", p
 	peer = ENetMultiplayerPeer.new()
 	peer.peer_connected.connect(_connected)
 	peer.peer_disconnected.connect(_disconnected)
-	var error:=peer.create_server(port,16)
+	var error:=peer.create_server(port,32)
 	if error==OK: started_at=Time.get_ticks_msec()
 	return error
 
 func _connected(id: int) -> void:
+	if pending.size()>=16:
+		peer.disconnect_peer(id)
+		return
 	transport_peers[id] = peer.get_peer(id)
 	pending[id] = Time.get_ticks_msec()
 
@@ -72,8 +83,10 @@ func _disconnected(id: int) -> void:
 	transport_peers.erase(id)
 	if peer_tokens.has(id):
 		var token: String = peer_tokens[id]
-		reservations[token].peer = 0
-		reservations[token].expires = Time.get_ticks_msec() + int(reservation_seconds * 1000)
+		var store:Dictionary=spectator_reservations if spectators.has(id) else reservations
+		if store.has(token):
+			store[token].peer=0
+			store[token].expires=Time.get_ticks_msec()+int(reservation_seconds*1000)
 		peer_tokens.erase(id)
 	if slots.has(id):
 		ready_slots.erase(slots[id])
@@ -81,6 +94,9 @@ func _disconnected(id: int) -> void:
 		motion.erase(slots[id])
 		velocities.erase(slots[id])
 	slots.erase(id)
+	spectators.erase(id)
+	peer_extensions.erase(id)
+	chat_history_times.erase(id)
 	snapshot_times.erase(id)
 	restart_times.erase(id)
 	lobby_budgets.erase(id)
@@ -95,7 +111,12 @@ func _expire_reservations() -> void:
 	var now := Time.get_ticks_msec()
 	for token in reservations.keys():
 		if reservations[token].peer == 0 and reservations[token].expires <= now:
+			chat.forget_identity(reservations[token].player)
 			reservations.erase(token)
+	for token in spectator_reservations.keys():
+		if spectator_reservations[token].peer==0 and spectator_reservations[token].expires<=now:
+			chat.forget_identity(spectator_reservations[token].id)
+			spectator_reservations.erase(token)
 	for id in rejected_disconnects.keys():
 		if now>=rejected_disconnects[id]:
 			peer.disconnect_peer(id)
@@ -107,11 +128,18 @@ func _expire_reservations() -> void:
 
 func _accept_hello(id: int, data: Dictionary) -> void:
 	if not pending.has(id) or rejected_disconnects.has(id): return
-	if not Protocol.valid_resume_token(data.get("resume_token")):
+	if not Protocol.valid_hello(data):
 		_fatal_hello(id,"invalid_or_expired_resume_token")
 		return
 	_expire_reservations()
 	var token: String = data.resume_token
+	var requested_role:String=data.get("role","player")
+	if requested_role=="spectator":
+		_accept_spectator(id,token,data.get("extensions",[]))
+		return
+	if spectator_reservations.has(token):
+		_fatal_hello(id,"resume_role_mismatch")
+		return
 	var player_id := ""
 	if not token.is_empty():
 		if not reservations.has(token):
@@ -136,6 +164,7 @@ func _accept_hello(id: int, data: Dictionary) -> void:
 	reservations[token] = {"player": player_id, "peer": id, "expires": 0}
 	peer_tokens[id] = token
 	slots[id] = player_id
+	peer_extensions[id]=data.get("extensions",[]).duplicate()
 	pending.erase(id)
 	_maybe_start()
 	_update_phase()
@@ -204,8 +233,21 @@ func _handle(sender: int, data: Dictionary) -> void:
 	if data.get("type") == "hello":
 		_accept_hello(sender, data)
 		return
-	if not slots.has(sender):
+	if not slots.has(sender) and not spectators.has(sender): return
+	var kind:Variant=data.get("type","")
+	if kind=="leave":
+		_leave_participant(sender)
 		return
+	if kind in ["chat_send","chat_history_request"]:
+		_handle_chat(sender,data)
+		return
+	if spectators.has(sender):
+		if kind=="display_name":
+			_rename_spectator(sender,data)
+			return
+		if kind not in ["ping","snapshot"]:
+			_reject(sender,"spectator_read_only")
+			return
 	match data.get("type", ""):
 		"ready", "display_name", "rematch":
 			_handle_lobby(sender, data)
@@ -272,18 +314,19 @@ func _handle(sender: int, data: Dictionary) -> void:
 					return
 				restart_times[sender] = now
 				runner.reset()
+				chat.reset(runner.state.generation)
 				terrain_revision = 0
 				motion.clear()
 				velocities.clear()
 				playback_remaining = 0.0
-				for id in slots:
+				for id in _participants():
 					_send_snapshot(id)
 
 		_:
 			_reject(sender, "unknown_message")
 
 func _send_snapshot(id: int) -> void:
-	if not slots.has(id) or not peer_tokens.has(id): return
+	if (not slots.has(id) and not spectators.has(id)) or not peer_tokens.has(id): return
 	_count("snapshots")
 	transfer_serial+=1
 	var size: Vector3i=runner.world.size
@@ -293,12 +336,18 @@ func _send_snapshot(id: int) -> void:
 	var frozen=FrozenWorld.new(size,edge)
 	frozen.material_ids=runner.world.material_ids.duplicate()
 	frozen.health_values=runner.world.health_values.duplicate()
-	var messages: Array=[{"type":"snapshot_begin","transfer_id":transfer_serial,"configuration":Protocol.encode_configuration(runner),"player_id":slots[id],"resume_token":peer_tokens[id],"size":[size.x,size.y,size.z],"chunk_size":edge,"chunk_count":count,"generation":runner.state.generation,"revision":runner.state.revision,"terrain_revision":terrain_revision,"phase":_phase(),"lobby":lobby_snapshot()}]
+	var messages: Array=[{"type":"snapshot_begin","transfer_id":transfer_serial,"configuration":Protocol.encode_configuration(runner),"player_id":slots.get(id,""),"resume_token":peer_tokens[id],"size":[size.x,size.y,size.z],"chunk_size":edge,"chunk_count":count,"generation":runner.state.generation,"revision":runner.state.revision,"terrain_revision":terrain_revision,"phase":_phase(),"lobby":lobby_snapshot()}]
 	for z in range(ceili(float(size.z)/edge)):
 		for y in range(ceili(float(size.y)/edge)):
 			for x in range(ceili(float(size.x)/edge)):
 				messages.append({"type":"queued_chunk","transfer_id":transfer_serial,"coordinate":Vector3i(x,y,z)})
+	if spectators.has(id) or peer_extensions.get(id,[]).has("spectators_v1"):
+		messages[0].role="spectator" if spectators.has(id) else "player"
+		messages[0].spectator_id=spectators[id].id if spectators.has(id) else ""
+	messages[0].chat_enabled=runtime_options.values.chat_enabled
 	messages.append({"type":"snapshot_end","transfer_id":transfer_serial,"state":runner.state_snapshot(),"checksum":Protocol.terrain_checksum(runner.world),"terrain_revision":terrain_revision,"phase":_phase()})
+	if peer_extensions.get(id,[]).has("chat_v1"):
+		messages.append({"type":"chat_history","history":chat.history(),"enabled":runtime_options.values.chat_enabled})
 	snapshot_queues[id]={"world":frozen,"messages":messages.duplicate(true),"cursor":0,"catchup":0,"catchup_bytes":0}
 
 func _drain_snapshots() -> void:
@@ -333,11 +382,11 @@ func _drain_snapshots() -> void:
 		if byte_count>=byte_limit: break
 
 func _broadcast(data: Dictionary) -> void:
-	for id in slots:
+	for id in _participants():
 		_send(id, data)
 
 func _send(id: int, data: Dictionary) -> void:
-	if not _draining and snapshot_queues.has(id) and data.get("type") in ["state","result","phase","lobby_state"]:
+	if not _draining and snapshot_queues.has(id) and data.get("type") in ["state","result","phase","lobby_state","chat_event","chat_history"]:
 		var queue: Dictionary=snapshot_queues[id]
 		var size:=_wire_size(data)
 		if queue.catchup>=128 or queue.catchup_bytes+size>8*1024*1024:
@@ -383,6 +432,11 @@ func close() -> void:
 	rematch_votes.clear()
 	lobby_budgets.clear()
 	slots.clear()
+	spectators.clear()
+	spectator_reservations.clear()
+	peer_extensions.clear()
+	chat_history_times.clear()
+	chat.reset(0)
 	transport_peers.clear()
 	reservations.clear()
 	peer_tokens.clear()
@@ -436,7 +490,10 @@ func lobby_snapshot() -> Dictionary:
 	if runner != null:
 		for player in runner.state.players:
 			roster.append({"id": player.player_id, "name": player.display_name, "team": player.team_id, "connected": slots.values().has(player.player_id), "ready": ready_slots.get(player.player_id, false), "rematch": rematch_votes.get(player.player_id, false)})
-	return {"capacity": capacity, "require_ready": require_ready, "started": started, "generation": runner.state.generation if runner != null else 0, "roster": roster}
+	var spectator_rows:Array=[]
+	for reservation in spectator_reservations.values():
+		spectator_rows.append({"id":reservation.id,"name":reservation.name,"connected":reservation.peer!=0})
+	return {"capacity": capacity, "require_ready": require_ready, "started": started, "generation": runner.state.generation if runner != null else 0, "roster": roster,"spectator_capacity":spectator_capacity,"spectators":spectator_rows}
 
 func _broadcast_lobby() -> void:
 	_broadcast({"type": "lobby_state", "lobby": lobby_snapshot()})
@@ -492,6 +549,7 @@ func _handle_lobby(sender: int, data: Dictionary) -> void:
 			rematch_votes[player_id] = data.vote
 			if slots.size() == capacity and slots.values().all(func(id): return rematch_votes.get(id, false)):
 				runner.reset()
+				chat.reset(runner.state.generation)
 				started = false
 				ready_slots.clear()
 				rematch_votes.clear()
@@ -502,7 +560,7 @@ func _handle_lobby(sender: int, data: Dictionary) -> void:
 				state_timer = 0.0
 				_update_phase()
 				_broadcast_lobby()
-				for id in slots:
+				for id in _participants():
 					_send_snapshot(id)
 				return
 	_maybe_start()
@@ -515,7 +573,11 @@ func apply_options(candidate: Dictionary) -> Dictionary:
 	if result.ok: reservation_seconds=runtime_options.values.reservation_seconds
 	return result
 func diagnostic_snapshot() -> Dictionary:
-	return {"uptime_seconds":maxf(0.0,(Time.get_ticks_msec()-started_at)/1000.0) if started_at>0 else 0.0,"phase":match_phase,"peers":slots.size(),"pending":pending.size(),"reservations":reservations.size(),"transfers":snapshot_queues.size(),"counters":diagnostics.duplicate(),"last_receive_packets":last_receive_packets,"last_receive_bytes":last_receive_bytes,"shutting_down":shutting_down}
+	var transfers:Array=[]
+	for id in snapshot_queues:
+		var queue:Dictionary=snapshot_queues[id]
+		transfers.append({"role":"spectator" if spectators.has(id) else "player","remaining":queue.messages.size()-queue.cursor,"catchup_bytes":queue.catchup_bytes})
+	return {"roster":participant_roster(),"spectators":spectators.size(),"spectator_capacity":spectator_capacity,"free_spectator_slots":maxi(0,spectator_capacity-spectator_reservations.size()),"transfer_details":transfers,"uptime_seconds":maxf(0.0,(Time.get_ticks_msec()-started_at)/1000.0) if started_at>0 else 0.0,"phase":match_phase,"peers":slots.size(),"pending":pending.size(),"reservations":reservations.size(),"transfers":snapshot_queues.size(),"counters":diagnostics.duplicate(),"last_receive_packets":last_receive_packets,"last_receive_bytes":last_receive_bytes,"shutting_down":shutting_down}
 func _fatal_hello(id: int, reason: String) -> void:
 	_send(id,{"type":"rejected","reason":reason,"fatal":true})
 	rejected_disconnects[id]=Time.get_ticks_msec()+250
@@ -524,3 +586,98 @@ static func _wire_size(data: Dictionary) -> int:
 	var envelope := data.duplicate()
 	envelope.version = Protocol.VERSION
 	return Protocol.packet(envelope).size()
+
+func _participants()->Array:
+	return slots.keys()+spectators.keys()
+
+func _accept_spectator(id:int,token:String,extensions:Array)->void:
+	if spectator_capacity==0:
+		_fatal_hello(id,"spectators_disabled"); return
+	if not token.is_empty():
+		if reservations.has(token):
+			_fatal_hello(id,"resume_role_mismatch"); return
+		if not spectator_reservations.has(token):
+			_fatal_hello(id,"invalid_or_expired_resume_token"); return
+		if spectator_reservations[token].peer!=0:
+			_fatal_hello(id,"resume_token_in_use"); return
+	else:
+		if spectator_reservations.size()>=spectator_capacity:
+			_fatal_hello(id,"spectator_slots_reserved_or_full"); return
+		token=Crypto.new().generate_random_bytes(32).hex_encode()
+		spectator_reservations[token]={"id":"spectator_"+Crypto.new().generate_random_bytes(16).hex_encode(),"name":"Spectator "+str(spectator_reservations.size()+1),"peer":0,"expires":0}
+	var reservation:Dictionary=spectator_reservations[token]
+	reservation.peer=id; reservation.expires=0
+	spectators[id]={"id":reservation.id,"name":reservation.name}
+	peer_tokens[id]=token
+	peer_extensions[id]=extensions.duplicate()
+	pending.erase(id)
+	_broadcast_lobby()
+	_send_snapshot(id)
+
+func _leave_participant(id:int)->void:
+	var token:String=peer_tokens.get(id,"")
+	var identity:String=spectators[id].id if spectators.has(id) else slots.get(id,"")
+	reservations.erase(token); spectator_reservations.erase(token); peer_tokens.erase(id)
+	chat.forget_identity(identity)
+	if peer!=null: peer.disconnect_peer(id)
+	_disconnected(id)
+
+func _rename_spectator(id:int,data:Dictionary)->void:
+	if data.get("generation")!=runner.state.generation or not Protocol.valid_display_name(data.get("name")):
+		_reject(id,"invalid_display_name"); return
+	var now:int=Time.get_ticks_msec()
+	var budget:Dictionary=lobby_budgets.get(id,{"at":now,"count":0})
+	if now-int(budget.at)>=1000: budget={"at":now,"count":0}
+	budget.count+=1; lobby_budgets[id]=budget
+	if budget.count>8: _reject(id,"lobby_rate_limit"); return
+	var value:String=data.name.strip_edges()
+	spectators[id].name=value
+	spectator_reservations[peer_tokens[id]].name=value
+	_broadcast_lobby()
+
+func _chat_author(id:int)->Dictionary:
+	if spectators.has(id): return {"id":spectators[id].id,"name":spectators[id].name,"role":"spectator"}
+	for player in runner.state.players:
+		if slots.get(id)==player.player_id: return {"id":player.player_id,"name":player.display_name,"role":"player"}
+	return {}
+
+func _handle_chat(id:int,data:Dictionary)->void:
+	if not peer_extensions.get(id,[]).has("chat_v1"): return
+	if data.type=="chat_history_request":
+		var now:int=Time.get_ticks_msec()
+		if now-int(chat_history_times.get(id,-2000))<1000: return
+		chat_history_times[id]=now
+		_send(id,{"type":"chat_history","history":chat.history(),"enabled":runtime_options.values.chat_enabled})
+		return
+	var reason:String=""
+	var result:Dictionary={}
+	if not runtime_options.values.chat_enabled: reason="chat_disabled"
+	elif not Chat.valid_text(data.get("text")) or not Chat.valid_nonce(data.get("nonce")) or not Protocol.integer(data.get("generation"),0,2147483647): reason="invalid_chat"
+	elif data.has("author_id") or data.has("author_name") or data.has("author_role") or data.has("player_id"): reason="invalid_chat_author"
+	else:
+		result=chat.append(_chat_author(id),data.text,data.nonce,int(data.generation),Time.get_ticks_msec())
+		if not result.ok: reason=result.reason
+	if not reason.is_empty():
+		_send(id,{"type":"chat_rejected","nonce":data.get("nonce","") if Chat.valid_nonce(data.get("nonce")) else "","reason":reason})
+		return
+	if result.get("duplicate",false):
+		_send(id,{"type":"chat_history","history":chat.history(),"enabled":true})
+		return
+	for receiver in _participants():
+		if peer_extensions.get(receiver,[]).has("chat_v1"): _send(receiver,{"type":"chat_event","event":result.event})
+
+func participant_roster()->Dictionary:
+	var players:Array=[]
+	var viewers:Array=[]
+	if runner!=null:
+		for player in runner.state.players:
+			var connected_peer:int=0
+			for id in slots:
+				if slots[id]==player.player_id: connected_peer=id
+			var reserved:bool=false
+			for value in reservations.values():
+				if value.player==player.player_id: reserved=true
+			players.append({"id":player.player_id,"name":player.display_name,"status":"synchronizing" if snapshot_queues.has(connected_peer) else ("connected" if connected_peer!=0 else ("reserved" if reserved else "vacant"))})
+	for reservation in spectator_reservations.values():
+		viewers.append({"id":reservation.id,"name":reservation.name,"status":"synchronizing" if snapshot_queues.has(reservation.peer) else ("connected" if reservation.peer!=0 else "reserved")})
+	return {"players":players,"spectators":viewers}

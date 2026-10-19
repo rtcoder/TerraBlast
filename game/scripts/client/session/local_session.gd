@@ -51,6 +51,7 @@ func update_bot() -> void:
 		# Exhausted inventory cannot act; expire this turn through recorded authority.
 		recorder.tick(scene.runner, scene.runner.state.time_remaining)
 func can_archive() -> bool:
+	if scene._special_session_active(): return false
 	var workflows = scene.get("workflows")
 	if workflows != null and workflows.training.active: return false
 	return not scene.remote_mode and not scene.projectile_in_flight and playback == null

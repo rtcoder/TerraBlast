@@ -1,0 +1,3038 @@
+[
+  {
+    "title": "Workshop: nowy dokument z grywalną platformą",
+    "description": "Przycisk New tworzy małą arenę roboczą z podłożem i dwoma spawnami, gotową do dalszej edycji.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "New daje niezależny dokument 32×12×32 z poprawnym podłożem i spawnami obu zespołów; MatchFactory.from_definition tworzy mecz dwóch graczy.",
+    "group": "workshop",
+    "id": "TB-532"
+  },
+  {
+    "title": "Workshop: kopia mapy fabrycznej",
+    "description": "Lista shipped maps ładuje wybraną definicję do edycji bez zmiany pliku źródłowego ani registry.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Wybranie twin_forts i zmiana jego boxa nie modyfikuje ponownego odczytu shipped mapy; UI pokazuje nazwę kopii.",
+    "group": "workshop",
+    "id": "TB-533"
+  },
+  {
+    "title": "Workshop: edycja identyfikatora areny",
+    "description": "Pole ID zapisuje identyfikator dokumentu z czytelnym błędem przy niedozwolonym zapisie.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Poprawne local_arena_1 jest przyjęte; pusty ID, spacja i wielkie litery pozostawiają poprzedni ID i pokazują powód.",
+    "group": "workshop",
+    "id": "TB-534"
+  },
+  {
+    "title": "Workshop: nazwa i motyw dokumentu",
+    "description": "Pola Name i Theme aktualizują metadane przez pojedyncze zatwierdzenie formularza.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Nazwa Unicode i motyw przechodzą eksport; znak kontrolny i przekroczona długość nie modyfikują dokumentu.",
+    "group": "workshop",
+    "id": "TB-535"
+  },
+  {
+    "title": "Workshop: rozmiar świata bez przycinania danych",
+    "description": "Pola dimensions zmieniają wielkość areny; zmniejszenie nie usuwa operacji ani spawnów i kieruje użytkownika do walidacji.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Powiększenie zmienia bounds preview; zmniejszenie zachowuje kolekcje i wskazuje box/spawn poza nową granicą; niepoprawny limit/volume jest odrzucony.",
+    "group": "workshop",
+    "id": "TB-536"
+  },
+  {
+    "title": "Workshop: dodawanie bryły z formularza",
+    "description": "Add box przyjmuje pozycję, rozmiar i materiał oraz wybiera nowo dodaną operację.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Dodanie boxa zwiększa listę o jeden, wybiera wpis i pokazuje jego voxelowy obrys w preview.",
+    "group": "workshop",
+    "id": "TB-537"
+  },
+  {
+    "title": "Workshop: pozycja i rozmiar wybranej bryły",
+    "description": "Apply box aktualizuje oba wektory jako jedną zmianę dokumentu.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Poprawne przesunięcie i skala są widoczne po Apply; zerowy extent i ujemna pozycja nie zapisują części formularza.",
+    "group": "workshop",
+    "id": "TB-538"
+  },
+  {
+    "title": "Workshop: wybór materiału bryły",
+    "description": "Selektor air/dirt/stone/metal edytuje wybraną operację i kolor jej podglądu.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Każdy materiał daje oczekiwane ID po przebudowie; air czyści voxele i nie zachowuje niezerowego health.",
+    "group": "workshop",
+    "id": "TB-539"
+  },
+  {
+    "title": "Workshop: opcjonalne zdrowie bryły",
+    "description": "Przełącznik custom health pozwala nadać zdrowie lub wrócić do wartości domyślnej materiału.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Włączenie health=77 daje 77 w świecie; wyłączenie usuwa klucz i przywraca max_health materiału; wartości spoza limitu odrzucane.",
+    "group": "workshop",
+    "id": "TB-540"
+  },
+  {
+    "title": "Workshop: etykieta bryły",
+    "description": "Pole Name wybranej bryły ułatwia identyfikację nakładających się operacji na liście.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Etykieta pojawia się w liście i po roundtrip TOML; edycja nazwy nie zmienia geometrii.",
+    "group": "workshop",
+    "id": "TB-541"
+  },
+  {
+    "title": "Workshop: duplikacja bryły",
+    "description": "Duplicate box tworzy pełną, niezależną kopię za wybranym wpisem z zachowaniem kolejności budowania.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Kopia ma wszystkie pola źródła i osobne tablice pozycji/rozmiaru; edycja kopii nie zmienia oryginału.",
+    "group": "workshop",
+    "id": "TB-542"
+  },
+  {
+    "title": "Workshop: usuwanie bryły",
+    "description": "Delete usuwa wybraną bryłę i wybiera sąsiada lub czyści inspektor.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Usunięcie ostatniego/jedynego wpisu nie zostawia niepoprawnego index; Undo przywraca wpis wraz z polami.",
+    "group": "workshop",
+    "id": "TB-543"
+  },
+  {
+    "title": "Workshop: kolejność nakładania brył",
+    "description": "Up/Down przenosi wybraną bryłę w rzeczywistej kolejności MapBuilder.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Przestawienie nakładających się dirt/metal zmienia materiał wspólnego voxela; przyciski graniczne są wyłączone.",
+    "group": "workshop",
+    "id": "TB-544"
+  },
+  {
+    "title": "Workshop: dodawanie sferycznego wycięcia",
+    "description": "Add carve tworzy wspierane przez MapBuilder wycięcie sphere z pozycją i promieniem.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Nowe wycięcie pojawia się na liście, a przebudowany podgląd usuwa środkowy voxel wcześniej pełnej bryły.",
+    "group": "workshop",
+    "id": "TB-545"
+  },
+  {
+    "title": "Workshop: edycja centrum i promienia wycięcia",
+    "description": "Apply carve zatwierdza centrum i radius wybranej sfery.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Radius 1 i graniczny legalny promień działają; zero, ponadlimitowy promień i sfera bez przecięcia świata nie zapisują formularza.",
+    "group": "workshop",
+    "id": "TB-546"
+  },
+  {
+    "title": "Workshop: duplikacja i usuwanie wycięcia",
+    "description": "Przyciski Duplicate/Delete obsługują sfery bez współdzielenia danych.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Edycja centrum kopii nie przesuwa oryginału; Delete i Undo odtwarzają dokładny wpis w tej samej kolejności.",
+    "group": "workshop",
+    "id": "TB-547"
+  },
+  {
+    "title": "Workshop: dodawanie spawnów obu zespołów",
+    "description": "Add spawn przyjmuje współrzędne, team, slot i yaw z inspektora.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Dodanie spawnu team 1 i team 2 pokazuje osobne znaczniki i zachowuje dane w eksporcie.",
+    "group": "workshop",
+    "id": "TB-548"
+  },
+  {
+    "title": "Workshop: pozycja i orientacja spawnu",
+    "description": "Apply spawn edytuje pozycję i skończony kąt yaw oraz kierunek znacznika.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Zmiana yaw 90 daje właściwy Basis przy playtest; NaN/Inf i niecałkowite współrzędne nie modyfikują spawnu.",
+    "group": "workshop",
+    "id": "TB-549"
+  },
+  {
+    "title": "Workshop: zespół i jawny slot spawnu",
+    "description": "Inspektor pozwala zmienić team i slot bez automatycznego przenumerowania pozostałych spawnów.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Zmiana team/slot aktualizuje etykietę; duplikat slotu jest pokazany w raporcie; team spoza 1/2 oraz ujemny slot odrzucone.",
+    "group": "workshop",
+    "id": "TB-550"
+  },
+  {
+    "title": "Workshop: duplikacja i usuwanie spawnu",
+    "description": "Duplicate/Delete umożliwia szybkie rozmieszczenie startów, z raportem kolizji dla jeszcze nieprzesuniętej kopii.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Kopia ma niezależną pozycję; walidacja wskazuje overlap do przesunięcia; usunięcie i Undo przywraca team/slot/yaw.",
+    "group": "workshop",
+    "id": "TB-551"
+  },
+  {
+    "title": "Workshop: historia Undo dla operacji dokumentu",
+    "description": "Undo cofa zatwierdzenie metadanych, geometrii, spawnów lub reorder jako jedną transakcję.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Sekwencja metadata/add/edit/reorder/delete cofa się przez dokładne poprzednie serializacje; UI aktualizuje zaznaczenie i dostępność Undo.",
+    "group": "workshop",
+    "id": "TB-552"
+  },
+  {
+    "title": "Workshop: Redo i odcięcie porzuconej gałęzi",
+    "description": "Redo przywraca cofniętą transakcję, a nowa edycja po Undo usuwa starą gałąź.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Undo→Redo daje identyczny dokument; Undo→nowy box wyłącza Redo i nie przywraca starego boxa.",
+    "group": "workshop",
+    "id": "TB-553"
+  },
+  {
+    "title": "Workshop: ograniczona pamięć historii",
+    "description": "Historia ma limit 32 pełnych snapshotów i nie dodaje wpisów dla identycznego Apply ani błędów.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "40 legalnych edycji pozostawia najwyżej 32 kroki Undo; no-op/błąd nie zmienia licznika; UI pokazuje stan historii.",
+    "group": "workshop",
+    "id": "TB-554"
+  },
+  {
+    "title": "Workshop: brudny dokument i punkt zapisu",
+    "description": "Tytuł okna pokazuje zmianę względem ostatniego udanego odczytu/zapisu według treści dokumentu.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Edycja ustawia *, udany Save usuwa *, Undo do zapisanej treści usuwa *, Redo ponownie ustawia *.",
+    "group": "workshop",
+    "id": "TB-555"
+  },
+  {
+    "title": "Workshop: import TOML przez okno pliku",
+    "description": "Import otwiera FileDialog z filtrem TOML i ładuje plik przez istniejący MapLoader.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Import poprawnej mapy zastępuje dokument i resetuje historię; Cancel zachowuje dokument; wadliwy TOML pokazuje powód bez utraty bieżącej pracy.",
+    "group": "workshop",
+    "id": "TB-556"
+  },
+  {
+    "title": "Workshop: eksport do wybranej ścieżki TOML",
+    "description": "Save As zapisuje istniejący format MapSerializer z FileDialog, bez zmiany formatów sesji i replay.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Zapis do katalogu tymczasowego daje poprawny roundtrip wszystkich pól; anulowanie dialogu nie oznacza dokumentu jako zapisanego.",
+    "group": "workshop",
+    "id": "TB-557"
+  },
+  {
+    "title": "Workshop: szybki zapis bieżącego pliku",
+    "description": "Save używa ścieżki ostatniego udanego importu/Save As; dokument nowy przechodzi do Save As.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Po Save As drugi Save aktualizuje ten sam plik; brak ścieżki otwiera dialog; błąd zapisu nie kasuje dirty.",
+    "group": "workshop",
+    "id": "TB-558"
+  },
+  {
+    "title": "Workshop: atomowy zapis pliku lokalnego",
+    "description": "Store zapisuje TOML przez plik tymczasowy w katalogu docelowym i rename, przekazując błędy do okna.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Udany zapis nie pozostawia pliku roboczego; wymuszona awaria przed replace zachowuje poprzednią zawartość i dirty.",
+    "group": "workshop",
+    "id": "TB-559"
+  },
+  {
+    "title": "Workshop: ochrona map dołączonych do gry",
+    "description": "Zapis odrzuca res:// i pliki shipped; robocza kopia mapy wymaga własnej lokalnej ścieżki.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Save As do res://maps/twin_forts.toml jest odrzucone z komunikatem; shipped hash bez zmian; zapis do temp działa.",
+    "group": "workshop",
+    "id": "TB-560"
+  },
+  {
+    "title": "Workshop: potwierdzanie utraty lokalnych zmian",
+    "description": "New, otwarcie shipped/import i zamknięcie dirty pokazują Save/Discard/Cancel w oknie.",
+    "files": [
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Cancel zachowuje dokument, historię i widoczność; Discard wykonuje żądaną akcję; Save z błędem nie wykonuje akcji.",
+    "group": "workshop",
+    "id": "TB-561"
+  },
+  {
+    "title": "Workshop: raport walidacji definicji",
+    "description": "Validate prezentuje błędy istniejącego MapValidator bez dopisywania nowego parsera lub schematu.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Niepoprawne bounds/slot/material w roboczym dokumencie dają listę błędów; poprawienie usuwa raport; brak crasha na pustych kolekcjach.",
+    "group": "workshop",
+    "id": "TB-562"
+  },
+  {
+    "title": "Workshop: walidacja fizycznego miejsca startu",
+    "description": "Validate buduje kandydata i sprawdza podparcie, ciało gracza oraz nakładanie spawnów.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Spawn w solidnym voxelu, bez podpory i pod niskim sufitem pokazuje właściwy błąd; po naprawie podłoża raport jest poprawny.",
+    "group": "workshop",
+    "id": "TB-563"
+  },
+  {
+    "title": "Workshop: lista wspieranych liczebności testu",
+    "description": "Selektor players wynika z faktycznej selekcji spawnów dla aktualnego dokumentu.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Układ 2+2 pokazuje wspierane 2 i 4 zgodnie ze SpawnSelector; po usunięciu spawnu niemożliwa opcja znika, wybór jest korygowany.",
+    "group": "workshop",
+    "id": "TB-564"
+  },
+  {
+    "title": "Workshop: blokada playtest przy błędnej arenie",
+    "description": "Playtest wymaga świeżej walidacji aktualnej rewizji dokumentu i poprawnej liczby graczy.",
+    "files": [
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Edycja po poprawnej walidacji nie może uruchomić starego kandydata; błędny spawn zostawia oryginalny runner i widoczny raport.",
+    "group": "workshop",
+    "id": "TB-565"
+  },
+  {
+    "title": "Workshop: limit rozmiaru importowanego dokumentu",
+    "description": "Import kontroluje rozmiar przed odczytem i zachowuje ostatni dobry dokument w razie pustego/za dużego pliku.",
+    "files": [
+      "game/scripts/core/workshop/workshop_store.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Pliki 0 i >1 MiB są odrzucane z komunikatem; bieżące pola, historia i dirty są identyczne jak przed importem.",
+    "group": "workshop",
+    "id": "TB-566"
+  },
+  {
+    "title": "Workshop: natywne okno edytora z listą operacji",
+    "description": "Osobne Window udostępnia metadane oraz zakładki Boxes/Carves/Spawns i odpowiadający inspektor.",
+    "files": [
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Po otwarciu wszystkie trzy zakładki mają działające Add/Apply/Duplicate/Delete; zmiana zakładki nie miesza zaznaczeń między kolekcjami.",
+    "group": "workshop",
+    "id": "TB-567"
+  },
+  {
+    "title": "Workshop: wybór wpisu aktualizuje inspektor",
+    "description": "Kliknięcie elementu listy ładuje jego rzeczywiste wartości i zaznacza go w preview.",
+    "files": [
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Przełączenie dwóch boxów o innych rozmiarach aktualizuje wszystkie pola; odświeżenie listy nie aplikuje przypadkowo wartości poprzedniego wpisu.",
+    "group": "workshop",
+    "id": "TB-568"
+  },
+  {
+    "title": "Workshop: przekrój voxelowy aktualnego dokumentu",
+    "description": "Preview pokazuje przekrój XZ na wybranej wysokości z rzeczywistą kolejnością boxes→carves.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/unit/workshop_oct19_tests.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Dla fixture z metalowym nakładaniem i sferą piksele przekroju odpowiadają material ID z MapBuilder; nie ma osobnej imitacji geometrii.",
+    "group": "workshop",
+    "id": "TB-569"
+  },
+  {
+    "title": "Workshop: kontrola wysokości przekroju",
+    "description": "Suwak layer i pole liczbowe przełączają wysokość przekroju w granicach dokumentu.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Zmiana y przełącza między podłogą/pustką/dachem; zmniejszenie size.y koryguje layer, UI nie wychodzi poza zakres.",
+    "group": "workshop",
+    "id": "TB-570"
+  },
+  {
+    "title": "Workshop: zoom i dopasowanie podglądu",
+    "description": "Zoom oraz Fit pozwalają oglądać pełne bounds małej i dużej areny w obszarze preview.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Fit mieści prostokątną mapę 128×32 w preview; Zoom respektuje min/max i nie zmienia dokumentu ani historii.",
+    "group": "workshop",
+    "id": "TB-571"
+  },
+  {
+    "title": "Workshop: kliknięcie przekroju ustawia pozycję edycji",
+    "description": "Kliknięcie voxelowego preview przenosi współrzędne kursora do formularza aktywnej kolekcji bez natychmiastowej mutacji dokumentu.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Kliknięcie znanego piksela daje prawidłowe x/y/z; Apply dopiero zapisuje; kliknięcie marginesu nie tworzy operacji.",
+    "group": "workshop",
+    "id": "TB-572"
+  },
+  {
+    "title": "Workshop: znaczniki spawnów z kierunkiem i team",
+    "description": "Preview rysuje odróżnialne kolory team 1/2, slot i strzałkę yaw, z wyróżnieniem wybranego spawnu.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Dwa spawny w tym samym przekroju mają różne kolory i poprawne strzałki; zmiana yaw/team aktualizuje rysunek po Apply.",
+    "group": "workshop",
+    "id": "TB-573"
+  },
+  {
+    "title": "Workshop: zachowanie ostatniego dobrego podglądu",
+    "description": "Niepoprawny roboczy dokument pokazuje błędy, zachowując oznaczony jako nieaktualny ostatni poprawny przekrój.",
+    "files": [
+      "game/scripts/client/workshop/workshop_preview.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/core/workshop/workshop_document.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Usunięcie podpory nie usuwa UI ani nie podmienia aktywnego świata; komunikat stale preview znika po poprawnej przebudowie.",
+    "group": "workshop",
+    "id": "TB-574"
+  },
+  {
+    "title": "Workshop: bezpieczne wejście z lokalnego meczu",
+    "description": "Otwieranie edytora jest dostępne lokalnie między strzałami i zawiesza aktywny mecz oraz bota.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Otwarcie zachowuje hash runnera i time_remaining przez wiele klatek; remote/replay/training/projectile blokują wejście z czytelną przyczyną.",
+    "group": "workshop",
+    "id": "TB-575"
+  },
+  {
+    "title": "Workshop: playtest na osobnym runnerze",
+    "description": "Playtest tworzy nowy lokalny runner przez MatchFactory.from_definition i przełącza prezentację na jego świat.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Runner testu jest innym obiektem, ma wybraną liczbę graczy i edytowaną geometrię; oryginalny hash pozostaje identyczny.",
+    "group": "workshop",
+    "id": "TB-576"
+  },
+  {
+    "title": "Workshop: panel powrotu z playtestu",
+    "description": "Podczas gry testowej widoczny przycisk Return to Workshop zatrzymuje test i ponownie pokazuje edytor.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Po ruchu i strzale powrót otwiera ten sam dokument/zaznaczenie/Undo; test nie nadpisuje geometrii roboczej zniszczeniami.",
+    "group": "workshop",
+    "id": "TB-577"
+  },
+  {
+    "title": "Workshop: odtwarzanie pełnego lokalnego kontekstu",
+    "description": "Zamknięcie Workshop przywraca oryginalny runner, recorder, opcje, prędkości graczy i wybór broni.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Po playtest wracają referencje runner/recorder, dokładny hash i velocity; options i selected weapon odpowiadają zapisowi wejścia.",
+    "group": "workshop",
+    "id": "TB-578"
+  },
+  {
+    "title": "Workshop: powtarzalny restart testu z dokumentu",
+    "description": "Restart testu przebudowuje wyłącznie kopię roboczej areny, nie uruchamia domyślnej mapy ani oryginalnego meczu.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Po zniszczeniu terenu Restart test odtwarza dokładne initial voxels i spawny dokumentu; live runner nie jest resetowany.",
+    "group": "workshop",
+    "id": "TB-579"
+  },
+  {
+    "title": "Workshop: izolacja testu od trwałych workflow meczu",
+    "description": "Podczas playtest blokowane są zapis sesji/replay, autosave, serie, trening i przejście do sieci.",
+    "files": [
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Próby archive/autosave/next round/training/network nie zapisują plików i nie przełączają runnera; powrót odblokowuje normalne akcje.",
+    "group": "workshop",
+    "id": "TB-580"
+  },
+  {
+    "title": "Workshop: klawiatura i zamknięcie okna bez przecieku wejścia",
+    "description": "Ctrl+Z/Ctrl+Shift+Z/Ctrl+S oraz Escape działają w oknie i nie wywołują ruchu/strzału sceny.",
+    "files": [
+      "game/scripts/client/workshop/workshop_window.gd",
+      "game/scripts/client/workshop/workshop_workflows.gd",
+      "game/tests/integration/workshop_oct19_next_tests.gd"
+    ],
+    "acceptance": "Skróty działają z fokusem inspektora, nie przechwytują zwykłego wpisywania; OS close przechodzi przez dirty prompt; po czystym wyjściu wraca właściwy mouse mode i stan pauzy.",
+    "group": "workshop",
+    "id": "TB-581"
+  },
+  {
+    "title": "Walidowany format lokalnych rozgrywek",
+    "description": "Wprowadź osobny model konfiguracji: liga, rewanże albo puchar; 2–8 uczestników, nazwa wydarzenia, istniejący preset i lista aren.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Nieznany format, pusta nazwa i 1 lub 9 uczestników są odrzucane bez zmiany aktywnych rozgrywek.",
+    "group": "competition",
+    "id": "TB-582"
+  },
+  {
+    "title": "Stabilne identyfikatory uczestników",
+    "description": "Oddziel id uczestnika od wyświetlanej nazwy i pozycji rozstawienia; id generowane deterministycznie z kolejności zgłoszeń.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Zmiana nazwy nie zmienia powiązań rozegranych spotkań; duplikaty id i pozycje poza zakresem są odrzucane.",
+    "group": "competition",
+    "id": "TB-583"
+  },
+  {
+    "title": "Czytelne nazwy drużyn",
+    "description": "Waliduj nazwy 1–32 znaki, białe końce, znaki kontrolne i unikatowość bez rozróżniania wielkości liter.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Unicode działa; nazwy puste, kontrolne oraz „ Alfa ” i „alfa” w jednym wydarzeniu dają konkretny komunikat.",
+    "group": "competition",
+    "id": "TB-584"
+  },
+  {
+    "title": "Równa liczebność zespołów",
+    "description": "Udostępnij 2,4,6,8,10 postaci na mecz hotseat z weryfikacją faktycznie obsługiwanych spawnów każdej wybranej areny.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Nieparzysta liczba oraz arena nieobsługująca wybranej liczby nie pozwalają utworzyć wydarzenia; żadna reguła gry nie otrzymuje nowych pól.",
+    "group": "competition",
+    "id": "TB-585"
+  },
+  {
+    "title": "Deterministyczna rotacja aren",
+    "description": "Zapisuj uporządkowaną listę 1–9 istniejących aren; przypisuj arenę na podstawie numeru spotkania.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Ponowne wygenerowanie tego samego turnieju daje identyczne mapy i kolejność; nieznana i powtórzona arena są odrzucone.",
+    "group": "competition",
+    "id": "TB-586"
+  },
+  {
+    "title": "Podgląd kosztu wydarzenia",
+    "description": "Wylicz liczbę kolejek, spotkań i wolnych losów przed startem bez tworzenia runnerów ani światów.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Liga 8 uczestników daje 28 meczów, rewanże 56, puchar 7; podgląd nie mutuje konfiguracji.",
+    "group": "competition",
+    "id": "TB-587"
+  },
+  {
+    "title": "Rozstawienie ręczne",
+    "description": "Pozwól zmieniać kolejność uczestników przed utworzeniem terminarza i pokaż jej znaczenie dla pucharu i ostatniego kryterium tabeli.",
+    "files": [
+      "game/scripts/core/competition/competition_config.gd"
+    ],
+    "acceptance": "Ruch w górę/w dół zachowuje id; po pierwszym rozpoczętym meczu rozstawienie jest zablokowane.",
+    "group": "competition",
+    "id": "TB-588"
+  },
+  {
+    "title": "Edycja zgłoszeń przed startem",
+    "description": "Dodawaj, usuwaj i przemianowuj uczestników w wersji roboczej, regenerując podgląd terminarza atomowo.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Nieudana edycja nie usuwa istniejących zgłoszeń; usunięcie poniżej minimum wyłącza przycisk startu z przyczyną.",
+    "group": "competition",
+    "id": "TB-589"
+  },
+  {
+    "title": "Zamrożenie zasad wydarzenia",
+    "description": "Po zatwierdzeniu wydarzenia zablokuj format, areny, preset, składy i rozstawienie; zachowaj osobny stan draft.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Próba zmiany zasad po pierwszym launch jest odrzucana, a sam podgląd ani zapis wersji roboczej niczego nie blokuje.",
+    "group": "competition",
+    "id": "TB-590"
+  },
+  {
+    "title": "Zmiana etykiety uczestnika w trakcie ligi",
+    "description": "Dopuść kontrolowaną zmianę samej nazwy z pełną rewalidacją oraz aktualizacją widoków historycznych przez id.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Tabela i stare wyniki natychmiast pokazują nową nazwę; wynik, seeding i powiązania par pozostają identyczne.",
+    "group": "competition",
+    "id": "TB-591"
+  },
+  {
+    "title": "Terminarz ligi dla parzystych składów",
+    "description": "Zastosuj metodę kołową dla 2,4,6,8 uczestników i stabilne identyfikatory spotkań.",
+    "files": [
+      "game/scripts/core/competition/competition_schedule.gd"
+    ],
+    "acceptance": "Każda para występuje dokładnie raz, uczestnik najwyżej raz na kolejkę; liczba spotkań wynosi n*(n-1)/2.",
+    "group": "competition",
+    "id": "TB-592"
+  },
+  {
+    "title": "Terminarz ligi z pauzami",
+    "description": "Obsłuż 3,5,7 uczestników przez jawnie prezentowaną pauzę w każdej kolejce.",
+    "files": [
+      "game/scripts/core/competition/competition_schedule.gd"
+    ],
+    "acceptance": "Każdy uczestnik ma dokładnie jedną pauzę i gra z każdym innym; pauza nie tworzy meczu i nie przyznaje punktów.",
+    "group": "competition",
+    "id": "TB-593"
+  },
+  {
+    "title": "Rewanże z odwróceniem stron",
+    "description": "Generuj drugą rundę ligi z zamianą stron A/B wszystkich par i zachowaniem stabilnych kluczy.",
+    "files": [
+      "game/scripts/core/competition/competition_schedule.gd"
+    ],
+    "acceptance": "Dla n=8 jest 56 unikatowych spotkań; każda para ma dwa mecze z przeciwnym przypisaniem do team_id 1/2.",
+    "group": "competition",
+    "id": "TB-594"
+  },
+  {
+    "title": "Zbilansowane strony w lidze",
+    "description": "Ogranicz różnice liczby meczów po stronie A i B deterministyczną orientacją par, pokazując orientację w terminarzu.",
+    "files": [
+      "game/scripts/core/competition/competition_schedule.gd"
+    ],
+    "acceptance": "Dla pojedynczej ligi różnica stron każdego uczestnika nie przekracza 1; w rewanżach wynosi 0.",
+    "group": "competition",
+    "id": "TB-595"
+  },
+  {
+    "title": "Drabinka pucharowa z wolnym losem",
+    "description": "Generuj najmniejszą drabinkę potęgi dwójki dla 2–8 uczestników i przyznawaj wolne losy według rozstawienia.",
+    "files": [
+      "game/scripts/core/competition/competition_schedule.gd"
+    ],
+    "acceptance": "Puchar 3,5,6,7 uczestników kończy się po n-1 rzeczywistych rozstrzygnięciach; wolny los nie jest zapisywany jako zwycięstwo w meczu.",
+    "group": "competition",
+    "id": "TB-596"
+  },
+  {
+    "title": "Awans wygranego w pucharze",
+    "description": "Powiąż sloty kolejnych rund z konkretnymi poprzednikami i awansuj dopiero po zaakceptowanym wyniku.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Finalista pochodzi z właściwego półfinału; nie można uruchomić meczu z nierozstrzygniętym poprzednikiem.",
+    "group": "competition",
+    "id": "TB-597"
+  },
+  {
+    "title": "Remis pucharowy wymaga powtórki",
+    "description": "Pozostaw sparowanie i arenę nierozstrzygnięte po remisie, wyświetlając potrzebę powtórzenia spotkania.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Remis nie awansuje żadnego uczestnika; powtórka otrzymuje nowy token uruchomienia i nie dubluje wcześniejszego wyniku.",
+    "group": "competition",
+    "id": "TB-598"
+  },
+  {
+    "title": "Lista spotkań gotowych do gry",
+    "description": "Wyznaczaj dostępne mecze bez aktywnego runnera: następna kolejka ligi albo rozwiązane sloty bieżącej rundy pucharu.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Zablokowany mecz nie występuje na liście gotowych; w lidze nie da się przeskoczyć niezamkniętej kolejki.",
+    "group": "competition",
+    "id": "TB-599"
+  },
+  {
+    "title": "Wybór meczu w bieżącej kolejce",
+    "description": "Dopuść wybór dowolnego gotowego meczu tej samej kolejki zamiast sztywnej pojedynczej ścieżki.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Wybrany mecz uruchamia właściwą parę i arenę; rozegrany i niegotowy mecz nie może zostać wybrany.",
+    "group": "competition",
+    "id": "TB-600"
+  },
+  {
+    "title": "Zakończenie i zwycięzca rozgrywek",
+    "description": "Wyznacz stan zakończenia ligi po wszystkich wynikach i pucharu po finale, z czytelnym mistrzem oraz pełną kolejnością ligi.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Ostatni wynik przełącza wydarzenie dokładnie raz; po zakończeniu launch jest zablokowany, przegląd i zapis działają.",
+    "group": "competition",
+    "id": "TB-601"
+  },
+  {
+    "title": "Wynik mapowany z zespołów gry",
+    "description": "Mapuj winner_team 1/2/0 na id zawodników zapisane w konkretnym aktywnym meczu, niezależnie od nazw graczy.",
+    "files": [
+      "game/scripts/core/competition/competition_results.gd"
+    ],
+    "acceptance": "Zamiana stron w rewanżu poprawnie wskazuje zwycięzcę; obce winner_team i wynik niekończącego się runnera są odrzucane.",
+    "group": "competition",
+    "id": "TB-602"
+  },
+  {
+    "title": "Dedykowany token uruchomienia meczu",
+    "description": "Używaj osobnego monotonicznego numeru próby i id meczu, nie polegając wyłącznie na resetowanym generation runnera.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Dwa nowo utworzone runnery z tą samą generation mają różne tokeny; spóźniony wynik starej próby nie zostaje zaakceptowany.",
+    "group": "competition",
+    "id": "TB-603"
+  },
+  {
+    "title": "Idempotentne zatwierdzanie rezultatów",
+    "description": "Wprowadź atomowe record_result dla tożsamości wydarzenia, meczu i tokenu próby.",
+    "files": [
+      "game/scripts/core/competition/competition_results.gd"
+    ],
+    "acceptance": "Wielokrotne update() po końcu meczu dodaje pojedynczy rezultat i pojedynczy awans; wynik innego meczu nie mutuje tabeli.",
+    "group": "competition",
+    "id": "TB-604"
+  },
+  {
+    "title": "Punktacja ligowa 3–1–0",
+    "description": "Wylicz rozgrywane, wygrane, remisy, porażki i punkty wyłącznie z zaakceptowanych wyników ligi.",
+    "files": [
+      "game/scripts/core/competition/competition_standings.gd"
+    ],
+    "acceptance": "Ręczna sekwencja wygrana/remis/porażka daje 4 punkty i bilans 1/1/1; aktywne, pucharowe i anulowane mecze nie naliczają punktów.",
+    "group": "competition",
+    "id": "TB-605"
+  },
+  {
+    "title": "Mała tabela remisujących",
+    "description": "Przy równych punktach zastosuj punkty w bezpośrednich meczach całej grupy remisujących, następnie liczbę zwycięstw i rozstawienie.",
+    "files": [
+      "game/scripts/core/competition/competition_standings.gd"
+    ],
+    "acceptance": "Dwustronny oraz trzyosobowy remis mają ręcznie policzoną kolejność; wynik nie zależy od kolejności wpisów w Dictionary.",
+    "group": "competition",
+    "id": "TB-606"
+  },
+  {
+    "title": "Wyjaśnienie miejsca w tabeli",
+    "description": "Zwracaj przy wierszu kryterium, które rozstrzygnęło pozycję, oraz legendę kolejności kryteriów.",
+    "files": [
+      "game/scripts/core/competition/competition_standings.gd"
+    ],
+    "acceptance": "UI pokazuje punkty, małą tabelę, zwycięstwa albo rozstawienie zgodnie z faktycznie użytym kryterium.",
+    "group": "competition",
+    "id": "TB-607"
+  },
+  {
+    "title": "Macierz bezpośrednich rezultatów",
+    "description": "Udostępnij pary rezultatów z rozdzieleniem pierwszego meczu i rewanżu, bez przechowywania kopii tabeli.",
+    "files": [
+      "game/scripts/core/competition/competition_standings.gd"
+    ],
+    "acceptance": "Macierz 4 uczestników zgadza się z terminarzem; brak rezultatu ma stan oczekujący, remis ma jawne 0:0 w kategoriach wygranej.",
+    "group": "competition",
+    "id": "TB-608"
+  },
+  {
+    "title": "Historia ukończonych spotkań",
+    "description": "Zachowuj ograniczoną listę finalnych rezultatów z id spotkania, stronami, areną, rozstrzygnięciem oraz numerem próby.",
+    "files": [
+      "game/scripts/core/competition/competition_results.gd"
+    ],
+    "acceptance": "Historia zawiera najwyżej liczbę spotkań terminarza; ponowna prezentacja wyniku i remisowa powtórka pucharu nie pompują listy.",
+    "group": "competition",
+    "id": "TB-609"
+  },
+  {
+    "title": "Kontrolowana korekta wyniku ligi",
+    "description": "Pozwól poprawić pojedynczy wynik ligi przez wybór A/remis/B z ponownym wyliczeniem tabeli, wyłącznie gdy nie trwa spotkanie.",
+    "files": [
+      "game/scripts/core/competition/competition_event.gd"
+    ],
+    "acceptance": "Korekta nie dubluje meczu i aktualizuje punkty; aktywny runner oraz puchar z zależnymi awansami blokują korektę z przyczyną.",
+    "group": "competition",
+    "id": "TB-610"
+  },
+  {
+    "title": "Raport końcowy wydarzenia",
+    "description": "Buduj tekstowy raport z nazwą, formatem, mistrzem, wynikami i tabelą do skopiowania z UI.",
+    "files": [
+      "game/scripts/core/competition/competition_standings.gd"
+    ],
+    "acceptance": "Raport dla zakończonej ligi zgadza się z tabelą; nazwy są zwykłym tekstem, brak dat i losowości zapewnia deterministyczność.",
+    "group": "competition",
+    "id": "TB-611"
+  },
+  {
+    "title": "Osobny walidowany plik wydarzenia",
+    "description": "Zdefiniuj własną otoczkę JSON competition v1 ze ścisłymi kluczami, konfigiem, stanem i opcjonalnym niezmienionym payload SessionStore.",
+    "files": [
+      "game/scripts/core/competition/competition_store.gd"
+    ],
+    "acceptance": "Nowy plik nie zmienia formatów sesji, replay ani archiwum; nieznany format/wersja/klucz zostaje odrzucony.",
+    "group": "competition",
+    "id": "TB-612"
+  },
+  {
+    "title": "Odtworzenie stanu z kanonicznego terminarza",
+    "description": "Podczas odczytu regeneruj pary z konfiguracji i weryfikuj wyniki oraz aktywny mecz względem kanonicznego terminarza.",
+    "files": [
+      "game/scripts/core/competition/competition_store.gd"
+    ],
+    "acceptance": "Podmieniona para, powtórzone id i niemożliwy awans pucharowy odrzucają cały plik bez częściowego załadowania.",
+    "group": "competition",
+    "id": "TB-613"
+  },
+  {
+    "title": "Atomowy zapis bez utraty poprzedniej wersji",
+    "description": "Zapisuj przez unikatowy plik tymczasowy, flush, zamknięcie i rename, sprzątając tylko własny plik tymczasowy.",
+    "files": [
+      "game/scripts/core/competition/competition_store.gd"
+    ],
+    "acceptance": "Błąd zapisu lub rename pozostawia poprzedni poprawny plik; test używa wyłącznie izolowanego katalogu /private/tmp.",
+    "group": "competition",
+    "id": "TB-614"
+  },
+  {
+    "title": "Ograniczenia rozmiaru i głęboka walidacja zapisu",
+    "description": "Ogranicz plik do SessionStore.MAX_BYTES + 256KiB oraz liczbę uczestników, wyników i elementów terminarza; odrzucaj niefinitywne i niecałkowite numery.",
+    "files": [
+      "game/scripts/core/competition/competition_store.gd"
+    ],
+    "acceptance": "Przekroczony limit jest sprawdzany przed parse; uszkodzone zagnieżdżone dane nie wywołują wyjątku ani mutacji bieżącego wydarzenia.",
+    "group": "competition",
+    "id": "TB-615"
+  },
+  {
+    "title": "Zapis i wznowienie aktywnego meczu",
+    "description": "Koduj stabilny runner przez istniejący SessionStore wraz z options i wszystkimi velocities oraz identyfikatorem meczu.",
+    "files": [
+      "game/scripts/core/competition/competition_store.gd"
+    ],
+    "acceptance": "Wznowienie zachowuje dokładny hash sesji, turę, broń, zdrowie i prędkości; payload z inną konfiguracją drużyn jest odrzucany.",
+    "group": "competition",
+    "id": "TB-616"
+  },
+  {
+    "title": "Bezpieczny punkt zapisu turnieju",
+    "description": "Zablokuj zapis podczas pocisku, playback, remote i treningu; zapis aktywnego meczu wolno wykonać tylko w stabilnym stanie.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Kliknięcie Save podczas animacji zwraca przyczynę i nie dotyka pliku; po zakończeniu pocisku ten sam przycisk zapisuje poprawnie.",
+    "group": "competition",
+    "id": "TB-617"
+  },
+  {
+    "title": "Zapis przed i po spotkaniu",
+    "description": "Automatycznie utrwalaj zatwierdzone wydarzenie przed launch i po zaakceptowanym wyniku, pokazując błąd bez ukrywania wyniku.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Błąd zapisu przed startem zatrzymuje launch; błąd po wyniku zachowuje wynik w pamięci i czytelne oznaczenie niezapisanych zmian.",
+    "group": "competition",
+    "id": "TB-618"
+  },
+  {
+    "title": "Przywrócenie wcześniejszego meczu lokalnego",
+    "description": "Przed pierwszym launch zachowaj runner, options, velocities, recorder i stan workflows; po wyjściu przywróć tę samą sesję.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Pełny cykl wejście–mecz–powrót zachowuje oryginalny runner, hash, recording i ręczny best-of bez dopisania turniejowego wyniku do serii.",
+    "group": "competition",
+    "id": "TB-619"
+  },
+  {
+    "title": "Przerwanie i ponowne rozpoczęcie meczu turnieju",
+    "description": "Udostępnij jawne przerwanie aktywnej próby z powrotem do hubu i nowy launch tej samej pary.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Porzucony mecz nie daje punktów; nowa próba ma nowy token, a opóźnione ended poprzedniego runnera jest ignorowane.",
+    "group": "competition",
+    "id": "TB-620"
+  },
+  {
+    "title": "Izolacja od obcych workflow",
+    "description": "Udostępnij hook blokowania restartu, nowego meczu, ładowania sesji, replay, treningu i połączenia sieciowego podczas aktywnego spotkania turnieju.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Każdy chroniony punkt wejścia ma test odrzucenia; przy zamkniętym hubie i braku aktywnego meczu istniejące akcje działają.",
+    "group": "competition",
+    "id": "TB-621"
+  },
+  {
+    "title": "Natywne wejście do centrum rozgrywek",
+    "description": "Zbuduj panel Control/PanelContainer i publiczne open() adaptera wywoływane przyciskiem Local competition w istniejącej pauzie.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Z normalnej uruchomionej sceny można dojść do hubu przyciskiem, wyjść i wrócić do gry; otwarcie pauzuje lokalny mecz.",
+    "group": "competition",
+    "id": "TB-622"
+  },
+  {
+    "title": "Formularz tworzenia wydarzenia",
+    "description": "Dodaj edycję nazwy, formatu, aren, presetu, liczby postaci i listy 2–8 nazw uczestników z walidacją inline.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Prawidłowe dane tworzą widoczne rozgrywki; błędne dane pokazują konkretną przyczynę i zachowują zawartość pól.",
+    "group": "competition",
+    "id": "TB-623"
+  },
+  {
+    "title": "Podgląd terminarza i drabinki",
+    "description": "Pokaż kolejki lub rundy, nazwy stron, areny, pauzy, gotowość oraz źródła nierozstrzygniętych slotów pucharowych.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Liga z 5 uczestnikami pokazuje pauzę bez fałszywego wyniku; puchar 5 uczestników pokazuje poprawne wolne losy i przyszłe pary.",
+    "group": "competition",
+    "id": "TB-624"
+  },
+  {
+    "title": "Uruchomienie spotkania z hubu",
+    "description": "Po wyborze gotowego fixture wywołaj istniejący start_local_match z właściwą areną, liczbą postaci, presetem i hotseat; pokaż etykiety drużyn w dodatkowym HUD.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Kliknięcie Play rzeczywiście zmienia runner i scenę; HUD mapuje nazwy na Blue/Red oraz team1/2 bez modyfikacji reguł i zapisanych nazw graczy.",
+    "group": "competition",
+    "id": "TB-625"
+  },
+  {
+    "title": "Powrót po wyniku do rozgrywek",
+    "description": "Obserwuj zakończenie rzeczywistego przypisanego runnera po animacji i udostępnij przycisk Powrót do rozgrywek z podsumowaniem rezultatu.",
+    "files": [
+      "game/scripts/client/competition/competition_controller.gd"
+    ],
+    "acceptance": "Rzeczywiste surrender/ended aktualizuje pojedynczy fixture; przycisk otwiera tabelę i następny dostępny mecz bez wymyślania rezultatu.",
+    "group": "competition",
+    "id": "TB-626"
+  },
+  {
+    "title": "Tabela ligowa w centrum",
+    "description": "Wyświetl pozycję, nazwę, M/W/R/P, punkty i wyjaśnienie kryterium; wybór uczestnika pokazuje jego terminarz.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Ręczna liga trzech drużyn daje zgodną tabelę i filtrowane mecze; zmiana nazwy aktualizuje oba widoki.",
+    "group": "competition",
+    "id": "TB-627"
+  },
+  {
+    "title": "Widoczna obsługa zapisu i wznowienia",
+    "description": "Dodaj Save competition, Resume saved, stan niezapisanych zmian i komunikat błędu; wznowienie waliduj przed zamianą aktywnych danych.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Przyciski operują domyślnym odrębnym plikiem; uszkodzony zapis pozostawia panel, wcześniejsze wydarzenie i runner bez zmian.",
+    "group": "competition",
+    "id": "TB-628"
+  },
+  {
+    "title": "Potwierdzane korekty i porzucenie próby",
+    "description": "Użyj osobnej sekcji potwierdzenia z tokenem wydarzenia/meczu dla korekty rezultatu, porzucenia aktywnej próby i zastąpienia wydarzenia.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Cancel niczego nie zmienia; potwierdzenie po zmianie aktywnego meczu jest odrzucone; wszystkie akcje mają konkretne przyciski.",
+    "group": "competition",
+    "id": "TB-629"
+  },
+  {
+    "title": "Obsługa klawiatury i małego okna",
+    "description": "Zastosuj ScrollContainer, follow_focus, wrap tekstu i jawne przywrócenie fokusu dla formularza, terminarza, tabeli i potwierdzeń.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Przy 800x600 i HUD 125% można klawiaturą dojść do Play/Save/Back; przyciski nie wychodzą poza panel i długie nazwy nie blokują nawigacji.",
+    "group": "competition",
+    "id": "TB-630"
+  },
+  {
+    "title": "Ekran mistrza i kopiowanie raportu",
+    "description": "Po zakończeniu pokaż zwycięzcę, pełne wyniki, przycisk Copy report i powrót do poprzedniej gry; raport prezentuj też w selektowalnym polu.",
+    "files": [
+      "game/scripts/client/competition/competition_panel.gd"
+    ],
+    "acceptance": "Zakończenie pełnej ligi i pucharu w testach UI pokazuje właściwego mistrza i raport; po powrocie oryginalna gra ma wcześniejszy hash.",
+    "group": "competition",
+    "id": "TB-631"
+  },
+  {
+    "title": "Opcjonalna negocjacja roli uczestnika",
+    "description": "Rozszerzyć hello v2 o role=player|spectator i bounded listę extensions; brak nowych pól zachowuje legacy player.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Legacy hello nadal dostaje slot gracza; nieznana rola, zły typ lub nadmierna lista rozszerzeń kończą fatal rejection bez alokacji.",
+    "group": "network",
+    "id": "TB-632"
+  },
+  {
+    "title": "Jawny limit miejsc obserwatorów",
+    "description": "Opcja spectator_capacity 0–6, domyślnie0; liczba miejsc graczy nadal2–10. Zwiększyć wyłącznie fizyczny limit ENet tak, aby obsłużył bounded pending.",
+    "files": [
+      "game/scripts/networking/transport/server_runtime_options.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "0 odrzuca obserwatorów; 6 przyjmuje maksymalnie6 tożsamości; siódma próba nie zajmuje miejsca gracza.",
+    "group": "network",
+    "id": "TB-633"
+  },
+  {
+    "title": "Oddzielne tożsamości obserwatorów",
+    "description": "Osobne spectators i spectator_reservations, stabilne losowe spectator_id; nie dodawać obserwatorów do MatchState.players, inventory ani slots.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Dwa nowe peer otrzymują różne identyfikatory; liczba i treść graczy, spawny i inventory nie zmieniają się po join obserwatora.",
+    "group": "network",
+    "id": "TB-634"
+  },
+  {
+    "title": "Autorytatywne potwierdzenie roli klientowi",
+    "description": "Snapshot nowych klientów zawiera role i spectator_id; player_id pusty jest dozwolony wyłącznie dla jawnego spectator.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Zły duet role/identyfikatory odrzucony atomowo; klient żądający spectator odrzuca snapshot player zamiast przejmować kontrolę.",
+    "group": "network",
+    "id": "TB-635"
+  },
+  {
+    "title": "Połączenie klienta w trybie obserwacji",
+    "description": "connect_to_server(host,port,role=\"player\") i requested_role zachowują dotychczasowe dwuargumentowe API.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Niepoprawna rola nie zamyka istniejącego połączenia; poprawny spectator wysyła właściwe hello, zwykły connect pozostaje player.",
+    "group": "network",
+    "id": "TB-636"
+  },
+  {
+    "title": "Oddzielna rezerwacja reconnect obserwatora",
+    "description": "Token obserwatora rezerwuje wyłącznie spectator_id i jego nazwę przez bounded grace; nie jest wymienialny na token gracza.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Reconnect odzyskuje tożsamość; użyty token i próba zmiany roli z tokenem odrzucone bez utraty istniejącego peer.",
+    "group": "network",
+    "id": "TB-637"
+  },
+  {
+    "title": "Wygaśnięcie rezerwacji obserwatora",
+    "description": "Expiry zwalnia spectator slot i usuwa powiązaną tożsamość bez dotykania rezerwacji graczy.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Po krótkim wstrzykniętym grace nowy widz może dołączyć; stary token nie odzyskuje cudzej tożsamości.",
+    "group": "network",
+    "id": "TB-638"
+  },
+  {
+    "title": "Jawne opuszczenie roli online",
+    "description": "Nowa wiadomość leave od autoryzowanego peer natychmiast usuwa jego rezerwację; client.leave wysyła i flushuje przed close, zwykły close nadal zachowuje retry.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Uprzejmy leave widza zwalnia miejsce od razu; nagła utrata transportu zachowuje grace; player leave nie zmienia liczby slotów meczu.",
+    "group": "network",
+    "id": "TB-639"
+  },
+  {
+    "title": "Rola obserwatora nigdy nie promuje automatycznie",
+    "description": "Przy zmianie endpointu lub requested_role czyścić token; brak przechodzenia do wolnego player slot podczas retry.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Retry widza pozostaje spectator mimo wolnego miejsca gracza; zmiana roli wymaga nowego hello z pustym tokenem.",
+    "group": "network",
+    "id": "TB-640"
+  },
+  {
+    "title": "Centralna zapora intencji gameplay obserwatora",
+    "description": "Przed player dispatch odrzucać command/move/surrender/restart/ready/rematch od spectator bez odwołań do slots[sender].",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Macierz wszystkich niedozwolonych wiadomości nie zmienia world checksum, state, motion, readiness ani quorum.",
+    "group": "network",
+    "id": "TB-641"
+  },
+  {
+    "title": "Lokalne blokowanie gameplay w kliencie obserwatora",
+    "description": "send_command/move_player/surrender/restart/set_ready/vote_rematch wymagają role=player; obserwator nadal ma ping i resync.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Podmieniony sender liczy zero wysłanych gameplay intentów widza; uprawniony player zachowuje dotychczasowe zachowanie.",
+    "group": "network",
+    "id": "TB-642"
+  },
+  {
+    "title": "Nazwy obserwatorów oddzielone od graczy",
+    "description": "Walidowane display_name dla spectator, niezależne od pregame rename gracza; nazwa widza może zmieniać się podczas meczu pod rate limitem.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Zmiana aktualizuje wyłącznie roster widzów; control chars i nadmiar odrzucone; reconnect zachowuje nazwę.",
+    "group": "network",
+    "id": "TB-643"
+  },
+  {
+    "title": "Rozsyłanie stanu do wszystkich uczestników",
+    "description": "Rozdzielić iterator autoryzowanych odbiorców od slots; state/result/phase/lobby/shutdown docierają do player i spectator.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Widz odbiera wynik rzeczywistego strzału i shutdown; pending/rejected peer nic nie otrzymuje.",
+    "group": "network",
+    "id": "TB-644"
+  },
+  {
+    "title": "Snapshot widza ze wspólnej zamrożonej ścieżki",
+    "description": "_send_snapshot obsługuje obie role, zachowując immutable terrain/state/config i istniejące budgety.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Widz dołączający po uszkodzeniu terenu ma ten sam checksum/revision co server bez otrzymania player_id.",
+    "group": "network",
+    "id": "TB-645"
+  },
+  {
+    "title": "Walidacja końca snapshotu bez fikcyjnego gracza",
+    "description": "Dla spectator walidować potwierdzoną tożsamość uczestnika zamiast wymagania membership w state.players; player membership pozostaje obowiązkowy.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Poprawny widz synchronizuje; player z nieistniejącym id nadal odrzucony; błędny role w end nie podmienia runnera.",
+    "group": "network",
+    "id": "TB-646"
+  },
+  {
+    "title": "Doganianie meczu przy późnym wejściu widza",
+    "description": "Kolejkować state/result/phase dla widza za snapshot_end, także gdy strzał zachodzi w trakcie transferu.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Wymuszony transfer po1chunk/frame i strzał w połowie kończą identycznym terrain_revision/checksum/turn na server i spectator.",
+    "group": "network",
+    "id": "TB-647"
+  },
+  {
+    "title": "Resync obserwatora po luce rewizji",
+    "description": "Istniejący request_snapshot może być autoryzowany dla widza, z tym samym cooldown i bounded watchdog.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Wstrzyknięta luka terrain revision prowadzi do poprawnego nowego snapshotu; widz nie zmienia ról ani zajętości player slots.",
+    "group": "network",
+    "id": "TB-648"
+  },
+  {
+    "title": "Sprawiedliwe transfery przy wielu widzach",
+    "description": "Obserwatorzy korzystają ze wspólnego round robin i globalnych limitów; nie otrzymują osobnego nieograniczonego budżetu.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Dwa transfery widzów i transfer gracza robią postęp; suma pakietów/bajtów respektuje istniejący globalny limit.",
+    "group": "network",
+    "id": "TB-649"
+  },
+  {
+    "title": "Rematch odświeża także widzów",
+    "description": "Nowa generation po player quorum przesyła nowy snapshot każdemu observer; stare kolejki i chat generation nie przenikają.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Dwóch graczy głosuje, widz nie głosuje; dokładnie jeden reset, widz przechodzi na nowy checksum i generation.",
+    "group": "network",
+    "id": "TB-650"
+  },
+  {
+    "title": "Zniknięcie widza nie pauzuje gry",
+    "description": "Cleanup spectator nie kasuje player rematch votes ani motion/velocities i nie wpływa na _phase/_maybe_start.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Disconnect widza w playing nie zatrzymuje zegara; disconnect prawdziwego gracza nadal ustawia waiting.",
+    "group": "network",
+    "id": "TB-651"
+  },
+  {
+    "title": "Sprzątanie wszystkich struktur roli",
+    "description": "close/start/shutdown usuwają spectator reservations, identity, capability i pending leave; nie pozostają martwe queue.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Po close i ponownym start nie ma nazw, tokenów, liczników ani transferów starej sesji; shutdown dociera również do widza.",
+    "group": "network",
+    "id": "TB-652"
+  },
+  {
+    "title": "Opcjonalny roster widzów w lobby",
+    "description": "Dodać spectator_capacity i spectators obok niezmienionego player roster; roster bounded, unique IDs, connected i nazwa.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Stary lobby bez pól jest poprawny; błędny zagnieżdżony roster widzów nie zastępuje poprawnego lobby klienta.",
+    "group": "network",
+    "id": "TB-653"
+  },
+  {
+    "title": "Stan połączenia ujawnia bezpieczną rolę",
+    "description": "status_snapshot zwraca role i spectator_id bez resume token; UI rozróżnia requested od potwierdzonej roli podczas synchronizacji.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Connecting/sync/connected/retry mają spójną rolę; kopia statusu nie pozwala mutować wnętrza; token nie pojawia się w JSON.",
+    "group": "network",
+    "id": "TB-654"
+  },
+  {
+    "title": "Wybór obserwacji w menu multiplayer",
+    "description": "Dodać picker Player/Spectator i selected_role(); istniejący connect_game(host) oraz selected_port() bez zmian.",
+    "files": [
+      "game/scripts/client/backend/backend_menu.gd"
+    ],
+    "acceptance": "Klik connect dla obu wyborów emituje raz; profile endpointów nie nadpisują roli; domyślne ustawienie to Player.",
+    "group": "network",
+    "id": "TB-655"
+  },
+  {
+    "title": "Widoczna rola i osobny roster w lobby",
+    "description": "Lobby pokazuje obserwatora, własny wpis oraz liczbę widzów obok licznika graczy; player quorum nie jest powiększane.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Widok2graczy+2widzów pokazuje2/2graczy i2/limitwidzów, a nie4/2; own spectator oznaczony jednoznacznie.",
+    "group": "network",
+    "id": "TB-656"
+  },
+  {
+    "title": "Kontrolki lobby zgodne z rolą widza",
+    "description": "Widz ma disabled Ready i Rematch oraz czytelną informację; edycja nazwy pozostaje dostępna także podczas grania.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Emitowane prawdziwe kliknięcia nie generują ready/vote od widza; nazwa wysyła właściwy intent bez zmiany player draftu.",
+    "group": "network",
+    "id": "TB-657"
+  },
+  {
+    "title": "Śledzenie gracza przez obserwatora",
+    "description": "Lobby udostępnia picker celu śledzenia z roster graczy i signal follow_player_requested(player_id); nie wysyła pozycji ani komendy sieciowej.",
+    "files": [
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Wybór emituje istniejący id raz; po wyjściu lub nowym roster wybór pozostaje poprawny albo wraca do Free camera.",
+    "group": "network",
+    "id": "TB-658"
+  },
+  {
+    "title": "Czytelny retry i leave widza",
+    "description": "Status i confirmation opisują rolę obserwatora oraz natychmiastowe zwolnienie przy świadomym leave; brak błędnego komunikatu resume your player slot.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/client/ui/lobby_panel.gd",
+      "game/scripts/client/backend/backend_menu.gd"
+    ],
+    "acceptance": "Retry zachowuje widza, cancel confirmation nic nie emituje; confirm jeden leave; błędy disabled/full jasno pokazane.",
+    "group": "network",
+    "id": "TB-659"
+  },
+  {
+    "title": "Rzeczywisty scenariusz UDP player i spectator",
+    "description": "Nowy test uruchamia serwer, dwóch graczy i późnego widza na izolowanym przydzielonym porcie; wykonuje rzeczywiste hello/snapshot/shot.",
+    "files": [
+      "game/tests/integration/network_spectator19_tests.gd"
+    ],
+    "acceptance": "Proces kończy się bounded; widz ma zgodne terrain/state po strzale; obaj gracze zachowują oryginalne id i działający gameplay.",
+    "group": "network",
+    "id": "TB-660"
+  },
+  {
+    "title": "Rzeczywisty test reconnect i pełnych miejsc",
+    "description": "Scenariusz UDP sprawdza pełny limit widzów, zerwanie i resume, jawny leave i ponowny join oraz ciągłość tury.",
+    "files": [
+      "game/tests/integration/network_spectator19_tests.gd"
+    ],
+    "acceptance": "Trzeci widz odrzucony przy limicie2; reconnect odzyskuje id; leave zwalnia miejsce; zegar graczy działa po odłączeniu widza.",
+    "group": "network",
+    "id": "TB-661"
+  },
+  {
+    "title": "Opcjonalne włączenie bounded czatu lobby",
+    "description": "Opcja chat_enabled domyślniefalse i capability chat_v1; czat gameplay lobby nie jest usługą Nakama.",
+    "files": [
+      "game/scripts/networking/transport/server_runtime_options.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Wyłączony czat odrzuca send bez historii; tylko autoryzowane player/spectator mogą korzystać; legacy nie musi wysyłać capability.",
+    "group": "network",
+    "id": "TB-662"
+  },
+  {
+    "title": "Ścisła walidacja treści wiadomości czatu",
+    "description": "Nowy LobbyChat model waliduje1–256znaków i max1024bajtów UTF8, trim, zakaz control chars; bez markup i struktur z klienta.",
+    "files": [
+      "game/scripts/networking/messages/lobby_chat.gd",
+      "game/scripts/networking/messages/match_protocol.gd"
+    ],
+    "acceptance": "Polskie znaki i emoji przechodzą w limicie; puste, nadmierne, CR/LF, null i błędne typy odrzucone bez mutacji historii.",
+    "group": "network",
+    "id": "TB-663"
+  },
+  {
+    "title": "Serwer nadaje autora wiadomości czatu",
+    "description": "Klient przesyła tylko text, nonce i generation; author_id/name/role i server sequence wylicza serwer z przypisanej tożsamości.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/lobby_chat.gd"
+    ],
+    "acceptance": "Podrobione author/player_id nie podszywa się pod gracza; zaakceptowany event ma rzeczywistego autora oraz monotoniczny sequence.",
+    "group": "network",
+    "id": "TB-664"
+  },
+  {
+    "title": "Osobny limit wysyłania czatu",
+    "description": "Per uczestnik maksymalnie4zaakceptowane wiadomości/10s i globalnie32/10s; limiter nie modyfikuje readiness ani packet bucket.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/lobby_chat.gd"
+    ],
+    "acceptance": "Jeden spamujący widz nie zużywa całego budżetu gracza; nadmiar nie trafia do historii; upływ czasu wstrzyknięty deterministycznie odblokowuje.",
+    "group": "network",
+    "id": "TB-665"
+  },
+  {
+    "title": "Ograniczona historia czatu",
+    "description": "LobbyChat trzyma maksymalnie64wiadomości i64KiB serializowanych eventów; najstarsze usuwane po przekroczeniu dowolnego limitu.",
+    "files": [
+      "game/scripts/networking/messages/lobby_chat.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Wielobajtowa seria nie przekracza obu limitów; tail zawiera najnowsze wiadomości w kolejności; publiczny getter zwraca kopię.",
+    "group": "network",
+    "id": "TB-666"
+  },
+  {
+    "title": "Deduplikacja wiadomości po nonce",
+    "description": "Bounded cache ostatnich nonce per tożsamość zapobiega duplikatom po retry; echo serwera jest jedynym potwierdzeniem wysłania.",
+    "files": [
+      "game/scripts/networking/messages/lobby_chat.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Powtórzone nonce z tym samym lub innym tekstem nie dopisuje drugiego eventu; cache ma stały limit i czyści się z tożsamością.",
+    "group": "network",
+    "id": "TB-667"
+  },
+  {
+    "title": "Czat respektuje generation meczu",
+    "description": "Send wymaga aktualnej generation; rematch zeruje bieżącą historię i sequence w nowej generation.",
+    "files": [
+      "game/scripts/networking/messages/lobby_chat.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd"
+    ],
+    "acceptance": "Spóźniona wiadomość poprzedniej generacji nie pojawia się po rematch; aktualne wiadomości zaczynają od nowej pustej historii.",
+    "group": "network",
+    "id": "TB-668"
+  },
+  {
+    "title": "Historia czatu po późnym dołączeniu",
+    "description": "Po snapshot_end wysłać chat_history do nowego capability chat_v1; live chat podczas snapshotu ustawia kolejkę z zachowaniem sequence.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/messages/lobby_chat.gd"
+    ],
+    "acceptance": "Join w połowie serii dostaje każdą zachowaną wiadomość dokładnie raz w kolejności, bez gubienia live eventu pomiędzy snapshot i history.",
+    "group": "network",
+    "id": "TB-669"
+  },
+  {
+    "title": "Walidacja wiadomości i historii czatu po stronie klienta",
+    "description": "Strict chat_event/chat_history waliduje role/autora/name/text/generation/sequence, limity i brak duplikatów przed atomową podmianą.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/messages/lobby_chat.gd"
+    ],
+    "acceptance": "Uszkodzona połowa historii nie nadpisuje poprawnej listy; nieznana rola lub za duży array ignorowane bez błędu skryptu.",
+    "group": "network",
+    "id": "TB-670"
+  },
+  {
+    "title": "Odtworzenie czatu po luce sekwencji",
+    "description": "Bounded chat_history_request zamiast terrain resync; klient koaleskuje żądania i przyjmuje tail z jawnym first_sequence.",
+    "files": [
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/messages/lobby_chat.gd"
+    ],
+    "acceptance": "Przerwa sequence wywołuje najwyżej jedno żądanie na cooldown; historia naprawia listę bez przebudowy świata ani fałszywych braków po eviction.",
+    "group": "network",
+    "id": "TB-671"
+  },
+  {
+    "title": "Panel historii czatu z tekstem literalnym",
+    "description": "Nowy LobbyChatPanel używa plain Label lub wyłączonego BBCode; bounded lista i przewijanie bez rozrastania drzewa.",
+    "files": [
+      "game/scripts/client/ui/lobby_chat_panel.gd",
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Tekst zawierający [url] i nawiasy jest literalny; po1000eventów istnieje maksymalnie64wierszy; scrollbar działa w720p.",
+    "group": "network",
+    "id": "TB-672"
+  },
+  {
+    "title": "Kompozytor czatu i pending echo",
+    "description": "LineEdit z Enter/Send, lokalną walidacją i jednym pending nonce; input czyści dopiero matching echo, reject/timeout zachowują draft.",
+    "files": [
+      "game/scripts/client/ui/lobby_chat_panel.gd",
+      "game/scripts/networking/transport/match_client.gd",
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Double click wysyła raz; echo innego autora nie kasuje draftu; błędny tekst nic nie emituje; poprawny echo odblokowuje wysłanie.",
+    "group": "network",
+    "id": "TB-673"
+  },
+  {
+    "title": "Czat nie przechwytuje sterowania grą po zamknięciu",
+    "description": "Panel zgłasza text_entry_changed(bool), zwalnia focus przy hide/disconnect i odtwarza brak pending dla nowej sesji.",
+    "files": [
+      "game/scripts/client/ui/lobby_chat_panel.gd",
+      "game/scripts/client/ui/lobby_panel.gd"
+    ],
+    "acceptance": "Enter w komponowaniu nie emituje gameplay intentu; hide i disconnect zdejmują focus oraz resetują pending; scroll historii nie blokuje kamery poza panelem.",
+    "group": "network",
+    "id": "TB-674"
+  },
+  {
+    "title": "Rzeczywisty czat gracza i widza przez UDP",
+    "description": "Scenariusz izolowanego UDP sprawdza kolejność, server attribution, reconnect history, disabled mode i brak wiadomości dla pending peer.",
+    "files": [
+      "game/tests/integration/network_chat19_tests.gd"
+    ],
+    "acceptance": "Obie role widzą te same eventy i sequence; podszycie autora odrzucone; nowy klient dostaje bounded tail; legacy gracz nadal strzela.",
+    "group": "network",
+    "id": "TB-675"
+  },
+  {
+    "title": "Bezpieczny roster diagnostyczny uczestników",
+    "description": "participant_roster() zwraca players/spectators z connected/synchronizing/reserved, nazwą i id; brak IP, tokenów i numerów peer na publicznym wire.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Raport rozróżnia player i spectator reservations, bounded do16tożsamości; zewnętrzna mutacja kopii nie zmienia serwera.",
+    "group": "network",
+    "id": "TB-676"
+  },
+  {
+    "title": "Szczegóły transferów w diagnostyce roli",
+    "description": "diagnostic_snapshot dodaje liczbę widzów, wolne miejsca i bounded transfer rows z rolą, remaining i catchup_bytes; nie loguje treści czatu.",
+    "files": [
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Raport podczas late join pokazuje malejący remaining i rolę; sekrety oraz text wiadomości nie występują w JSON.",
+    "group": "network",
+    "id": "TB-677"
+  },
+  {
+    "title": "Lokalny zrzut roster serwera na żądanie",
+    "description": "server_main udostępnia diagnostic_roster_json() i flagę --print-roster dla jawnego jednorazowego wydruku; żadnego zdalnego admin socket.",
+    "files": [
+      "game/scripts/server/server_main.gd",
+      "game/scripts/networking/transport/match_server.gd"
+    ],
+    "acceptance": "Wydruk jest poprawnym JSON, niepowtarzany co klatkę; nie zmienia stanu; raport shutdown obejmuje bezpieczny roster.",
+    "group": "network",
+    "id": "TB-678"
+  },
+  {
+    "title": "Walidowane flagi serwera dla widzów i czatu",
+    "description": "server_main obsługuje --spectators N i --lobby-chat, waliduje przed bind i raportuje konfigurację w startup log.",
+    "files": [
+      "game/scripts/server/server_main.gd",
+      "game/scripts/networking/transport/server_runtime_options.gd"
+    ],
+    "acceptance": "--spectators 7/NaN/ujemne kończy exit2 przed otwarciem portu; brak flag zachowuje domyślny serwer bez widzów i czatu.",
+    "group": "network",
+    "id": "TB-679"
+  },
+  {
+    "title": "Kontrakt zgodności rozszerzeń protokołu v2",
+    "description": "Dodać testy legacy hello/lobby/player snapshot i nowych optional fields; starzy gracze nie muszą znać spectators/chat ani zmieniać wersji.",
+    "files": [
+      "game/scripts/networking/messages/match_protocol.gd",
+      "game/scripts/networking/transport/match_server.gd",
+      "game/scripts/networking/transport/match_client.gd",
+      "game/tests/unit/network_spectator19_tests.gd"
+    ],
+    "acceptance": "Golden legacy pakiety przechodzą; unknown extension jest ignorowane w bounded hello, unknown role odrzucone; player id i quorum bez regresji.",
+    "group": "network",
+    "id": "TB-680"
+  },
+  {
+    "title": "Instrukcja lokalnej obserwacji i czatu",
+    "description": "Udokumentować uruchomienie serwera z limitem, wybór roli, reconnect/leave, bounded chat i prywatne diagnostyki; jasno odróżnić role ENet od tożsamości Nakama.",
+    "files": [
+      "docs/networking.md",
+      "docs/backend.md"
+    ],
+    "acceptance": "Komendy testowane lokalnie na wolnym porcie; opisane limity, legacy default oraz brak zdalnego admin API i automatycznego przydziału backendu.",
+    "group": "network",
+    "id": "TB-681"
+  },
+  {
+    "title": "Notatnik powtórki",
+    "description": "Osobny schema1 sidecar powiązany SHA256 nagrania, bez zmiany archiwum.",
+    "acceptance": "Osobny schema1 sidecar powiązany SHA256 nagrania, bez zmiany archiwum.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-682"
+  },
+  {
+    "title": "Dodawanie zakładki z tytułem",
+    "description": "Zakładka zapisuje indeks0..action_count, unikalne ID i tytuł1..80 znaków.",
+    "acceptance": "Zakładka zapisuje indeks0..action_count, unikalne ID i tytuł1..80 znaków.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-683"
+  },
+  {
+    "title": "Edycja zakładki",
+    "description": "Zmiana tytułu/opisu zachowuje ID i pozycję; błędna edycja jest atomowa.",
+    "acceptance": "Zmiana tytułu/opisu zachowuje ID i pozycję; błędna edycja jest atomowa.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-684"
+  },
+  {
+    "title": "Usuwanie zakładki",
+    "description": "Usunięcie wybranego ID nie zmienia pozostałych; brak ID daje czytelny wynik.",
+    "acceptance": "Usunięcie wybranego ID nie zmienia pozostałych; brak ID daje czytelny wynik.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-685"
+  },
+  {
+    "title": "Opis tekstowy zakładki",
+    "description": "Opis do2000 znaków zachowuje Unicode i nowe linie, odrzuca kontrolne znaki.",
+    "acceptance": "Opis do2000 znaków zachowuje Unicode i nowe linie, odrzuca kontrolne znaki.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-686"
+  },
+  {
+    "title": "Kategorie zakładek",
+    "description": "Kategorie note/hit/mistake/highlight walidowane; filtr zwraca pasujące pozycje.",
+    "acceptance": "Kategorie note/hit/mistake/highlight walidowane; filtr zwraca pasujące pozycje.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-687"
+  },
+  {
+    "title": "Wyszukiwanie w notatkach",
+    "description": "Wyszukuje case-insensitive w tytule i opisie bez mutowania notatnika.",
+    "acceptance": "Wyszukuje case-insensitive w tytule i opisie bez mutowania notatnika.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-688"
+  },
+  {
+    "title": "Stabilny porządek zakładek",
+    "description": "Lista uporządkowana po indeksie i ID niezależnie od kolejności importu.",
+    "acceptance": "Lista uporządkowana po indeksie i ID niezależnie od kolejności importu.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-689"
+  },
+  {
+    "title": "Ochrona starego notatnika",
+    "description": "Niezgodny fingerprint nie zostaje przypisany do zmienionej powtórki.",
+    "acceptance": "Niezgodny fingerprint nie zostaje przypisany do zmienionej powtórki.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-690"
+  },
+  {
+    "title": "Trwałość notatnika",
+    "description": "Atomowy zapis i bounded odczyt; wadliwy plik nie nadpisuje aktualnych notatek.",
+    "acceptance": "Atomowy zapis i bounded odczyt; wadliwy plik nie nadpisuje aktualnych notatek.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-691"
+  },
+  {
+    "title": "Eksport notatek",
+    "description": "Eksport JSON zawiera wersję i fingerprint; istniejący cel wymaga replace.",
+    "acceptance": "Eksport JSON zawiera wersję i fingerprint; istniejący cel wymaga replace.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-692"
+  },
+  {
+    "title": "Łączenie notatek",
+    "description": "Import zgodnego notatnika deduplikuje ID; konflikt treści i limit200 odrzucany atomowo.",
+    "acceptance": "Import zgodnego notatnika deduplikuje ID; konflikt treści i limit200 odrzucany atomowo.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-693"
+  },
+  {
+    "title": "Zakładka bieżącej akcji w UI",
+    "description": "Inspector pozwala dodać zakładkę bieżącego indeksu i zobaczyć ją na liście.",
+    "acceptance": "Inspector pozwala dodać zakładkę bieżącego indeksu i zobaczyć ją na liście.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-694"
+  },
+  {
+    "title": "Nawigacja po zakładkach",
+    "description": "Wybór/Previous/Next przenoszą do indeksu, krańce nie zmieniają kursora.",
+    "acceptance": "Wybór/Previous/Next przenoszą do indeksu, krańce nie zmieniają kursora.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-695"
+  },
+  {
+    "title": "Edytor notatek w UI",
+    "description": "Tytuł, opis, kategoria i delete dostępne w przewijanym panelu z walidacją.",
+    "acceptance": "Tytuł, opis, kategoria i delete dostępne w przewijanym panelu z walidacją.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-696"
+  },
+  {
+    "title": "Znaczniki zakresu klipu",
+    "description": "Początek/koniec z bieżącego kursora; zakres0<=start<end<=count.",
+    "acceptance": "Początek/koniec z bieżącego kursora; zakres0<=start<end<=count.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-697"
+  },
+  {
+    "title": "Kopiowanie fragmentu replay",
+    "description": "Klip przechwytuje stan przy start i oryginalne akcje[start,end), bez przepisania autorytetu.",
+    "acceptance": "Klip przechwytuje stan przy start i oryginalne akcje[start,end), bez przepisania autorytetu.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-698"
+  },
+  {
+    "title": "Zgodność końca klipu",
+    "description": "Hash końca klipu jest równy stanowi źródła na end; źródło pozostaje identyczne.",
+    "acceptance": "Hash końca klipu jest równy stanowi źródła na end; źródło pozostaje identyczne.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-699"
+  },
+  {
+    "title": "Budżet budowania klipu",
+    "description": "Job.step(max_actions) ogranicza replay pracy i raportuje fazę/progres.",
+    "acceptance": "Job.step(max_actions) ogranicza replay pracy i raportuje fazę/progres.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-700"
+  },
+  {
+    "title": "Anulowanie budowania klipu",
+    "description": "Cancel zatrzymuje job bez zapisu i bez podmiany aktywnego playback.",
+    "acceptance": "Cancel zatrzymuje job bez zapisu i bez podmiany aktywnego playback.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-701"
+  },
+  {
+    "title": "Eksport klipu do archiwum",
+    "description": "Wynik przechodzi ReplayArchive.encode/decode i nadaje się do zwykłego inspectora.",
+    "acceptance": "Wynik przechodzi ReplayArchive.encode/decode i nadaje się do zwykłego inspectora.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-702"
+  },
+  {
+    "title": "Zapis klipu w bibliotece",
+    "description": "Nowy wpis ma niezależne ID, poprawny payload oraz tytuł użytkownika.",
+    "acceptance": "Nowy wpis ma niezależne ID, poprawny payload oraz tytuł użytkownika.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-703"
+  },
+  {
+    "title": "Przenoszenie zakładek do klipu",
+    "description": "Zakładki z zakresu przesunięte o start; pozostałe pominięte i nowy fingerprint.",
+    "acceptance": "Zakładki z zakresu przesunięte o start; pozostałe pominięte i nowy fingerprint.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-704"
+  },
+  {
+    "title": "Panel klipu",
+    "description": "UI pokazuje granice, postęp, cancel, eksport i błędy bez zamrażania live session.",
+    "acceptance": "UI pokazuje granice, postęp, cancel, eksport i błędy bez zamrażania live session.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-705"
+  },
+  {
+    "title": "Porównanie graczy replay",
+    "description": "Raport porównuje HP/alive/position/team po player_id i opisuje brakujące osoby.",
+    "acceptance": "Raport porównuje HP/alive/position/team po player_id i opisuje brakujące osoby.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-706"
+  },
+  {
+    "title": "Porównanie ekwipunku",
+    "description": "Raport perplayer/perweapon różnic ammo, w tym unlimited=-1, bez fałszywych sum.",
+    "acceptance": "Raport perplayer/perweapon różnic ammo, w tym unlimited=-1, bez fałszywych sum.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-707"
+  },
+  {
+    "title": "Porównanie statystyk",
+    "description": "Delta shots/hits/damage/kills z pełnych statystyk; źródła nie są modyfikowane.",
+    "acceptance": "Delta shots/hits/damage/kills z pełnych statystyk; źródła nie są modyfikowane.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-708"
+  },
+  {
+    "title": "Porównanie terenu",
+    "description": "Rozmiary świata sprawdzane; bounded lista zmienionych współrzędnych i pełny count.",
+    "acceptance": "Rozmiary świata sprawdzane; bounded lista zmienionych współrzędnych i pełny count.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-709"
+  },
+  {
+    "title": "Porównanie zdrowia voxelów",
+    "description": "Rozróżnia zmianę materiału i uszkodzenie przy tym samym materiale.",
+    "acceptance": "Rozróżnia zmianę materiału i uszkodzenie przy tym samym materiale.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-710"
+  },
+  {
+    "title": "Pierwsza różnica akcji",
+    "description": "Wskazuje pierwszy różniący się action lub różną długość; canonical JSON porównanie.",
+    "acceptance": "Wskazuje pierwszy różniący się action lub różną długość; canonical JSON porównanie.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-711"
+  },
+  {
+    "title": "Zgodność konfiguracji w porównaniu",
+    "description": "Wyraźnie pokazuje różne initialstate/rules/weapons zamiast sugerować deterministyczną regresję.",
+    "acceptance": "Wyraźnie pokazuje różne initialstate/rules/weapons zamiast sugerować deterministyczną regresję.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-712"
+  },
+  {
+    "title": "Porównanie dwóch wpisów w UI",
+    "description": "Pin pierwszego replay i wybranie drugiego uruchamia prywatne porównanie.",
+    "acceptance": "Pin pierwszego replay i wybranie drugiego uruchamia prywatne porównanie.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-713"
+  },
+  {
+    "title": "Eksport porównania",
+    "description": "Wersjonowany JSON zachowuje podsumowanie i bounded szczegóły; nie nadpisuje wejścia.",
+    "acceptance": "Wersjonowany JSON zachowuje podsumowanie i bounded szczegóły; nie nadpisuje wejścia.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-714"
+  },
+  {
+    "title": "Paczka wybranych archiwów",
+    "description": "Manifest bundle1 z maksymalnie20 wybranymi wpisami i dokładnymi payloadami.",
+    "acceptance": "Manifest bundle1 z maksymalnie20 wybranymi wpisami i dokładnymi payloadami.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-715"
+  },
+  {
+    "title": "Sumy zawartości paczki",
+    "description": "SHA256 każdego wpisu sprawdzany przed importem; uszkodzenie odrzuca całą paczkę.",
+    "acceptance": "SHA256 każdego wpisu sprawdzany przed importem; uszkodzenie odrzuca całą paczkę.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-716"
+  },
+  {
+    "title": "Eksport paczki ZIP",
+    "description": "Wyłącznie manifest.json i entries/ID.json; bounded rozmiar wejścia i brak symlinków.",
+    "acceptance": "Wyłącznie manifest.json i entries/ID.json; bounded rozmiar wejścia i brak symlinków.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-717"
+  },
+  {
+    "title": "Weryfikacja paczki bez zapisu",
+    "description": "Preview zwraca wpisy/rozmiary/błędy bez tworzenia danych w bibliotece.",
+    "acceptance": "Preview zwraca wpisy/rozmiary/błędy bez tworzenia danych w bibliotece.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-718"
+  },
+  {
+    "title": "Ochrona ścieżek ZIP",
+    "description": "Traversal, absolutne ścieżki, powtórzone nazwy i nieznane pliki są odrzucane.",
+    "acceptance": "Traversal, absolutne ścieżki, powtórzone nazwy i nieznane pliki są odrzucane.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-719"
+  },
+  {
+    "title": "Limity rozpakowania",
+    "description": "Limity liczby plików, rozmiaru pojedynczego i sumy sprawdzane przed dekodowaniem.",
+    "acceptance": "Limity liczby plików, rozmiaru pojedynczego i sumy sprawdzane przed dekodowaniem.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-720"
+  },
+  {
+    "title": "Import paczki z nowymi ID",
+    "description": "Wszystkie payloady walidowane; nowe wpisy otrzymują niezależne ID i zachowują tytuły.",
+    "acceptance": "Wszystkie payloady walidowane; nowe wpisy otrzymują niezależne ID i zachowują tytuły.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-721"
+  },
+  {
+    "title": "Atomowy import paczki",
+    "description": "Brak miejsca lub błąd któregokolwiek wpisu nie pozostawia części importu.",
+    "acceptance": "Brak miejsca lub błąd któregokolwiek wpisu nie pozostawia części importu.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-722"
+  },
+  {
+    "title": "Wybór wielu wpisów do paczki",
+    "description": "UI osobnej listy multiselect nie psuje dotychczasowego pojedynczego load.",
+    "acceptance": "UI osobnej listy multiselect nie psuje dotychczasowego pojedynczego load.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-723"
+  },
+  {
+    "title": "Dialog eksportu i importu paczki",
+    "description": "Dialog ZIP pokazuje preview przed importem i wynik bez zmiany live match.",
+    "acceptance": "Dialog ZIP pokazuje preview przed importem i wynik bez zmiany live match.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-724"
+  },
+  {
+    "title": "Eksport klipu przez CLI",
+    "description": "Tryb clip-replay przyjmuje source/start/end/output i zapisuje zweryfikowany wynik.",
+    "acceptance": "Tryb clip-replay przyjmuje source/start/end/output i zapisuje zweryfikowany wynik.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-725"
+  },
+  {
+    "title": "Szczegółowe porównanie CLI",
+    "description": "Tryb diff-replays daje JSON graczy/terenu/konfiguracji i kod2 dla wadliwych wejść.",
+    "acceptance": "Tryb diff-replays daje JSON graczy/terenu/konfiguracji i kod2 dla wadliwych wejść.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-726"
+  },
+  {
+    "title": "Weryfikacja bundle CLI",
+    "description": "Tryb verify-bundle raportuje manifest i integralność bez zapisów do biblioteki.",
+    "acceptance": "Tryb verify-bundle raportuje manifest i integralność bez zapisów do biblioteki.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-727"
+  },
+  {
+    "title": "Notatki i klipy po zmianie replay",
+    "description": "Zmiana/wyjście z inspectora anuluje job i czyści operacje zależne od starego źródła.",
+    "acceptance": "Zmiana/wyjście z inspectora anuluje job i czyści operacje zależne od starego źródła.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-728"
+  },
+  {
+    "title": "Modalność panelu replay studio",
+    "description": "Input formularza i dialogów nie przechodzi do gameplay, cancel przywraca fokus.",
+    "acceptance": "Input formularza i dialogów nie przechodzi do gameplay, cancel przywraca fokus.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-729"
+  },
+  {
+    "title": "Przewijanie replay studio",
+    "description": "W800x600 HUD125 wszystkie operacje dostępne, pełne Unicode w tooltip/details.",
+    "acceptance": "W800x600 HUD125 wszystkie operacje dostępne, pełne Unicode w tooltip/details.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-730"
+  },
+  {
+    "title": "Izolacja pracy z replay studio",
+    "description": "Integracja notes/clip/diff/bundle/return zachowuje hash i velocities live oraz blokuje online.",
+    "acceptance": "Integracja notes/clip/diff/bundle/return zachowuje hash i velocities live oraz blokuje online.",
+    "files": [
+      "game/scripts/core/replay/replay_notebook.gd",
+      "game/scripts/core/replay/replay_clip_job.gd",
+      "game/scripts/core/replay/replay_diff.gd",
+      "game/scripts/core/storage/archive_bundle.gd",
+      "game/scripts/client/session/replay_studio.gd"
+    ],
+    "group": "studio",
+    "id": "TB-731"
+  },
+  {
+    "title": "Manifest macierzy symulacji",
+    "description": "Schema1 opisuje maps/players/presets/seeds/shots/bots; nieznane klucze odrzucane.",
+    "acceptance": "Schema1 opisuje maps/players/presets/seeds/shots/bots; nieznane klucze odrzucane.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-732"
+  },
+  {
+    "title": "Rozwinięcie macierzy",
+    "description": "Iloczyn osi deterministyczny; duplikaty wartości usuwane, max128 przypadków.",
+    "acceptance": "Iloczyn osi deterministyczny; duplikaty wartości usuwane, max128 przypadków.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-733"
+  },
+  {
+    "title": "Stabilne identyfikatory scenariuszy",
+    "description": "ID z canonical konfiguracji nie zmienia się po zmianie kolejności manifestu.",
+    "acceptance": "ID z canonical konfiguracji nie zmienia się po zmianie kolejności manifestu.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-734"
+  },
+  {
+    "title": "Walidacja aren macierzy",
+    "description": "Dozwolone registered IDs uzyskiwane z audit-maps, brakujące mapy fail preflight.",
+    "acceptance": "Dozwolone registered IDs uzyskiwane z audit-maps, brakujące mapy fail preflight.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-735"
+  },
+  {
+    "title": "Budżet graczy i strzałów",
+    "description": "Players2..10 i shots1..256; booleans/float/ujemne wartości nie są liczbami całkowitymi.",
+    "acceptance": "Players2..10 i shots1..256; booleans/float/ujemne wartości nie są liczbami całkowitymi.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-736"
+  },
+  {
+    "title": "Wybór botów scenariusza",
+    "description": "seeded/easy/normal tworzą dokładne argumenty simulate bez shell.",
+    "acceptance": "seeded/easy/normal tworzą dokładne argumenty simulate bez shell.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-737"
+  },
+  {
+    "title": "Planowanie bez silnika",
+    "description": "scenarios plan emituje deterministyczny JSON komend bez uruchomienia procesów.",
+    "acceptance": "scenarios plan emituje deterministyczny JSON komend bez uruchomienia procesów.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-738"
+  },
+  {
+    "title": "Selekcja scenariuszy",
+    "description": "--include/--exclude globy na ID, pusty wybór to błąd przed wykonaniem.",
+    "acceptance": "--include/--exclude globy na ID, pusty wybór to błąd przed wykonaniem.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-739"
+  },
+  {
+    "title": "Sekwencyjne wykonanie macierzy",
+    "description": "Każdy case ma oddzielny katalog, output/report/log i kontrolowany exit.",
+    "acceptance": "Każdy case ma oddzielny katalog, output/report/log i kontrolowany exit.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-740"
+  },
+  {
+    "title": "Ograniczona równoległość macierzy",
+    "description": "--jobs1..4 utrzymuje maksymalną liczbę aktywnych procesów i stabilny porządek raportu.",
+    "acceptance": "--jobs1..4 utrzymuje maksymalną liczbę aktywnych procesów i stabilny porządek raportu.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-741"
+  },
+  {
+    "title": "Timeout pojedynczego scenariusza",
+    "description": "Timeout finite0..3600 kończy drzewo procesów, wynik oznaczony timeout.",
+    "acceptance": "Timeout finite0..3600 kończy drzewo procesów, wynik oznaczony timeout.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-742"
+  },
+  {
+    "title": "Całkowity budżet przebiegu",
+    "description": "Deadline całej macierzy zatrzymuje start nowych przypadków i zapisuje przerwane/pominięte.",
+    "acceptance": "Deadline całej macierzy zatrzymuje start nowych przypadków i zapisuje przerwane/pominięte.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-743"
+  },
+  {
+    "title": "Anulowanie macierzy",
+    "description": "SIGINT/SIGTERM sprząta wszystkie aktywne grupy i zachowuje częściowy raport.",
+    "acceptance": "SIGINT/SIGTERM sprząta wszystkie aktywne grupy i zachowuje częściowy raport.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-744"
+  },
+  {
+    "title": "Wznowienie ukończonych przypadków",
+    "description": "Resume pomija tylko zgodną konfigurację z poprawnym plikiem/hash; brakujące artefakty powtarza.",
+    "acceptance": "Resume pomija tylko zgodną konfigurację z poprawnym plikiem/hash; brakujące artefakty powtarza.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-745"
+  },
+  {
+    "title": "Ponowienie błędów macierzy",
+    "description": "Retry-failed nie uruchamia przypadków passed i nie przyjmuje komend z raportu.",
+    "acceptance": "Retry-failed nie uruchamia przypadków passed i nie przyjmuje komend z raportu.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-746"
+  },
+  {
+    "title": "Tożsamość środowiska macierzy",
+    "description": "Raport schema/time/platform/Godot/revision + manifest digest bez sekretów.",
+    "acceptance": "Raport schema/time/platform/Godot/revision + manifest digest bez sekretów.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-747"
+  },
+  {
+    "title": "Atomowy postęp macierzy",
+    "description": "Report po każdym wyniku, awaria zapisu daje nonzero i nie uszkadza poprzedniego JSON.",
+    "acceptance": "Report po każdym wyniku, awaria zapisu daje nonzero i nie uszkadza poprzedniego JSON.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-748"
+  },
+  {
+    "title": "Unikalne próby scenariusza",
+    "description": "Ponowienie zachowuje poprzedni log w nowym attempt zamiast nadpisania.",
+    "acceptance": "Ponowienie zachowuje poprzedni log w nowym attempt zamiast nadpisania.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-749"
+  },
+  {
+    "title": "Nagrywanie scenariuszy",
+    "description": "Opcja --record-all zapisuje ReplayArchive obok wyniku każdego przypadku.",
+    "acceptance": "Opcja --record-all zapisuje ReplayArchive obok wyniku każdego przypadku.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-750"
+  },
+  {
+    "title": "Weryfikacja nagrań scenariuszy",
+    "description": "Opcja --verify-recordings uruchamia replay i porównuje poprawność przed passed.",
+    "acceptance": "Opcja --verify-recordings uruchamia replay i porównuje poprawność przed passed.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-751"
+  },
+  {
+    "title": "Integralność artefaktów scenariusza",
+    "description": "Manifest zawiera size/SHA256 summary/replay; tamper wykrywany przy resume.",
+    "acceptance": "Manifest zawiera size/SHA256 summary/replay; tamper wykrywany przy resume.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-752"
+  },
+  {
+    "title": "Granice katalogu wyników",
+    "description": "Odrzuca source root, symlink components i nieznany katalog do zastąpienia.",
+    "acceptance": "Odrzuca source root, symlink components i nieznany katalog do zastąpienia.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-753"
+  },
+  {
+    "title": "Walidacja wyniku symulacji",
+    "description": "Wymaga state/terrain_hash/map/seed/shots; uszkodzony JSON lub brak pól nie jest passed.",
+    "acceptance": "Wymaga state/terrain_hash/map/seed/shots; uszkodzony JSON lub brak pól nie jest passed.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-754"
+  },
+  {
+    "title": "Rozróżnienie błędów wykonania",
+    "description": "Raport oddziela timeout, engineerror, invalidsummary, replayfailure i spawnfailure.",
+    "acceptance": "Raport oddziela timeout, engineerror, invalidsummary, replayfailure i spawnfailure.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-755"
+  },
+  {
+    "title": "Podsumowanie zwycięstw",
+    "description": "Aggregate per map/preset/players liczy teamA/teamB/draw/unresolved poprawnie.",
+    "acceptance": "Aggregate per map/preset/players liczy teamA/teamB/draw/unresolved poprawnie.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-756"
+  },
+  {
+    "title": "Podsumowanie obrażeń",
+    "description": "Aggregate shots/damage/hits/kills z graczy bez dublowania healthsum.",
+    "acceptance": "Aggregate shots/damage/hits/kills z graczy bez dublowania healthsum.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-757"
+  },
+  {
+    "title": "Podsumowanie destrukcji",
+    "description": "Statystyki deltas i terrain_hash grupowane bez traktowania hash jako wielkości numerycznej.",
+    "acceptance": "Statystyki deltas i terrain_hash grupowane bez traktowania hash jako wielkości numerycznej.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-758"
+  },
+  {
+    "title": "Rozkład czasów",
+    "description": "min/median/p95/max dla dodatnich finite elapsed; p95 jawna nearest-rank definicja.",
+    "acceptance": "min/median/p95/max dla dodatnich finite elapsed; p95 jawna nearest-rank definicja.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-759"
+  },
+  {
+    "title": "Wykrywanie powtarzalności",
+    "description": "Powtórzenia tej samej konfiguracji porównują kanoniczny state+terrain, ignorują walltime.",
+    "acceptance": "Powtórzenia tej samej konfiguracji porównują kanoniczny state+terrain, ignorują walltime.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-760"
+  },
+  {
+    "title": "Eksport zbiorczy CSV",
+    "description": "Jeden wiersz percase, bezpieczne quote/formula-prefix, stabilne kolumny.",
+    "acceptance": "Jeden wiersz percase, bezpieczne quote/formula-prefix, stabilne kolumny.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-761"
+  },
+  {
+    "title": "Czytelny raport Markdown",
+    "description": "Tabela statusów, metryk i względnych linków do logów; escape nazw.",
+    "acceptance": "Tabela statusów, metryk i względnych linków do logów; escape nazw.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-762"
+  },
+  {
+    "title": "Raport HTML offline",
+    "description": "Samodzielny HTML z escaped treścią i filtrami statusu bez CDN/skryptów z danych.",
+    "acceptance": "Samodzielny HTML z escaped treścią i filtrami statusu bez CDN/skryptów z danych.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-763"
+  },
+  {
+    "title": "Porównanie dwóch przebiegów",
+    "description": "Join po ID raportuje added/removed/changed/matched i nie gubi nieudanych przypadków.",
+    "acceptance": "Join po ID raportuje added/removed/changed/matched i nie gubi nieudanych przypadków.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-764"
+  },
+  {
+    "title": "Porównanie deterministycznych stanów",
+    "description": "State/terrain mismatch oznacza regresję; różnice wersji/manifestu jawnie wskazane.",
+    "acceptance": "State/terrain mismatch oznacza regresję; różnice wersji/manifestu jawnie wskazane.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-765"
+  },
+  {
+    "title": "Próg czasu regresji",
+    "description": "Konfigurowalne relative+absolute tolerances, small baseline nie dzieli przez zero.",
+    "acceptance": "Konfigurowalne relative+absolute tolerances, small baseline nie dzieli przez zero.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-766"
+  },
+  {
+    "title": "Próg obrażeń regresji",
+    "description": "Porównanie statystyk według ID dla tych samych scenariuszy z konkretnym diff.",
+    "acceptance": "Porównanie statystyk według ID dla tych samych scenariuszy z konkretnym diff.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-767"
+  },
+  {
+    "title": "Próg akcji regresji",
+    "description": "Zmiana liczby zaakceptowanych shots raportowana osobno od timingu.",
+    "acceptance": "Zmiana liczby zaakceptowanych shots raportowana osobno od timingu.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-768"
+  },
+  {
+    "title": "Polityka nowego i brakującego case",
+    "description": "Strict comparison traktuje missing jako failure, permissive pokazuje bez porównania.",
+    "acceptance": "Strict comparison traktuje missing jako failure, permissive pokazuje bez porównania.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-769"
+  },
+  {
+    "title": "Eksport porównania JSON",
+    "description": "Wersjonowany raport z machine-readable failures i kodem nonzero przy regresji.",
+    "acceptance": "Wersjonowany raport z machine-readable failures i kodem nonzero przy regresji.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-770"
+  },
+  {
+    "title": "Rejestr zestawów scenariuszy",
+    "description": "Repo zawiera small smoke, arena coverage i bot comparison manifests bez wymuszania długiego CI.",
+    "acceptance": "Repo zawiera small smoke, arena coverage i bot comparison manifests bez wymuszania długiego CI.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-771"
+  },
+  {
+    "title": "CLI macierzy z launchera",
+    "description": "launch.py scenarios przekazuje argv i działa z obcego cwd.",
+    "acceptance": "launch.py scenarios przekazuje argv i działa z obcego cwd.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-772"
+  },
+  {
+    "title": "Kontrola manifestu bez uruchamiania",
+    "description": "scenarios validate sprawdza schema/budżety i emituje błędy z dokładną ścieżką pola.",
+    "acceptance": "scenarios validate sprawdza schema/budżety i emituje błędy z dokładną ścieżką pola.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-773"
+  },
+  {
+    "title": "Zliczenie kosztu planu",
+    "description": "Plan pokazuje cases/upper shot count/recording count i odrzuca przekroczenie limitu pracy.",
+    "acceptance": "Plan pokazuje cases/upper shot count/recording count i odrzuca przekroczenie limitu pracy.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-774"
+  },
+  {
+    "title": "Filtrowanie raportu wyników",
+    "description": "summary --status/map wybiera istniejące rekordy bez zmiany źródłowego raportu.",
+    "acceptance": "summary --status/map wybiera istniejące rekordy bez zmiany źródłowego raportu.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-775"
+  },
+  {
+    "title": "Bezpieczny eksport raportów",
+    "description": "Raporty nie nadpisują wejścia/manifestu ani plików źródłowych przez alias ścieżki.",
+    "acceptance": "Raporty nie nadpisują wejścia/manifestu ani plików źródłowych przez alias ścieżki.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-776"
+  },
+  {
+    "title": "Weryfikacja raportu z dysku",
+    "description": "validate-report bounded8MiB, schema/unique IDs/statuses/hash/finite metrics.",
+    "acceptance": "validate-report bounded8MiB, schema/unique IDs/statuses/hash/finite metrics.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-777"
+  },
+  {
+    "title": "Metadane producenta artefaktu",
+    "description": "Każdy case wiąże output z configdigest oraz wersją silnika, nie ufa cudzej ścieżce.",
+    "acceptance": "Każdy case wiąże output z configdigest oraz wersją silnika, nie ufa cudzej ścieżce.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-778"
+  },
+  {
+    "title": "Test macierzy prawdziwym Godot",
+    "description": "Mały2case smoke uruchamia silnik, replayverification i deterministiccompare w temp.",
+    "acceptance": "Mały2case smoke uruchamia silnik, replayverification i deterministiccompare w temp.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-779"
+  },
+  {
+    "title": "Test awarii workerów",
+    "description": "Fake executables odtwarzają crash, timeout, oversizedoutput i przerwanie równoległych childów.",
+    "acceptance": "Fake executables odtwarzają crash, timeout, oversizedoutput i przerwanie równoległych childów.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py",
+      "tools/launch.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-780"
+  },
+  {
+    "title": "Powtórzenia scenariusza w macierzy",
+    "description": "repeats1..10 tworzy niezależne przypadki o wspólnym configdigest; koszt128 i raport nondeterminism respektują powtórzenia.",
+    "acceptance": "Dwa identyczne seeds z repeats2 uruchamiają2procesy, mają różnecaseID i jedenconfigdigest; zmieniony wynik wykryty.",
+    "files": [
+      "tools/scenarios.py",
+      "tools/scenario_report.py",
+      "tools/test_scenarios.py"
+    ],
+    "group": "scenarios",
+    "id": "TB-781"
+  }
+]

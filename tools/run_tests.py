@@ -66,7 +66,7 @@ def build_cases(binary,directory):
             sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     cases.append(('server',[binary,'--headless','--path',str(ROOT/'game'),'--log-file',str(directory/'server.log'),'--','--mode','server','--port',str(port),'--smoke']))
     if os.environ.get('RUN_RENDER_TESTS')=='1':cases.append(('render',[binary,'--path',str(ROOT/'game'),'--log-file',str(directory/'render.log'),'--script','tests/integration/mvp_smoke.gd']))
-    for script in ['test_devtools.py','run_network_process_test.py','test_simulation_cli.py','test_bot_cli.py','test_lobby_cli.py','test_library_cli.py','test_delivery.py','test_analysis_cli.py','test_release_review.py']:
+    for script in ['test_devtools.py','run_network_process_test.py','test_simulation_cli.py','test_bot_cli.py','test_lobby_cli.py','test_library_cli.py','test_delivery.py','test_analysis_cli.py','test_release_review.py','test_scenarios.py','test_scenarios_engine.py','test_studio_cli.py']:
         cases.append((Path(script).stem,[sys.executable,str(ROOT/'tools'/script)]))
     # Stable names are the trusted execution registry; report files supply names only.
     if len({x[0] for x in cases})!=len(cases):raise ValueError('Duplicate test names')

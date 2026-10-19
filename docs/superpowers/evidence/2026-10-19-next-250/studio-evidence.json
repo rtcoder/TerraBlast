@@ -1,0 +1,1045 @@
+[
+  {
+    "index": 1,
+    "id": "TB-682",
+    "title": "Notatnik powtórki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 13,
+        "assertion": "check(false,\"S01 replay notebook must exist\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 25,
+        "assertion": "check(n.bind(fingerprint,6).ok and n.encode().version == 1 and n.encode().fingerprint == fingerprint,\"S01 versioned fingerprint sidecar\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 2,
+    "id": "TB-683",
+    "title": "Dodawanie zakładki z tytułem",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 27,
+        "assertion": "check(first.ok and first.id.length() == 32 and n.add(0,\"Start\",\"\",\"note\").ok and n.add(6,\"EOF\",\"\",\"hit\").ok,\"S02 bookmark endpoints unique IDs\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 28,
+        "assertion": "check(not n.add(-1,\"Bad\",\"\",\"note\").ok and not n.add(7,\"Bad\",\"\",\"note\").ok and not n.add(0,\"x\".repeat(81),\"\",\"note\").ok,\"S02 index title limits\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 47,
+        "assertion": "check(not imported.decode(fractional,fingerprint,6).ok,\"S02 JSON fractional index rejected\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 99,
+        "assertion": "check(not invalid_binding.bind(fingerprint,1.2).ok,\"S02 fractional action count binding rejected\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 3,
+    "id": "TB-684",
+    "title": "Edycja zakładki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 30,
+        "assertion": "check(n.edit(first.id,{\"title\":\"Edited\",\"body\":\"Opis\"}).ok and n.list()[1].id == first.id and n.list()[1].index == 3,\"S03 edit preserves identity\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 31,
+        "assertion": "check(not n.edit(first.id,{\"index\":2}).ok and n.list()[1].index == 3,\"S03 edit atomic\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 4,
+    "id": "TB-685",
+    "title": "Usuwanie zakładki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 40,
+        "assertion": "check(n.remove(first.id).ok and n.list().size() == 2 and not n.remove(first.id).ok,\"S04 removal exact ID\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 5,
+    "id": "TB-686",
+    "title": "Opis tekstowy zakładki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 32,
+        "assertion": "check(n.edit(first.id,{\"body\":\"Zażółć\\nGęślą\"}).ok and not n.edit(first.id,{\"body\":\"a\\u0001b\"}).ok and not n.edit(first.id,{\"body\":\"x\".repeat(2001)}).ok,\"S05 body Unicode controls limits\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 6,
+    "id": "TB-687",
+    "title": "Kategorie zakładek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 33,
+        "assertion": "check(n.list(\"\",\"highlight\").size() == 1 and not n.add(1,\"Bad\",\"\",\"bad\").ok,\"S06 categories filter\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 7,
+    "id": "TB-688",
+    "title": "Wyszukiwanie w notatkach",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 34,
+        "assertion": "check(n.list(\"GĘŚLĄ\").size() == 1 and n.list().size() == 3,\"S07 case-insensitive search\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 8,
+    "id": "TB-689",
+    "title": "Stabilny porządek zakładek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 38,
+        "assertion": "check(imported.decode(encoded,fingerprint,6).ok and imported.list()[0].index == 0 and imported.list()[2].index == 6,\"S08 stable index ordering\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 9,
+    "id": "TB-690",
+    "title": "Ochrona starego notatnika",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 39,
+        "assertion": "check(not imported.decode(encoded,\"a\".repeat(64),6).ok and imported.list().size() == 3,\"S09 stale notebook rejected\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 10,
+    "id": "TB-691",
+    "title": "Trwałość notatnika",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 50,
+        "assertion": "check(n.save_to(path).ok and not n.save_to(path,false).ok,\"S10 S11 atomic write overwrite protection\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 51,
+        "assertion": "check(imported.load_from(path).ok and imported.list().size() == 3,\"S10 bounded notebook load\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 55,
+        "assertion": "check(not imported.load_from(path).ok and imported.list().size() == 3,\"S10 corrupt load preserves notes\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 59,
+        "assertion": "for index in 200: check(wide.add(index % 7,\"😀\".repeat(80),\"😀\".repeat(2000),\"note\").ok,\"S10 full Unicode note %d\" % index)"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 60,
+        "assertion": "check(wide.save_to(path).ok,\"S10 full 200-row Unicode notebook saves\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 63,
+        "assertion": "check(reopened.load_from(path).ok and reopened.list().size() == 200,\"S10 full Unicode notebook reopens own saved output\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 132,
+        "assertion": "check(studio.notebook.list().size() == 1,\"S10 notes persisted and restored\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 11,
+    "id": "TB-692",
+    "title": "Eksport notatek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 50,
+        "assertion": "check(n.save_to(path).ok and not n.save_to(path,false).ok,\"S10 S11 atomic write overwrite protection\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 12,
+    "id": "TB-693",
+    "title": "Łączenie notatek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 41,
+        "assertion": "check(n.merge(encoded).ok and n.list().size() == 3 and n.merge(encoded).ok and n.list().size() == 3,\"S12 merge deduplicates\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 44,
+        "assertion": "check(not n.merge(conflict).ok and n.list().size() == 3,\"S12 conflicting merge atomic\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 64,
+        "assertion": "check(not wide.add(0,\"Overflow\",\"\",\"note\").ok,\"S12 note count limit\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 13,
+    "id": "TB-694",
+    "title": "Zakładka bieżącej akcji w UI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 15,
+        "assertion": "check(false,\"S13 Replay Studio UI must exist\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 47,
+        "assertion": "check(studio.notebook.list().size() == 1 and studio.note_list.item_count == 1 and studio.notebook.list()[0].index == 0,\"S13 add current bookmark through UI\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 14,
+    "id": "TB-695",
+    "title": "Nawigacja po zakładkach",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 54,
+        "assertion": "check(scene.session.playback.index == 0,\"S14 choose bookmark navigates\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 56,
+        "assertion": "check(scene.session.playback.index == 3,\"S14 next bookmark navigates\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 58,
+        "assertion": "check(scene.session.playback.index == 3,\"S14 edge next cursor unchanged\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 78,
+        "assertion": "check(scene.session.playback.index == 0 and hidden_unchanged,\"S14 filtered navigation cannot select or overwrite hidden note\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 15,
+    "id": "TB-696",
+    "title": "Edytor notatek w UI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 61,
+        "assertion": "check(studio.notebook.list()[1].title == \"Edited\",\"S15 real note editor\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 63,
+        "assertion": "check(studio.notebook.list().size() == 1,\"S15 delete selected note\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 88,
+        "assertion": "check(studio.notebook.encode() == hidden_snapshot,\"S15 filter hides selection and clears edit target\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 16,
+    "id": "TB-697",
+    "title": "Znaczniki zakresu klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 68,
+        "assertion": "check(not job.begin(rec,2,2) and not job.begin(rec,6,7) and job.begin(rec,2,5),\"S16 reject empty EOF out-of-range clips\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 97,
+        "assertion": "check(studio.clip_start == 3 and studio.clip_end == 6,\"S16 UI range markers\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 17,
+    "id": "TB-698",
+    "title": "Kopiowanie fragmentu replay",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 74,
+        "assertion": "check(job.error.is_empty() and job.result_recorder.data.actions.size() == 3,\"S17 original action subrange\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 80,
+        "assertion": "check(Replay.state_hash(job.result_recorder.initial_runner()) == Replay.state_hash(start),\"S17 clip captures exact start\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 18,
+    "id": "TB-699",
+    "title": "Zgodność końca klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 77,
+        "assertion": "check(Replay.state_hash(job.result_runner) == Replay.state_hash(expected) and JSON.stringify(rec.data,\"\",true,true) == original_data,\"S18 end hash source immutable\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 19,
+    "id": "TB-700",
+    "title": "Budżet budowania klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 70,
+        "assertion": "check(job.index == 1 and not job.finished and progress.phase == \"prefix\",\"S19 prefix replay budget\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 72,
+        "assertion": "check(job.index == 2 and not job.finished,\"S19 second bounded frame\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 96,
+        "assertion": "check(job.begin(dense,4500,5000) and job.step(99999).work == 4096 and job.index == 4096,\"S19 hard per-step action budget\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 20,
+    "id": "TB-701",
+    "title": "Anulowanie budowania klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 88,
+        "assertion": "check(job.finished and job.error == \"cancelled\" and not job.step(99).ok and job.result_recorder == null,\"S20 clip cancel no result\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 126,
+        "assertion": "check(studio.clip_job.finished and studio.clip_job.error == \"cancelled\",\"S20 UI cancel clip\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 21,
+    "id": "TB-702",
+    "title": "Eksport klipu do archiwum",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 82,
+        "assertion": "check(clip_archive.ok and Archive.decode(clip_archive.payload).ok,\"S21 verified clip archive\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 92,
+        "assertion": "check(Archive.decode(legacy_clip).ok,\"S21 legacy and exact clip decode\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 123,
+        "assertion": "check(FileAccess.file_exists(output),\"S21 UI clip archive export\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 22,
+    "id": "TB-703",
+    "title": "Zapis klipu w bibliotece",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 119,
+        "assertion": "check(scene.library.list_entries(\"replay\").entries.size() == 3,\"S22 clip saved independent library entry\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 23,
+    "id": "TB-704",
+    "title": "Przenoszenie zakładek do klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 84,
+        "assertion": "check(moved.list().size() == 1 and moved.list()[0].index == 1 and moved.encode().fingerprint != fingerprint,\"S23 notes remapped clip fingerprint\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 24,
+    "id": "TB-705",
+    "title": "Panel klipu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 99,
+        "assertion": "check(studio.clip_job != null and not studio.clip_job.finished,\"S24 clip job starts from UI\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 101,
+        "assertion": "check(studio.clip_job.finished and studio.clip_job.error.is_empty() and studio.clip_status.text.contains(\"ready\"),\"S24 UI clip progress completion\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 106,
+        "assertion": "check(studio.clip_job == null,\"S24 changing clip markers invalidates finished old range\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 112,
+        "assertion": "check(studio.clip_job.result_recorder.data.actions.size() == 4,\"S24 rebuilt clip matches changed marker range\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 25,
+    "id": "TB-706",
+    "title": "Porównanie graczy replay",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 103,
+        "assertion": "check(same.ok and same.terrain.count == 0 and same.players.is_empty() and same.configuration.initial_equal,\"S25 identical private comparison\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 113,
+        "assertion": "check(report.ok and report.players.size() == 1 and report.players[0].id == \"blue_1\",\"S25 player ID HP position diff\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 26,
+    "id": "TB-707",
+    "title": "Porównanie ekwipunku",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 114,
+        "assertion": "check(report.inventory.size() > 0 and report.inventory[0].right == -1 and report.inventory[0].delta == null,\"S26 unlimited inventory diff\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 27,
+    "id": "TB-708",
+    "title": "Porównanie statystyk",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 115,
+        "assertion": "check(report.statistics.size() > 0,\"S27 full statistics delta\")"
+      },
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 120,
+        "assertion": "check(JSON.stringify(rec.data,\"\",true,true) == original_data,\"S27 comparison source immutable\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 28,
+    "id": "TB-709",
+    "title": "Porównanie terenu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 116,
+        "assertion": "check(report.terrain.count == 2 and report.terrain.details.size() == 1 and report.terrain.truncated,\"S28 full terrain count bounded details\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 29,
+    "id": "TB-710",
+    "title": "Porównanie zdrowia voxelów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 117,
+        "assertion": "check(report.terrain.material_changes == 1 and report.terrain.health_changes == 1,\"S29 distinguish voxel health material\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 30,
+    "id": "TB-711",
+    "title": "Pierwsza różnica akcji",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 118,
+        "assertion": "check(report.actions.first_difference == 2,\"S30 first canonical action mismatch\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 31,
+    "id": "TB-712",
+    "title": "Zgodność konfiguracji w porównaniu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 119,
+        "assertion": "check(not report.configuration.initial_equal and report.configuration.rules_equal and not report.configuration.weapons_equal,\"S31 honest initial config mismatch\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 32,
+    "id": "TB-713",
+    "title": "Porównanie dwóch wpisów w UI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 143,
+        "assertion": "check(studio.compare_replay(second.id).ok and studio.comparison.get(\"ok\",false),\"S32 pinned two replay comparison\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 33,
+    "id": "TB-714",
+    "title": "Eksport porównania",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/replay_studio19_tests.gd",
+        "line": 121,
+        "assertion": "check(Diff.export(path,report,false).ok and not Diff.export(path,report,false).ok,\"S33 report export protect overwrite\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 34,
+    "id": "TB-715",
+    "title": "Paczka wybranych archiwów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 26,
+        "assertion": "check(false,\"S34 archive bundle must exist\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 41,
+        "assertion": "check(saved.ok and session.ok and Bundle.export_bundle(library,[saved.id,session.id],path).ok,\"S34 two exact archive payloads exported\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 35,
+    "id": "TB-716",
+    "title": "Sumy zawartości paczki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 63,
+        "assertion": "check(not Bundle.inspect(bad_path).ok and not Bundle.import_bundle(target,bad_path).ok and target.list_entries().entries.size() == 2,\"S35 tampered hash whole import rejected\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 36,
+    "id": "TB-717",
+    "title": "Eksport paczki ZIP",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 47,
+        "assertion": "check(reader.get_files().size() == 3 and reader.file_exists(\"manifest.json\") and reader.file_exists(\"entries/\"+saved.id+\".json\"),\"S36 ZIP canonical members\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 105,
+        "assertion": "check(directory.create_link(path,\"linked.zip\") == OK and not Bundle.inspect(linked).ok,\"S36 symlink bundle source rejected\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 108,
+        "assertion": "check(not Bundle.export_bundle(library,[saved.id],path).ok and FileAccess.get_file_as_string(path) == existing,\"S36 no overwrite by default\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 109,
+        "assertion": "check(not Bundle.export_bundle(library,[saved.id],library.base_path.path_join(\"bundle.zip\")).ok,\"S36 library outputs protected\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 37,
+    "id": "TB-718",
+    "title": "Weryfikacja paczki bez zapisu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 44,
+        "assertion": "check(inspected.ok and inspected.entries.size() == 2 and target.list_entries() == before,\"S37 inspection without writes\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 38,
+    "id": "TB-719",
+    "title": "Ochrona ścieżek ZIP",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 65,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S38 traversal rejected\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 67,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S38 absolute path rejected\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 69,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S38 unknown member rejected\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 81,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S38 duplicate filenames rejected\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 39,
+    "id": "TB-720",
+    "title": "Limity rozpakowania",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 73,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S39 ZIP member count limit\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 92,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S39 declared single inflate budget checked before decompression\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 99,
+        "assertion": "check(not Bundle.inspect(bad_path).ok,\"S39 total inflate budget checked before JSON decoding\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 40,
+    "id": "TB-721",
+    "title": "Import paczki z nowymi ID",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 51,
+        "assertion": "check(imported.ok and imported.ids.size() == 2 and saved.id not in imported.ids and session.id not in imported.ids,\"S40 import new IDs\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 56,
+        "assertion": "check(exact,\"S40 exact payload and Unicode title preserved\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 41,
+    "id": "TB-722",
+    "title": "Atomowy import paczki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 101,
+        "assertion": "check(not Bundle.import_bundle(interrupted,path).ok and interrupted.writes == 2 and DirAccess.get_files_at(interrupted.base_path).is_empty(),\"S41 second write failure rolls back actual first file\")"
+      },
+      {
+        "file": "game/tests/unit/archive_bundle19_tests.gd",
+        "line": 115,
+        "assertion": "check(not Bundle.import_bundle(full,path).ok and DirAccess.get_files_at(full.base_path).size() == 99,\"S41 capacity failure no partial import\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 42,
+    "id": "TB-723",
+    "title": "Wybór wielu wpisów do paczki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 141,
+        "assertion": "check(studio.bundle_list.select_mode == ItemList.SELECT_MULTI and scene.library_panel.entries.select_mode == ItemList.SELECT_SINGLE,\"S42 separate multiselect library list\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 43,
+    "id": "TB-724",
+    "title": "Dialog eksportu i importu paczki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 151,
+        "assertion": "check(FileAccess.file_exists(bundle_path),\"S43 actual ZIP export dialog callback\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 154,
+        "assertion": "check(studio.bundle_confirmation.visible and scene.library.list_entries().entries.size() == 3,\"S43 preview before import\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 156,
+        "assertion": "check(scene.library.list_entries().entries.size() == 6,\"S43 confirmed import new entries\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 44,
+    "id": "TB-725",
+    "title": "Eksport klipu przez CLI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 36,
+        "assertion": "\"\"\"S44 verified CLI clip and protected input.\"\"\""
+      },
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 71,
+        "assertion": "\"\"\"S44 S45 S46 application entry point dispatches all three modes.\"\"\""
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 45,
+    "id": "TB-726",
+    "title": "Szczegółowe porównanie CLI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 50,
+        "assertion": "\"\"\"S45 detailed CLI report and error exit.\"\"\""
+      },
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 71,
+        "assertion": "\"\"\"S44 S45 S46 application entry point dispatches all three modes.\"\"\""
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 46,
+    "id": "TB-727",
+    "title": "Weryfikacja bundle CLI",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 60,
+        "assertion": "\"\"\"S46 read-only CLI bundle verification.\"\"\""
+      },
+      {
+        "file": "tools/test_studio_cli.py",
+        "line": 71,
+        "assertion": "\"\"\"S44 S45 S46 application entry point dispatches all three modes.\"\"\""
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 47,
+    "id": "TB-728",
+    "title": "Notatki i klipy po zmianie replay",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 109,
+        "assertion": "check(not FileAccess.file_exists(stale_clip_path),\"S47 stale range dialog cannot export previous clip\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 130,
+        "assertion": "check(not FileAccess.file_exists(folder.path_join(\"stale.json\")) and studio.clip_job == null,\"S47 stale source dialog and job cancelled\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": []
+  },
+  {
+    "index": 48,
+    "id": "TB-729",
+    "title": "Modalność panelu replay studio",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 134,
+        "assertion": "check(studio.file_dialog.visible and scene.local_paused,\"S48 dialog modal and local paused\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 136,
+        "assertion": "check(not studio.file_dialog.visible,\"S48 cancel restores inspector\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 49,
+    "id": "TB-730",
+    "title": "Przewijanie replay studio",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 48,
+        "assertion": "check(studio.note_list.get_item_tooltip(0).contains(\"GĘŚLĄ\"),\"S49 Unicode full note tooltip\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 167,
+        "assertion": "check(scene.library_panel.scroll.get_v_scroll_bar().max_value > scene.library_panel.scroll.size.y and studio.bundle_list.is_inside_tree(),\"S49 800x600 HUD125 scrolling exposes studio controls\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  },
+  {
+    "index": 50,
+    "id": "TB-731",
+    "title": "Izolacja pracy z replay studio",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 41,
+        "assertion": "check(scene._inspect_recording(rec),\"S50 open inspector\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 138,
+        "assertion": "check(scene.runner == live and Replay.state_hash(live) == live_hash and scene.player_velocities.blue_1 == Vector3(0.25,1.5,-0.25),\"S50 live hash and velocity preserved\")"
+      },
+      {
+        "file": "game/tests/integration/replay_studio19_next_tests.gd",
+        "line": 161,
+        "assertion": "check(not studio.file_dialog.visible and studio.notebook.list().size() == old_notes,\"S50 online operations blocked\")"
+      }
+    ],
+    "verification": "Godot4.6.2 core242+bundle18+UI31 and PythonCLI4 tests passed; actual800x600HUD125 notes+clips inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-notes-800x600-hud125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/studio-clips-800x600-hud125.png"
+    ]
+  }
+]

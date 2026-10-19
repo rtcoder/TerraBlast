@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-19T07:08:30.920785+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "0e274a29337c35fd1e574a72cbbdb9091d322b54",
+  "optional_checks": {
+    "nakama": false,
+    "render": false
+  },
+  "tests": [
+    {
+      "name": "network_scene19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 6.102,
+      "log_path": "/private/tmp/tb19-network-scene-isolation/attempt-a15r0oc2/network_scene19_next_tests.out"
+    }
+  ],
+  "finished_at": "2026-10-19T07:08:37.032518+00:00"
+}

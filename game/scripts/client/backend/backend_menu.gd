@@ -4,6 +4,8 @@ signal connect_game(host: String)
 signal retry_requested
 const Profiles=preload("res://scripts/client/backend/connection_profiles.gd")
 const Identity=preload("res://scripts/client/backend/guest_identity.gd")
+var role_picker:OptionButton
+var _selected_role:="player"
 var profiles: RefCounted
 var profile_picker: OptionButton
 var profile_title: LineEdit
@@ -83,6 +85,11 @@ func _ready() -> void:
 	port.max_value = 65535
 	port.value = int(GameConfig.argument("--port", "19170"))
 	box.add_child(port)
+	role_picker=OptionButton.new()
+	role_picker.add_item("Player"); role_picker.add_item("Spectator")
+	role_picker.select(1 if _selected_role=="spectator" else 0)
+	role_picker.item_selected.connect(func(index:int): _selected_role="spectator" if index==1 else "player")
+	box.add_child(role_picker)
 	_button(box, "Connect to gameplay server", _connect_game)
 	_button(box,"Copy server endpoint",_copy_endpoint)
 	_setup_profiles(box)
@@ -284,5 +291,12 @@ func present_game_connection(value: Dictionary) -> void:
 	game_connection=value.duplicate(true)
 	if game_status==null: return
 	var progress: Dictionary=value.get("progress",{})
-	game_status.text="Gameplay: %s · %s:%s · %d/%d chunks\nRTT: %s · %s" % [value.get("state","disconnected"),value.get("host",""),value.get("port",0),progress.get("completed",0),progress.get("total",0),str(value.latency_ms)+" ms" if value.get("latency_ms",-1)>=0 else "unavailable",value.get("last_error","")]
+	game_status.text="Gameplay (%s): %s · %s:%s · %d/%d chunks\nRTT: %s · %s" % [value.get("role","player"),value.get("state","disconnected"),value.get("host",""),value.get("port",0),progress.get("completed",0),progress.get("total",0),str(value.latency_ms)+" ms" if value.get("latency_ms",-1)>=0 else "unavailable",value.get("last_error","")]
 	retry_button.disabled=not value.get("can_retry",false)
+
+func selected_role()->String:
+	return _selected_role
+func set_selected_role(value:String)->void:
+	if value not in ["player","spectator"]: return
+	_selected_role=value
+	if role_picker!=null: role_picker.select(1 if value=="spectator" else 0)

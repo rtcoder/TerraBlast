@@ -221,7 +221,7 @@ static func terrain_checksum(world: RefCounted) -> String:
 static func valid_snapshot_metadata(data: Dictionary) -> bool:
 	if not data.get("configuration") is Dictionary or not integer(data.get("transfer_id"), 1, 2147483647):
 		return false
-	if not data.get("player_id") is String or data.player_id.is_empty() or data.player_id.length() > 64 or not vector(data.get("size")) or not integer(data.get("chunk_size"), 1, 32):
+	if not valid_participant_metadata(data) or not vector(data.get("size")) or not integer(data.get("chunk_size"), 1, 32):
 		return false
 	var count := 1
 	var volume := 1
@@ -341,6 +341,7 @@ static func valid_lobby(data: Variant) -> bool:
 		return false
 	if not data.get("roster") is Array or data.roster.size() != data.capacity:
 		return false
+	if not valid_spectator_roster(data): return false
 	var ids := {}
 	for row in data.roster:
 		if not row is Dictionary or not row.get("id") is String or row.id.is_empty() or row.id.length() > 64 or ids.has(row.id) or not valid_display_name(row.get("name")) or not integer(row.get("team"), 1, 2):
@@ -370,5 +371,33 @@ static func valid_resume_token(value: Variant) -> bool:
 	if value.is_empty(): return true
 	if value.length()!=64: return false
 	for c in value:
+		if c not in "0123456789abcdef": return false
+	return true
+
+static func valid_hello(data:Dictionary)->bool:
+	if data.get("role","player") not in ["player","spectator"] or not valid_resume_token(data.get("resume_token")): return false
+	var extensions:Variant=data.get("extensions",[])
+	if not extensions is Array or extensions.size()>8: return false
+	for value in extensions:
+		if not value is String or value.is_empty() or value.length()>32: return false
+	return true
+
+static func valid_participant_metadata(data:Dictionary)->bool:
+	var role:Variant=data.get("role","player")
+	if role=="player": return data.get("player_id") is String and not data.player_id.is_empty() and data.player_id.length()<=64 and data.get("spectator_id","")==""
+	return role=="spectator" and data.get("player_id")=="" and data.get("spectator_id") is String and valid_spectator_id(data.spectator_id)
+
+static func valid_spectator_roster(data:Dictionary)->bool:
+	if not data.has("spectators") and not data.has("spectator_capacity"): return true
+	if not integer(data.get("spectator_capacity"),0,6) or not data.get("spectators") is Array or data.spectators.size()>data.spectator_capacity: return false
+	var ids:Dictionary={}
+	for row in data.spectators:
+		if not row is Dictionary or not row.get("id") is String or not valid_spectator_id(row.id) or ids.has(row.id) or not valid_display_name(row.get("name")) or not row.get("connected") is bool: return false
+		ids[row.id]=true
+	return true
+
+static func valid_spectator_id(value:Variant)->bool:
+	if not value is String or not value.begins_with("spectator_") or value.length()!=42: return false
+	for c in value.substr(10):
 		if c not in "0123456789abcdef": return false
 	return true

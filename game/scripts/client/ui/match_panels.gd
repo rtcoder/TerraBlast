@@ -1,5 +1,7 @@
 extends Control
 ## Presentation and user intent only. Owner scene applies authoritative results.
+signal workshop_requested
+signal competition_requested
 signal training_requested
 signal autosave_requested
 signal next_round_requested
@@ -58,6 +60,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pause_panel = _panel("Match menu — P to close")
 	_button(pause_panel, "Library — F8", func(): library_requested.emit())
+	_button(pause_panel, "Arena Workshop", func(): workshop_requested.emit())
+	_button(pause_panel, "Local competition", func(): competition_requested.emit())
 	_button(pause_panel, "Training lessons", func(): training_requested.emit())
 	_button(pause_panel, "Continue latest autosave", func(): autosave_requested.emit())
 	_button(pause_panel, "Resume", func(): resume_requested.emit())

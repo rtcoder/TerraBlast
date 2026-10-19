@@ -102,3 +102,19 @@ The registry now contains nine arenas: `twin_forts`, `two_islands`, `canyon_brid
 ## Bounded server operation
 
 Server-only flags: `--reservation-seconds 1..300`, `--hello-seconds 1..30`, `--packet-rate 60..1000`, `--byte-rate 8192..1048576`, `--snapshot-chunks 1..64`, `--snapshot-bytes 65536..8388608`, `--receive-bytes 8192..4194304`. `--shutdown-after SECONDS` (0.1..3600) requests graceful shutdown. `--server-report /absolute/path.json` atomically records diagnostics at shutdown; its existing parent must be outside the project and contain no symlink components. Reports omit credentials and tokens.
+
+## Scenario matrices and Replay Studio
+
+See [scenario matrices](../docs/scenario-matrices.md) for manifest schema, process limits, resume integrity and comparison semantics.
+
+```sh
+python3 tools/launch.py scenarios plan --manifest tools/scenarios/smoke.json
+python3 tools/launch.py scenarios run --manifest tools/scenarios/smoke.json --output-root build/scenario-smoke --jobs 2 --verify-recordings
+python3 tools/launch.py clip-replay --replay /private/tmp/replay.json --clip-start 0 --clip-end 2 --output /private/tmp/clip.json
+python3 tools/launch.py diff-replays --replay /private/tmp/replay.json --replay-other /private/tmp/other.json
+python3 tools/launch.py verify-bundle --bundle /private/tmp/archives.zip
+python3 tools/launch.py server --players 2 --lobby --spectators 6 --lobby-chat --print-roster
+python3 tools/launch.py client --host 127.0.0.1 --role spectator
+```
+
+Clip ranges are action boundaries `[start,end)`; reconstruction verifies the prefix and produces a standalone replay. Diff compares private final runners and reports detailed players, statistics, inventory and bounded voxel changes. ZIP verification is read-only and validates all entries before import; the GUI imports new copies only. Spectator/chat flags are opt-in server settings; `--role` is client-only. Existing two-player defaults and replay codecs remain compatible.

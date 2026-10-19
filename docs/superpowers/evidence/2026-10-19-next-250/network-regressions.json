@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-19T06:52:40.443395+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "0e274a29337c35fd1e574a72cbbdb9091d322b54",
+  "optional_checks": {
+    "nakama": false,
+    "render": false
+  },
+  "tests": [
+    {
+      "name": "network_backend250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.312,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_backend250_tests.out"
+    },
+    {
+      "name": "network_chat19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.293,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_chat19_tests.out"
+    },
+    {
+      "name": "network_review250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.294,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_review250_tests.out"
+    },
+    {
+      "name": "network_spectator19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.402,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_spectator19_tests.out"
+    },
+    {
+      "name": "network_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.254,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_smoke.out"
+    },
+    {
+      "name": "network50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.362,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network50_tests.out"
+    },
+    {
+      "name": "network_backend_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.557,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_backend_next_tests.out"
+    },
+    {
+      "name": "network_chat19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.657,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_chat19_next_tests.out"
+    },
+    {
+      "name": "network_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 10.148,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_next_tests.out"
+    },
+    {
+      "name": "network_oct17_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 24.265,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_oct17_next_tests.out"
+    },
+    {
+      "name": "network_spectator19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 16.654,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_spectator19_next_tests.out"
+    },
+    {
+      "name": "network_spectator_ui19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.307,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/network_spectator_ui19_next_tests.out"
+    },
+    {
+      "name": "run_network_process_test",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 6.1,
+      "log_path": "/private/tmp/tb19-network-suite/attempt-ugefk66g/run_network_process_test.out"
+    }
+  ],
+  "finished_at": "2026-10-19T06:54:00.063700+00:00"
+}

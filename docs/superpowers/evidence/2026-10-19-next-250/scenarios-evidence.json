@@ -1,0 +1,452 @@
+[
+  {
+    "id": "TB-732",
+    "index": 1,
+    "title": "Manifest macierzy symulacji",
+    "implementation": "tools/scenarios.py:13 validate_manifest",
+    "evidence": "tools/test_scenarios.py: test_schema_and_limits",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-733",
+    "index": 2,
+    "title": "Rozwinięcie macierzy",
+    "implementation": "tools/scenarios.py:35 expand_matrix",
+    "evidence": "tools/test_scenarios.py: test_stable_ids_and_repeats",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-734",
+    "index": 3,
+    "title": "Stabilne identyfikatory scenariuszy",
+    "implementation": "tools/scenarios.py:35 expand_matrix",
+    "evidence": "tools/test_scenarios.py: test_stable_ids_and_repeats",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-735",
+    "index": 4,
+    "title": "Walidacja aren macierzy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-736",
+    "index": 5,
+    "title": "Budżet graczy i strzałów",
+    "implementation": "tools/scenarios.py:13 validate_manifest",
+    "evidence": "tools/test_scenarios.py: test_schema_and_limits",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-737",
+    "index": 6,
+    "title": "Wybór botów scenariusza",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-738",
+    "index": 7,
+    "title": "Planowanie bez silnika",
+    "implementation": "tools/scenarios.py:224 main",
+    "evidence": "tools/test_scenarios.py: test_plan_foreign_cwd_and_empty_selection",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-739",
+    "index": 8,
+    "title": "Selekcja scenariuszy",
+    "implementation": "tools/scenarios.py:42 select_cases",
+    "evidence": "tools/test_scenarios.py: test_selection",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-740",
+    "index": 9,
+    "title": "Sekwencyjne wykonanie macierzy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-741",
+    "index": 10,
+    "title": "Ograniczona równoległość macierzy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_parallel_signal_kills_children_and_preserves_report",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-742",
+    "index": 11,
+    "title": "Timeout pojedynczego scenariusza",
+    "implementation": "tools/scenarios.py:87 _execute",
+    "evidence": "tools/test_scenarios.py: test_worker_failures_and_cancellation",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-743",
+    "index": 12,
+    "title": "Całkowity budżet przebiegu",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_total_deadline_and_foreign_directory",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-744",
+    "index": 13,
+    "title": "Anulowanie macierzy",
+    "implementation": "tools/scenarios.py:87 _execute",
+    "evidence": "tools/test_scenarios.py: test_parallel_signal_kills_children_and_preserves_report",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-745",
+    "index": 14,
+    "title": "Wznowienie ukończonych przypadków",
+    "implementation": "tools/scenarios.py:115 _reusable",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-746",
+    "index": 15,
+    "title": "Ponowienie błędów macierzy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-747",
+    "index": 16,
+    "title": "Tożsamość środowiska macierzy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-748",
+    "index": 17,
+    "title": "Atomowy postęp macierzy",
+    "implementation": "tools/scenarios.py:75 atomic_json",
+    "evidence": "tools/test_scenarios.py: test_parallel_signal_kills_children_and_preserves_report",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-749",
+    "index": 18,
+    "title": "Unikalne próby scenariusza",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-750",
+    "index": 19,
+    "title": "Nagrywanie scenariuszy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-751",
+    "index": 20,
+    "title": "Weryfikacja nagrań scenariuszy",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-752",
+    "index": 21,
+    "title": "Integralność artefaktów scenariusza",
+    "implementation": "tools/scenarios.py:108 _artifacts",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-753",
+    "index": 22,
+    "title": "Granice katalogu wyników",
+    "implementation": "tools/scenarios.py:67 safe_root",
+    "evidence": "tools/test_scenarios.py: test_safe_root_and_bounded_load",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-754",
+    "index": 23,
+    "title": "Walidacja wyniku symulacji",
+    "implementation": "tools/scenario_report.py:27 validate_summary",
+    "evidence": "tools/test_scenarios.py: test_exports_and_report_validation",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-755",
+    "index": 24,
+    "title": "Rozróżnienie błędów wykonania",
+    "implementation": "tools/scenarios.py:87 _execute",
+    "evidence": "tools/test_scenarios.py: test_worker_failures_and_cancellation",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-756",
+    "index": 25,
+    "title": "Podsumowanie zwycięstw",
+    "implementation": "tools/scenario_report.py:77 summarize",
+    "evidence": "tools/test_scenarios.py: test_summary_and_repeatability",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-757",
+    "index": 26,
+    "title": "Podsumowanie obrażeń",
+    "implementation": "tools/scenario_report.py:65 metrics",
+    "evidence": "tools/test_scenarios.py: test_summary_and_repeatability",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-758",
+    "index": 27,
+    "title": "Podsumowanie destrukcji",
+    "implementation": "tools/scenario_report.py:77 summarize",
+    "evidence": "tools/test_scenarios.py: test_report_integrity_and_export_escaping",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-759",
+    "index": 28,
+    "title": "Rozkład czasów",
+    "implementation": "tools/scenario_report.py:77 summarize",
+    "evidence": "tools/test_scenarios.py: test_summary_and_repeatability",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-760",
+    "index": 29,
+    "title": "Wykrywanie powtarzalności",
+    "implementation": "tools/scenario_report.py:77 summarize",
+    "evidence": "tools/test_scenarios.py: test_summary_and_repeatability",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-761",
+    "index": 30,
+    "title": "Eksport zbiorczy CSV",
+    "implementation": "tools/scenario_report.py:119 to_csv",
+    "evidence": "tools/test_scenarios.py: test_report_integrity_and_export_escaping",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-762",
+    "index": 31,
+    "title": "Czytelny raport Markdown",
+    "implementation": "tools/scenario_report.py:124 to_markdown",
+    "evidence": "tools/test_scenarios.py: test_exports_and_report_validation",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-763",
+    "index": 32,
+    "title": "Raport HTML offline",
+    "implementation": "tools/scenario_report.py:136 to_html",
+    "evidence": "tools/test_scenarios.py: test_exports_and_report_validation",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-764",
+    "index": 33,
+    "title": "Porównanie dwóch przebiegów",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-765",
+    "index": 34,
+    "title": "Porównanie deterministycznych stanów",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-766",
+    "index": 35,
+    "title": "Próg czasu regresji",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-767",
+    "index": 36,
+    "title": "Próg obrażeń regresji",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-768",
+    "index": 37,
+    "title": "Próg akcji regresji",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-769",
+    "index": 38,
+    "title": "Polityka nowego i brakującego case",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-770",
+    "index": 39,
+    "title": "Eksport porównania JSON",
+    "implementation": "tools/scenario_report.py:95 compare_reports",
+    "evidence": "tools/test_scenarios.py: test_comparison",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-771",
+    "index": 40,
+    "title": "Rejestr zestawów scenariuszy",
+    "implementation": "tools/scenarios.py:224 main",
+    "evidence": "tools/test_scenarios.py: test_plan_foreign_cwd_and_empty_selection",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-772",
+    "index": 41,
+    "title": "CLI macierzy z launchera",
+    "implementation": "tools/scenarios.py:224 main",
+    "evidence": "tools/test_scenarios.py: test_plan_foreign_cwd_and_empty_selection",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-773",
+    "index": 42,
+    "title": "Kontrola manifestu bez uruchamiania",
+    "implementation": "tools/scenarios.py:13 validate_manifest",
+    "evidence": "tools/test_scenarios.py: test_schema_and_limits",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-774",
+    "index": 43,
+    "title": "Zliczenie kosztu planu",
+    "implementation": "tools/scenarios.py:224 main",
+    "evidence": "tools/test_scenarios.py: test_plan_foreign_cwd_and_empty_selection",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-775",
+    "index": 44,
+    "title": "Filtrowanie raportu wyników",
+    "implementation": "tools/scenario_report.py:77 summarize",
+    "evidence": "tools/test_scenarios.py: test_summary_and_repeatability",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-776",
+    "index": 45,
+    "title": "Bezpieczny eksport raportów",
+    "implementation": "tools/scenarios.py:224 main",
+    "evidence": "tools/test_scenarios.py: test_safe_root_and_bounded_load",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-777",
+    "index": 46,
+    "title": "Weryfikacja raportu z dysku",
+    "implementation": "tools/scenario_report.py:38 validate_report",
+    "evidence": "tools/test_scenarios.py: test_report_integrity_and_export_escaping",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-778",
+    "index": 47,
+    "title": "Metadane producenta artefaktu",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios.py: test_fake_engine_resume_and_tamper",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-779",
+    "index": 48,
+    "title": "Test macierzy prawdziwym Godot",
+    "implementation": "tools/scenarios.py:132 run_matrix",
+    "evidence": "tools/test_scenarios_engine.py: test_real_matrix",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-780",
+    "index": 49,
+    "title": "Test awarii workerów",
+    "implementation": "tools/scenarios.py:87 _execute",
+    "evidence": "tools/test_scenarios.py: test_parallel_signal_kills_children_and_preserves_report",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  },
+  {
+    "id": "TB-781",
+    "index": 50,
+    "title": "Powtórzenia scenariusza w macierzy",
+    "implementation": "tools/scenarios.py:35 expand_matrix",
+    "evidence": "tools/test_scenarios.py: test_stable_ids_and_repeats",
+    "status": "implemented",
+    "verification": "Root domain and full-suite reports; real Godot 4.6.2 two-case record/verify/resume plus fake process failures and SIGTERM group cleanup."
+  }
+]

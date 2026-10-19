@@ -89,6 +89,10 @@ func blocked() -> bool:
 	return handoff or (training.active and training.phase != "armed")
 func _turn_key() -> String: return "%s/%s" % [scene.runner.state.generation,scene.runner.state.turn_id]
 func request(action: String, config := {}) -> void:
+	if scene.workshop != null and scene.workshop.is_active():
+		if action == "restart" and scene.workshop.is_playtesting(): scene.restart_match()
+		return
+	if scene.competition != null and scene.competition.blocks_external_action() and action != "surrender": return
 	if scene.remote_mode:
 		if action == "restart": scene.restart_match()
 		return
@@ -124,6 +128,7 @@ func _confirm(token: Dictionary) -> void:
 					if scene.match_panels.profiles.save_to() != OK: scene._session_message("Match started; configuration save failed")
 	scene._refresh_menu_state()
 func next_round() -> void:
+	if scene._special_session_active(): return
 	if scene.remote_mode or training.active or scene.session.playback != null or not series.next_round() or series_config.is_empty() or scene.runner.state.status != "ended": return
 	var cfg := series_config
 	scene.start_local_match(cfg.map,cfg.count,cfg.preset,cfg.mode,cfg.difficulty,cfg.human_team)
@@ -134,6 +139,7 @@ func on_started() -> void:
 	last_turn = _turn_key()
 	captions.clear()
 func continue_autosave() -> void:
+	if scene._special_session_active(): return
 	if scene.remote_mode or scene.projectile_in_flight or scene.session.playback != null or training.active: return
 	var result: Dictionary = autosave.latest_valid()
 	if not result.ok:
@@ -147,11 +153,13 @@ func continue_autosave() -> void:
 	scene._close_overlays()
 	scene._session_message("Autosave restored; damaged newer slots skipped: %s" % result.skipped)
 func open_training() -> void:
+	if scene._special_session_active(): return
 	if scene.remote_mode or scene.session.playback != null or scene.projectile_in_flight: return
 	scene._close_overlays()
 	training_panel.show()
 	scene._refresh_menu_state()
 func begin_training(id: String) -> void:
+	if scene._special_session_active(): return
 	if scene.remote_mode or scene.session.playback != null or scene.projectile_in_flight: return
 	var snapshot: Dictionary
 	if live.is_empty(): snapshot = Store.encode(scene.runner,scene.session.options,scene.player_velocities)
@@ -233,7 +241,7 @@ func consume(events: Array) -> void:
 	captions.consume(events,"%s/%s/%s" % [scene.runner.state.generation,scene.runner.state.revision,scene.runner.state.turn_id])
 func update(delta: float) -> void:
 	if confirmation == null: return
-	if not scene.remote_mode and scene.session.playback == null and not training.active and scene.runner != last_live_runner:
+	if not scene._special_session_active() and not scene.remote_mode and scene.session.playback == null and not training.active and scene.runner != last_live_runner:
 		series.reset()
 		handoff = false
 		last_live_runner = scene.runner
@@ -271,7 +279,7 @@ func update(delta: float) -> void:
 				if progress.save_to(progress_path) != OK: training_notice = "Lesson completed for this session; progress save failed"
 			_mark_latest()
 			open_training()
-	elif not scene.remote_mode and scene.session.playback == null and not scene.projectile_in_flight:
+	elif not scene._special_session_active() and not scene.remote_mode and scene.session.playback == null and not scene.projectile_in_flight:
 		var key := _turn_key()
 		if key != last_turn:
 			last_turn = key

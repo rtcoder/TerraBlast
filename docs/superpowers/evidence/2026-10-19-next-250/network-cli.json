@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "enabled",
+      "expected": 0,
+      "exit_code": 0,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nTerraBlast server ready; core players=2 map=twin_forts preset=classic capacity=2 mode=auto\nSpectator capacity=2; lobby chat=true\n{\"players\":[{\"id\":\"blue_1\",\"name\":\"Blue 1\",\"status\":\"vacant\"},{\"id\":\"red_1\",\"name\":\"Red 1\",\"status\":\"vacant\"}],\"spectators\":[]}\n"
+    },
+    {
+      "case": "too-many",
+      "expected": 2,
+      "exit_code": 2,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nInvalid arguments: Invalid spectator capacity\n"
+    },
+    {
+      "case": "nonfinite",
+      "expected": 2,
+      "exit_code": 2,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nInvalid arguments: Invalid spectator capacity\n"
+    },
+    {
+      "case": "negative",
+      "expected": 2,
+      "exit_code": 2,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nInvalid arguments: Invalid spectator capacity\n"
+    },
+    {
+      "case": "wrong-mode",
+      "expected": 2,
+      "exit_code": 2,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nInvalid arguments: --spectators requires server mode\n"
+    },
+    {
+      "case": "unknown-role",
+      "expected": 2,
+      "exit_code": 2,
+      "ok": true,
+      "output": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org\n\nInvalid arguments: Invalid role\n"
+    }
+  ],
+  "diagnostic": {
+    "counters": {
+      "bytes": 0,
+      "packets": 0,
+      "rejections": 0,
+      "send_failures": 0,
+      "sent_bytes": 0,
+      "sent_packets": 0,
+      "snapshots": 0
+    },
+    "free_spectator_slots": 2,
+    "last_receive_bytes": 0,
+    "last_receive_packets": 0,
+    "peers": 0,
+    "pending": 0,
+    "phase": "waiting",
+    "reservations": 0,
+    "roster": {
+      "players": [
+        {
+          "id": "blue_1",
+          "name": "Blue 1",
+          "status": "vacant"
+        },
+        {
+          "id": "red_1",
+          "name": "Red 1",
+          "status": "vacant"
+        }
+      ],
+      "spectators": []
+    },
+    "shutdown_reason": "deadline",
+    "shutting_down": true,
+    "spectator_capacity": 2,
+    "spectators": 0,
+    "transfer_details": [],
+    "transfers": 0,
+    "uptime_seconds": 0.14
+  }
+}

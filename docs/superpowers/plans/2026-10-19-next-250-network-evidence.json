@@ -1,0 +1,452 @@
+[
+  {
+    "id": "TB-632",
+    "index": 1,
+    "title": "Opcjonalna negocjacja roli uczestnika",
+    "implementation": "game/scripts/networking/messages/match_protocol.gd: valid_hello; game/scripts/networking/transport/match_server.gd: _accept_hello",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Legacy hello player compatible / Malformed hello; game/tests/integration/network_chat19_next_tests.gd: Real legacy hello keeps player slot",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": "Nowy obserwator wymaga serwera z rozszerzeniem role; starszy serwer może tymczasowo zarezerwować slot gracza przed wykryciem braku obsługi."
+  },
+  {
+    "id": "TB-633",
+    "index": 2,
+    "title": "Jawny limit miejsc obserwatorów",
+    "implementation": "game/scripts/networking/transport/server_runtime_options.gd: DEFAULTS/LIMITS/apply; game/scripts/networking/transport/match_server.gd: start/_accept_spectator",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Typed spectator/chat options / Invalid options atomic / Default disabled spectator admission; game/tests/integration/network_spectator19_next_tests.gd: Full observer room leaves players alone",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-634",
+    "index": 3,
+    "title": "Oddzielne tożsamości obserwatorów",
+    "implementation": "game/scripts/networking/transport/match_server.gd: spectators/spectator_reservations/_accept_spectator",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Independent spectator IDs / Spectator admission never mutates player state",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-635",
+    "index": 4,
+    "title": "Autorytatywne potwierdzenie roli klientowi",
+    "implementation": "game/scripts/networking/messages/match_protocol.gd: valid_participant_metadata; game/scripts/networking/transport/match_client.gd: snapshot_begin/snapshot_end",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Spectator metadata valid without fake player / Empty player identity forbidden / No silent downgrade to player",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": "Nowy obserwator wymaga serwera z rozszerzeniem role; starszy serwer może tymczasowo zarezerwować slot gracza przed wykryciem braku obsługi."
+  },
+  {
+    "id": "TB-636",
+    "index": 5,
+    "title": "Połączenie klienta w trybie obserwacji",
+    "implementation": "game/scripts/networking/transport/match_client.gd: connect_to_server(connection_role)",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Invalid endpoint leaves session / Invalid role atomic; game/tests/integration/network_spectator19_next_tests.gd: Client socket / No fake player identity",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-637",
+    "index": 6,
+    "title": "Oddzielna rezerwacja reconnect obserwatora",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _accept_spectator/_disconnected; game/scripts/networking/transport/match_client.gd: retry_connection",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: In-use spectator token rejected / Cross-role token rejected; game/tests/integration/network_spectator19_next_tests.gd: Resume restores role identity and name",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-638",
+    "index": 7,
+    "title": "Wygaśnięcie rezerwacji obserwatora",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _expire_reservations",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Observer grace expires / Expired token cannot recover another viewer",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-639",
+    "index": 8,
+    "title": "Jawne opuszczenie roli online",
+    "implementation": "game/scripts/networking/transport/match_client.gd: leave; game/scripts/networking/transport/leave_delivery.gd; game/scripts/networking/transport/match_server.gd: _leave_participant",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Explicit leave releases immediately; game/tests/integration/network_scene19_next_tests.gd: Full scene leave releases reservation after scene network removal",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-640",
+    "index": 9,
+    "title": "Rola obserwatora nigdy nie promuje automatycznie",
+    "implementation": "game/scripts/networking/transport/match_client.gd: requested_role/connect_to_server/retry_connection",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Explicit observer-to-player role change / Role switch starts fresh identity, no implicit promotion",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-641",
+    "index": 10,
+    "title": "Centralna zapora intencji gameplay obserwatora",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _handle spectator_read_only guard",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Spectator cannot author any gameplay; game/tests/integration/network_spectator19_next_tests.gd: Real UDP forged spectator intents rejected",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-642",
+    "index": 11,
+    "title": "Lokalne blokowanie gameplay w kliencie obserwatora",
+    "implementation": "game/scripts/networking/transport/match_client.gd: send_command/move_player/surrender/restart_match/set_ready/vote_rematch",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Client spectator gameplay guards / Spectator retains resync",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-643",
+    "index": 12,
+    "title": "Nazwy obserwatorów oddzielone od graczy",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _rename_spectator; game/scripts/networking/transport/match_client.gd: set_display_name",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Spectator rename independent during match; game/tests/integration/network_spectator19_next_tests.gd: Spectator rename / Resume restores role identity and name",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-644",
+    "index": 13,
+    "title": "Rozsyłanie stanu do wszystkich uczestników",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _participants/_broadcast/graceful_shutdown",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Frozen snapshot plus real result exact terrain/state / Shutdown reaches all roles",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-645",
+    "index": 14,
+    "title": "Snapshot widza ze wspólnej zamrożonej ścieżki",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_snapshot frozen world and role metadata",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Shot during slow spectator snapshot / Late join catchup converges",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-646",
+    "index": 15,
+    "title": "Walidacja końca snapshotu bez fikcyjnego gracza",
+    "implementation": "game/scripts/networking/transport/match_client.gd: snapshot_end membership conditional on role; game/scripts/networking/messages/match_protocol.gd: valid_participant_metadata",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Empty player identity forbidden; game/tests/integration/network_spectator19_next_tests.gd: No fake player identity / Observer repair converges",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-647",
+    "index": 16,
+    "title": "Doganianie meczu przy późnym wejściu widza",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send ordered catchup/_drain_snapshots",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Shot during slow spectator snapshot / Frozen snapshot plus real result exact terrain/state",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-648",
+    "index": 17,
+    "title": "Resync obserwatora po luce rewizji",
+    "implementation": "game/scripts/networking/transport/match_client.gd: request_snapshot; game/scripts/networking/transport/match_server.gd: snapshot dispatch for participants",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Observer resync / Observer repair converges",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-649",
+    "index": 18,
+    "title": "Sprawiedliwe transfery przy wielu widzach",
+    "implementation": "game/scripts/networking/transport/match_server.gd: shared snapshot_queues/_round_robin/_drain_snapshots",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Global snapshot frame limit and round robin / Second spectator cannot starve behind players",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-650",
+    "index": 19,
+    "title": "Rematch odświeża także widzów",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _handle_lobby rematch recipients/_send_snapshot",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Players alone decide rematch / Observer receives rematch snapshot / Rematch keeps spectator outside quorum",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-651",
+    "index": 20,
+    "title": "Zniknięcie widza nie pauzuje gry",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _disconnected separates spectators from slots/quorum",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Spectator disconnect cannot pause live match / Observer disconnect preserves rematch vote",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-652",
+    "index": 21,
+    "title": "Sprzątanie wszystkich struktur roli",
+    "implementation": "game/scripts/networking/transport/match_server.gd: close; game/scripts/networking/transport/match_client.gd: close; LeaveDelivery._exit_tree",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Close clears role structures; game/tests/integration/network_spectator19_next_tests.gd: Shutdown reaches all roles",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-653",
+    "index": 22,
+    "title": "Opcjonalny roster widzów w lobby",
+    "implementation": "game/scripts/networking/messages/match_protocol.gd: valid_spectator_roster/valid_lobby; game/scripts/networking/transport/match_server.gd: lobby_snapshot",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Bounded optional spectator roster / Duplicate spectator roster rejected",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-654",
+    "index": 23,
+    "title": "Stan połączenia ujawnia bezpieczną rolę",
+    "implementation": "game/scripts/networking/transport/match_client.gd: status_snapshot; game/scripts/client/ui/lobby_panel.gd: present_connection; game/scripts/client/backend/backend_menu.gd: present_game_connection",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: No fake player identity; game/tests/integration/network_scene19_next_tests.gd: Full scene spectator has no gameplay control; native720/native125 rendered role status",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-655",
+    "index": 24,
+    "title": "Wybór obserwacji w menu multiplayer",
+    "implementation": "game/scripts/client/backend/backend_menu.gd: role_picker/selected_role/set_selected_role",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Pre-ready CLI role selection / Bad menu role ignored / Picker changes future join role",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-656",
+    "index": 25,
+    "title": "Widoczna rola i osobny roster w lobby",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: present optional role/id and separate viewer roster",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Separate role and counters; native720 rendered2/2players +1/1spectators",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-657",
+    "index": 26,
+    "title": "Kontrolki lobby zgodne z rolą widza",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: present/_request_ready/_request_rematch/_request_name",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Viewer UI cannot ready or rematch / Observer rename while playing / Observer name authority confirms",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-658",
+    "index": 27,
+    "title": "Śledzenie gracza przez obserwatora",
+    "implementation": "game/scripts/client/ui/lobby_panel.gd: _update_follow/follow_player_requested; root voxel_debug camera hooks",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Follow emits actual player identity / Missing follow target returns free camera; game/tests/integration/network_scene19_next_tests.gd: Full scene follow camera hook",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-659",
+    "index": 28,
+    "title": "Czytelny retry i leave widza",
+    "implementation": "game/scripts/networking/transport/match_client.gd: disconnect message/retry; game/scripts/client/ui/lobby_panel.gd: role-specific confirmation; game/scripts/client/backend/backend_menu.gd: role status",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Resume restores role identity and name / Explicit leave releases immediately; game/tests/integration/network_scene19_next_tests.gd: Full scene leave releases reservation after scene network removal",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-660",
+    "index": 29,
+    "title": "Rzeczywisty scenariusz UDP player i spectator",
+    "implementation": "game/tests/integration/network_spectator19_next_tests.gd: complete real ENet server/two players/late observer scenario",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Late join catchup converges / Frozen snapshot plus real result exact terrain/state",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-661",
+    "index": 30,
+    "title": "Rzeczywisty test reconnect i pełnych miejsc",
+    "implementation": "game/tests/integration/network_spectator19_next_tests.gd: real ENet cap/reconnect/leave/expiry scenario",
+    "evidence": "game/tests/integration/network_spectator19_next_tests.gd: Full observer room leaves players alone / Resume restores role identity and name / Explicit leave releases immediately / Observer grace expires",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-662",
+    "index": 31,
+    "title": "Opcjonalne włączenie bounded czatu lobby",
+    "implementation": "game/scripts/networking/transport/server_runtime_options.gd: chat_enabled; game/scripts/networking/transport/match_server.gd: _handle_chat capability gate",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Disabled chat UI/API / Disabled server rejects raw send / Legacy client not sent unnegotiated chat events",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-663",
+    "index": 32,
+    "title": "Ścisła walidacja treści wiadomości czatu",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: valid_text",
+    "evidence": "game/tests/unit/network_chat19_tests.gd: Invalid chat rejected / Unicode literal accepted; game/tests/integration/network_chat19_next_tests.gd: Spoof malformed stale and duplicate never append",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-664",
+    "index": 33,
+    "title": "Serwer nadaje autora wiadomości czatu",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _chat_author/_handle_chat; game/scripts/networking/messages/lobby_chat.gd: append sequence allocation",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Server assigns spectator attribution / Spoof malformed stale and duplicate never append",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-665",
+    "index": 34,
+    "title": "Osobny limit wysyłania czatu",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: author_times/global_times rate windows",
+    "evidence": "game/tests/unit/network_chat19_tests.gd: Rate limit / Global32 limit / Global time refill; game/tests/integration/network_chat19_next_tests.gd: Per-author chat limiter independent of player",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-666",
+    "index": 35,
+    "title": "Ograniczona historia czatu",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: MAX_MESSAGES/MAX_BYTES/append/history",
+    "evidence": "game/tests/unit/network_chat19_tests.gd: Both history caps / History copy; game/tests/integration/network_spectator_ui19_next_tests.gd: History tree bounded",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-667",
+    "index": 36,
+    "title": "Deduplikacja wiadomości po nonce",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: bounded nonces cache; game/scripts/networking/transport/match_server.gd: duplicate history response",
+    "evidence": "game/tests/unit/network_chat19_tests.gd: Nonce deduplicated / Duplicate no append; game/tests/integration/network_chat19_next_tests.gd: Spoof malformed stale and duplicate never append",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-668",
+    "index": 37,
+    "title": "Czat respektuje generation meczu",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: reset/append generation; game/scripts/networking/transport/match_server.gd: both runner.reset branches",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Rematch clears chat and old queued generation / Chat generation reset shares authoritative restart / Delayed chat cannot cross rematch",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-669",
+    "index": 38,
+    "title": "Historia czatu po późnym dołączeniu",
+    "implementation": "game/scripts/networking/transport/match_server.gd: _send_snapshot freezes chat_history after snapshot_end / _send chat catchup",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: History plus concurrent live chat / Late chat converges exactly once",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-670",
+    "index": 39,
+    "title": "Walidacja wiadomości i historii czatu po stronie klienta",
+    "implementation": "game/scripts/networking/messages/lobby_chat.gd: valid_event/valid_history; game/scripts/networking/transport/match_client.gd: _accept_chat_history/_accept_chat_event",
+    "evidence": "game/tests/unit/network_chat19_tests.gd: History wire validation; game/tests/integration/network_chat19_next_tests.gd: Malformed history leaves valid chat atomic",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-671",
+    "index": 40,
+    "title": "Odtworzenie czatu po luce sekwencji",
+    "implementation": "game/scripts/networking/transport/match_client.gd: _request_chat_history/_accept_chat_event; game/scripts/networking/transport/match_server.gd: chat_history_request cooldown",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Sequence gap chat-only history repair / Chat recovery never rebuilds terrain",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-672",
+    "index": 41,
+    "title": "Panel historii czatu z tekstem literalnym",
+    "implementation": "game/scripts/client/ui/lobby_chat_panel.gd: present plain Label and bounded rows",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Chat renders plain literal text / History tree bounded; native125 screenshot literal [url]",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-673",
+    "index": 42,
+    "title": "Kompozytor czatu i pending echo",
+    "implementation": "game/scripts/client/ui/lobby_chat_panel.gd: _submit/send_result/operation_rejected/_process; game/scripts/networking/transport/match_client.gd: send_chat/_ack_chat",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Enter and repeat wait for echo / Reject preserves draft and unlocks / Only matching server echo clears draft / Pending timeout preserves draft",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-674",
+    "index": 43,
+    "title": "Czat nie przechwytuje sterowania grą po zamknięciu",
+    "implementation": "game/scripts/client/ui/lobby_chat_panel.gd: focus signals/reset_focus; game/scripts/client/ui/lobby_panel.gd: forwarding signals; root voxel_debug input hook",
+    "evidence": "game/tests/integration/network_spectator_ui19_next_tests.gd: Text focus exposes gameplay block hook / Hide releases focus and pending; game/tests/integration/network_scene19_next_tests.gd: Full scene chat input hook / Full scene hide releases input",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-675",
+    "index": 44,
+    "title": "Rzeczywisty czat gracza i widza przez UDP",
+    "implementation": "game/tests/integration/network_chat19_next_tests.gd: complete real ENet player/legacy/observer scenario",
+    "evidence": "game/tests/integration/network_chat19_next_tests.gd: Both roles receive same event / Server assigns spectator attribution / No chat broadcast reaches pending unauthenticated peer / Reconnect bounded tail and stable author / Gameplay unaffected by chat",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-676",
+    "index": 45,
+    "title": "Bezpieczny roster diagnostyczny uczestników",
+    "implementation": "game/scripts/networking/transport/match_server.gd: participant_roster",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Roster is deep copy / Diagnostic omits secrets and addresses; game/tests/integration/network_spectator19_next_tests.gd: Safe live diagnostic roster",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-677",
+    "index": 46,
+    "title": "Szczegóły transferów w diagnostyce roli",
+    "implementation": "game/scripts/networking/transport/match_server.gd: diagnostic_snapshot transfer_details and spectator counts",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Global snapshot frame limit and round robin / Diagnostic omits secrets and addresses; game/tests/integration/network_spectator19_next_tests.gd: Safe live diagnostic roster; network-cli.json diagnostic",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-678",
+    "index": 47,
+    "title": "Lokalny zrzut roster serwera na żądanie",
+    "implementation": "game/scripts/server/server_main.gd: diagnostic_roster_json/--print-roster/request_shutdown report",
+    "evidence": "network-cli.json: enabled case exit0, one startup roster JSON and shutdown report containing player/spectator roster",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-679",
+    "index": 48,
+    "title": "Walidowane flagi serwera dla widzów i czatu",
+    "implementation": "game/scripts/server/server_main.gd: _ready spectator/chat flags; game/scripts/networking/transport/server_runtime_options.gd: strict typed apply; root GameConfig validation",
+    "evidence": "network-cli.json: enabled, too-many, nonfinite, negative, wrong-mode, unknown-role; all six expected exit statuses",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  },
+  {
+    "id": "TB-680",
+    "index": 49,
+    "title": "Kontrakt zgodności rozszerzeń protokołu v2",
+    "implementation": "game/scripts/networking/messages/match_protocol.gd: VERSION remains2/optional metadata and lobby; game/scripts/networking/transport/match_server.gd: default player hello",
+    "evidence": "game/tests/unit/network_spectator19_tests.gd: Legacy hello player compatible / Malformed hello; game/tests/integration/network_chat19_next_tests.gd: Real legacy hello keeps player slot / Legacy client not sent unnegotiated chat events; network-regressions.json:13/13 incl process harness",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": "Nowy obserwator wymaga serwera z rozszerzeniem role; starszy serwer może tymczasowo zarezerwować slot gracza przed wykryciem braku obsługi."
+  },
+  {
+    "id": "TB-681",
+    "index": 50,
+    "title": "Instrukcja lokalnej obserwacji i czatu",
+    "implementation": "docs/network-spectators.md: local commands, capacities, lifecycle, chat limits, diagnostics and ENet/Nakama boundary",
+    "evidence": "network-cli.json validated local commands; network-new-suites.json role/chat/scene/UI; native720 and native125 verified literal text, role, scrolling and lower controls",
+    "verification_report": "docs/superpowers/evidence/2026-10-19-next-250/network-new-suites.json",
+    "limitations": ""
+  }
+]

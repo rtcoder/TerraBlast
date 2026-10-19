@@ -15,10 +15,10 @@ def main():
         print(__doc__)
         return 0
     mode = args.pop(0)
-    if mode in ('test', 'doctor', 'release'):
-        script = {'test':'run_tests.py','doctor':'doctor.py','release':'release.py'}[mode]
+    if mode in ('test', 'doctor', 'release', 'scenarios'):
+        script = {'test':'run_tests.py','doctor':'doctor.py','release':'release.py','scenarios':'scenarios.py'}[mode]
         return subprocess.call([sys.executable, str(ROOT / 'tools' / script), *args], cwd=ROOT)
-    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays'):
+    if mode not in ('client', 'server', 'local-dev', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays', 'clip-replay', 'diff-replays', 'verify-bundle'):
         print('Unknown launcher mode: ' + mode, file=sys.stderr)
         return 2
     try:
@@ -26,7 +26,7 @@ def main():
     except FileNotFoundError as error:
         print(error, file=sys.stderr)
         return 2
-    if mode in ('server', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays'):
+    if mode in ('server', 'simulate', 'replay', 'library', 'audit-maps', 'analyze-replay', 'compare-replays', 'clip-replay', 'diff-replays', 'verify-bundle'):
         command.append('--headless')
     command += ['--', '--mode', mode, *[arg for arg in args if arg != '--dry-run']]
     if '--dry-run' in args:

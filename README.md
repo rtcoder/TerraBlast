@@ -141,3 +141,15 @@ F3 adds reduced animation, accessible team colors with letter labels, configurab
 The library supports title search, ordering, favorites, pages, details, duplicate entries, JSON file import/export and corrupt-entry diagnostics. Filters and favorites persist separately from archive payloads. Replay analysis reconstructs its own runner in bounded batches and can be cancelled; it reports players, weapons, turns, shots, terrain and eliminations. Shot bookmarks, previous-shot/next-turn navigation, looping and fingerprint-checked saved cursors extend the inspector. Analysis exports JSON or player/shot CSV. See [tool commands](tools/README.md#replay-analysis-and-library-inspection) for headless analysis and comparison.
 
 F2 supports saved connection profiles and a persistent local guest identity. Connection feedback distinguishes authentication, websocket connection, snapshot loading and gameplay readiness. Snapshot transfers are queued with frame budgets, and later match results are applied after the frozen snapshot so joining clients cannot lose intervening shots.
+
+### Arena Workshop, competitions and Replay Studio
+
+The local match menu now opens **Arena Workshop** and **Local competition**. Workshop edits a private map document (boxes, carves, spawns, metadata), previews voxel slices, supports undo/redo and TOML import/export, and launches disposable playtests. Returning restores the original match and recording; unsaved edits require an explicit discard choice.
+
+Local competitions support 2–8 teams, single/double round-robin leagues and seeded knockout brackets with byes. The hub shows fixtures, standings, results and corrections; active fixtures can be saved/resumed. Knockout draws are replayed. Team identities stay stable across display-name changes. Return to game restores the original live match and best-of series.
+
+Replay Studio extends the existing inspector with fingerprint-bound notes, note navigation and verified action-range clips. The library can pin and compare replays, inspect player/inventory/terrain differences, and export or import validated ZIP bundles as new entries. Studio operates on private replay state; source archives stay protected. Details and CLI commands are in [portable tools](tools/README.md).
+
+Servers can opt into up to six **spectators** and bounded **lobby chat**. Spectators receive authoritative snapshots and follow-camera controls but cannot act, vote or satisfy player readiness. See [spectators and chat](docs/network-spectators.md).
+
+[Scenario matrices](docs/scenario-matrices.md) run bounded, reproducible batches with recording verification, checksummed resume, repeatability checks, regression comparisons and offline reports.

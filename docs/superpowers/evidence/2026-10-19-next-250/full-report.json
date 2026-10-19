@@ -1,0 +1,583 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-19T07:02:51.901962+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "0e274a29337c35fd1e574a72cbbdb9091d322b54",
+  "optional_checks": {
+    "nakama": true,
+    "render": true
+  },
+  "tests": [
+    {
+      "name": "archive250_edges_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 6.313,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/archive250_edges_tests.out"
+    },
+    {
+      "name": "archive_analysis_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.213,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/archive_analysis_tests.out"
+    },
+    {
+      "name": "archive_bundle19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.599,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/archive_bundle19_tests.out"
+    },
+    {
+      "name": "archive_review_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.736,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/archive_review_tests.out"
+    },
+    {
+      "name": "arena_oct17_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.786,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/arena_oct17_tests.out"
+    },
+    {
+      "name": "bot_oct16_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.379,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/bot_oct16_tests.out"
+    },
+    {
+      "name": "client250_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 22.934,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client250_next_tests.out"
+    },
+    {
+      "name": "client_review250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.303,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client_review250_tests.out"
+    },
+    {
+      "name": "competition19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.593,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/competition19_tests.out"
+    },
+    {
+      "name": "competition_panel19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.311,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/competition_panel19_tests.out"
+    },
+    {
+      "name": "competition_store19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.643,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/competition_store19_tests.out"
+    },
+    {
+      "name": "config50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.213,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/config50_tests.out"
+    },
+    {
+      "name": "core250_edges_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.301,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core250_edges_tests.out"
+    },
+    {
+      "name": "core250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.172,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core250_tests.out"
+    },
+    {
+      "name": "core50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.156,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core50_tests.out"
+    },
+    {
+      "name": "core_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.322,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core_next_tests.out"
+    },
+    {
+      "name": "core_replay_oct16_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 14.33,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core_replay_oct16_tests.out"
+    },
+    {
+      "name": "core_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.302,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/core_tests.out"
+    },
+    {
+      "name": "devtools_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.292,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/devtools_next_tests.out"
+    },
+    {
+      "name": "input_bindings_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.298,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/input_bindings_tests.out"
+    },
+    {
+      "name": "library_oct17_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.363,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/library_oct17_tests.out"
+    },
+    {
+      "name": "mvp_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.287,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/mvp_tests.out"
+    },
+    {
+      "name": "network_backend250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.304,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_backend250_tests.out"
+    },
+    {
+      "name": "network_chat19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.305,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_chat19_tests.out"
+    },
+    {
+      "name": "network_review250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.307,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_review250_tests.out"
+    },
+    {
+      "name": "network_spectator19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.384,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_spectator19_tests.out"
+    },
+    {
+      "name": "replay_studio19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.597,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/replay_studio19_tests.out"
+    },
+    {
+      "name": "replay_timeline_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 5.147,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/replay_timeline_tests.out"
+    },
+    {
+      "name": "terrain50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.381,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/terrain50_tests.out"
+    },
+    {
+      "name": "trajectory250_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.404,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/trajectory250_tests.out"
+    },
+    {
+      "name": "workshop_oct19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.297,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/workshop_oct19_tests.out"
+    },
+    {
+      "name": "debug_scene_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.28,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/debug_scene_smoke.out"
+    },
+    {
+      "name": "artillery_flow_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.258,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/artillery_flow_tests.out"
+    },
+    {
+      "name": "match_ui_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.562,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/match_ui_tests.out"
+    },
+    {
+      "name": "mvp_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.031,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/mvp_smoke.out"
+    },
+    {
+      "name": "review_regressions",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.266,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/review_regressions.out"
+    },
+    {
+      "name": "network_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.364,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_smoke.out"
+    },
+    {
+      "name": "client50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.839,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client50_tests.out"
+    },
+    {
+      "name": "network50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.651,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network50_tests.out"
+    },
+    {
+      "name": "archive_ui250_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 11.8,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/archive_ui250_next_tests.out"
+    },
+    {
+      "name": "backend_profiles_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.314,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/backend_profiles_next_tests.out"
+    },
+    {
+      "name": "client_library_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 8.829,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client_library_next_tests.out"
+    },
+    {
+      "name": "client_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.028,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client_next_tests.out"
+    },
+    {
+      "name": "client_oct16_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.558,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client_oct16_next_tests.out"
+    },
+    {
+      "name": "client_oct17_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 12.955,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/client_oct17_next_tests.out"
+    },
+    {
+      "name": "competition19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 9.972,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/competition19_next_tests.out"
+    },
+    {
+      "name": "network_backend_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.556,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_backend_next_tests.out"
+    },
+    {
+      "name": "network_chat19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 16.216,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_chat19_next_tests.out"
+    },
+    {
+      "name": "network_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 9.369,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_next_tests.out"
+    },
+    {
+      "name": "network_oct17_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 20.531,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_oct17_next_tests.out"
+    },
+    {
+      "name": "network_scene19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 9.25,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_scene19_next_tests.out"
+    },
+    {
+      "name": "network_spectator19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 16.677,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_spectator19_next_tests.out"
+    },
+    {
+      "name": "network_spectator_ui19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.31,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/network_spectator_ui19_next_tests.out"
+    },
+    {
+      "name": "replay_studio19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.523,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/replay_studio19_next_tests.out"
+    },
+    {
+      "name": "workshop_oct19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.959,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/workshop_oct19_next_tests.out"
+    },
+    {
+      "name": "nakama_smoke",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.084,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/nakama_smoke.out"
+    },
+    {
+      "name": "nakama50_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.411,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/nakama50_tests.out"
+    },
+    {
+      "name": "server",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.3,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/server.out"
+    },
+    {
+      "name": "render",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.405,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/render.out"
+    },
+    {
+      "name": "test_devtools",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.999,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_devtools.out"
+    },
+    {
+      "name": "run_network_process_test",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.601,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/run_network_process_test.out"
+    },
+    {
+      "name": "test_simulation_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.647,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_simulation_cli.out"
+    },
+    {
+      "name": "test_bot_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 12.088,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_bot_cli.out"
+    },
+    {
+      "name": "test_lobby_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 5.649,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_lobby_cli.out"
+    },
+    {
+      "name": "test_library_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.422,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_library_cli.out"
+    },
+    {
+      "name": "test_delivery",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.065,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_delivery.out"
+    },
+    {
+      "name": "test_analysis_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 8.931,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_analysis_cli.out"
+    },
+    {
+      "name": "test_release_review",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.138,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_release_review.out"
+    },
+    {
+      "name": "test_scenarios",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.623,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_scenarios.out"
+    },
+    {
+      "name": "test_scenarios_engine",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.102,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_scenarios_engine.out"
+    },
+    {
+      "name": "test_studio_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.817,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/full/test_studio_cli.out"
+    }
+  ],
+  "finished_at": "2026-10-19T07:07:48.343585+00:00"
+}

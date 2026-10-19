@@ -1,0 +1,1032 @@
+[
+  {
+    "index": 1,
+    "id": "TB-582",
+    "title": "Walidowany format lokalnych rozgrywek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_config.gd",
+        "line": 19,
+        "assertion": "static func validate(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 69,
+        "assertion": "check(not Config.validate(invalid).ok,\"Reject invalid configuration option \"+str(patch))"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 2,
+    "id": "TB-583",
+    "title": "Stabilne identyfikatory uczestników",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_config.gd",
+        "line": 19,
+        "assertion": "static func validate(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition_panel19_tests.gd",
+        "line": 44,
+        "assertion": "check(panel.form_configuration().entrants[1].id==\"entrant_3\",\"Reordering keeps participant identity\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 3,
+    "id": "TB-584",
+    "title": "Czytelne nazwy drużyn",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_config.gd",
+        "line": 11,
+        "assertion": "static func text(value: Variant, maximum: int) -> bool:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 74,
+        "assertion": "check(not Config.validate(controlled).ok,\"Unicode control characters rejected in names\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 4,
+    "id": "TB-585",
+    "title": "Równa liczebność zespołów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_config.gd",
+        "line": 19,
+        "assertion": "static func validate(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 83,
+        "assertion": "check(not Config.validate(bad).ok,\"Unequal teams rejected\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 5,
+    "id": "TB-586",
+    "title": "Deterministyczna rotacja aren",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 2,
+        "assertion": "static func generate(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 27,
+        "assertion": "check(Schedule.generate(cfg)==Schedule.generate(cfg),\"Deterministic schedule\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 6,
+    "id": "TB-587",
+    "title": "Podgląd kosztu wydarzenia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_config.gd",
+        "line": 43,
+        "assertion": "static func preview(config: Dictionary) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 26,
+        "assertion": "check(event.fixtures().size()==expected,\"Hand-derived fixture count %d %s\" % [n,format])"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 7,
+    "id": "TB-588",
+    "title": "Rozstawienie ręczne",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_panel.gd",
+        "line": 184,
+        "assertion": "func _move_entrant(index: int, direction: int) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition_panel19_tests.gd",
+        "line": 44,
+        "assertion": "check(panel.form_configuration().entrants[1].id==\"entrant_3\",\"Reordering keeps participant identity\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 8,
+    "id": "TB-589",
+    "title": "Edycja zgłoszeń przed startem",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 22,
+        "assertion": "func update_draft(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 87,
+        "assertion": "check(event.update_draft(configuration(4)).ok,\"Draft remains editable\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 9,
+    "id": "TB-590",
+    "title": "Zamrożenie zasad wydarzenia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 22,
+        "assertion": "func update_draft(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 89,
+        "assertion": "check(not event.update_draft(configuration(3)).ok,\"Launched rules frozen\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 10,
+    "id": "TB-591",
+    "title": "Zmiana etykiety uczestnika w trakcie ligi",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 25,
+        "assertion": "func rename_entrant(id: String, name: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 90,
+        "assertion": "check(event.rename_entrant(\"entrant_1\",\"Żółwie\").ok,\"Rename during event\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 11,
+    "id": "TB-592",
+    "title": "Terminarz ligi dla parzystych składów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 2,
+        "assertion": "static func generate(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 43,
+        "assertion": "for count in pairs.values(): check(count==(2 if format==\"double_league\" else 1),\"Each pairing occurs once per leg\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 12,
+    "id": "TB-593",
+    "title": "Terminarz ligi z pauzami",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 2,
+        "assertion": "static func generate(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 39,
+        "assertion": "check(not rounds.has(round_key),\"One fixture per entrant per round\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 13,
+    "id": "TB-594",
+    "title": "Rewanże z odwróceniem stron",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 2,
+        "assertion": "static func generate(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 43,
+        "assertion": "for count in pairs.values(): check(count==(2 if format==\"double_league\" else 1),\"Each pairing occurs once per leg\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 14,
+    "id": "TB-595",
+    "title": "Zbilansowane strony w lidze",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 2,
+        "assertion": "static func generate(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 44,
+        "assertion": "for balance in sides.values(): check(abs(balance)<=(0 if format==\"double_league\" else 1),\"Balanced A/B assignment\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 15,
+    "id": "TB-596",
+    "title": "Drabinka pucharowa z wolnym losem",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 34,
+        "assertion": "static func _knockout(config: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 62,
+        "assertion": "check(event.is_complete() and not event.champion().is_empty(),\"Whole event completes\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 16,
+    "id": "TB-597",
+    "title": "Awans wygranego w pucharze",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 61,
+        "assertion": "static func resolve(fixtures: Array, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 62,
+        "assertion": "check(event.is_complete() and not event.champion().is_empty(),\"Whole event completes\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 17,
+    "id": "TB-598",
+    "title": "Remis pucharowy wymaga powtórki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 50,
+        "assertion": "func record(token: Dictionary, winner_team: int) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 55,
+        "assertion": "check(event.snapshot().results.is_empty(),\"Draw does not promote a knockout entrant\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 18,
+    "id": "TB-599",
+    "title": "Lista spotkań gotowych do gry",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_schedule.gd",
+        "line": 70,
+        "assertion": "static func ready(fixtures: Array, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 48,
+        "assertion": "check(not ready.is_empty(),\"Unfinished event has a ready match\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 19,
+    "id": "TB-600",
+    "title": "Wybór meczu w bieżącej kolejce",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 44,
+        "assertion": "func launch(id: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 51,
+        "assertion": "check(launch.ok,\"Launch selected ready match\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 20,
+    "id": "TB-601",
+    "title": "Zakończenie i zwycięzca rozgrywek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 72,
+        "assertion": "func is_complete() -> bool:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 67,
+        "assertion": "check(controller.event.is_complete(),\"Whole real-scene \"+format+\" completes\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 21,
+    "id": "TB-602",
+    "title": "Wynik mapowany z zespołów gry",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_results.gd",
+        "line": 6,
+        "assertion": "static func from_winner(fixture: Dictionary, token: Dictionary, winner_team: int) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 60,
+        "assertion": "check(result.ok,\"Authoritative recorded surrender finishes actual match\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 22,
+    "id": "TB-603",
+    "title": "Dedykowany token uruchomienia meczu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 44,
+        "assertion": "func launch(id: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 58,
+        "assertion": "check(not event.record(old,1).ok,\"Stale draw replay token rejected\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 23,
+    "id": "TB-604",
+    "title": "Idempotentne zatwierdzanie rezultatów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 50,
+        "assertion": "func record(token: Dictionary, winner_team: int) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 63,
+        "assertion": "check(controller.event.snapshot().results.size()==limit+1,\"Ended result accepted exactly once\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 24,
+    "id": "TB-605",
+    "title": "Punktacja ligowa 3–1–0",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_standings.gd",
+        "line": 3,
+        "assertion": "static func calculate(config: Dictionary, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 98,
+        "assertion": "check(played==2 and points==2,\"Draw correction replaces victory points\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 25,
+    "id": "TB-606",
+    "title": "Mała tabela remisujących",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_standings.gd",
+        "line": 3,
+        "assertion": "static func calculate(config: Dictionary, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 151,
+        "assertion": "check(duel_rows[0].id==\"entrant_3\" and duel_rows[1].id==\"entrant_4\" and duel_rows[2].id==\"entrant_2\" and duel_rows[3].id==\"entrant_1\",\"Direct encounter outranks seeding in two tied pairs\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 26,
+    "id": "TB-607",
+    "title": "Wyjaśnienie miejsca w tabeli",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_standings.gd",
+        "line": 3,
+        "assertion": "static func calculate(config: Dictionary, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 108,
+        "assertion": "check(table_event.standings()[0].id==\"entrant_1\" and table_event.standings()[0].points==2,\"Full tie resolves by stable seeding\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 27,
+    "id": "TB-608",
+    "title": "Macierz bezpośrednich rezultatów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_standings.gd",
+        "line": 51,
+        "assertion": "static func matrix(config: Dictionary, results: Array) -> Array:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 47,
+        "assertion": "check(controller.event.fixtures().size()==3,\"Native form creates 3-team league\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 28,
+    "id": "TB-609",
+    "title": "Historia ukończonych spotkań",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_results.gd",
+        "line": 8,
+        "assertion": "static func history(snapshot: Dictionary) -> Array:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 60,
+        "assertion": "check(not event.record(launch.token,1).ok,\"Repeated result deduplicated\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 29,
+    "id": "TB-610",
+    "title": "Kontrolowana korekta wyniku ligi",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 65,
+        "assertion": "func correct(id: String, winner_team: int) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 92,
+        "assertion": "check(event.correct(launched.token.fixture_id,0).ok,\"Correct league result\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 30,
+    "id": "TB-611",
+    "title": "Raport końcowy wydarzenia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_standings.gd",
+        "line": 60,
+        "assertion": "static func report(snapshot: Dictionary) -> String:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 68,
+        "assertion": "check(controller.panel.report.text.contains(\"Champion:\"),\"Champion and report visible\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 31,
+    "id": "TB-612",
+    "title": "Osobny walidowany plik wydarzenia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_store.gd",
+        "line": 10,
+        "assertion": "static func encode(event_snapshot: Dictionary, match_payload: Dictionary = {}) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition_store19_tests.gd",
+        "line": 26,
+        "assertion": "check(loaded.ok and loaded.event.snapshot()==event.snapshot(),\"Draft roundtrip\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 32,
+    "id": "TB-613",
+    "title": "Odtworzenie stanu z kanonicznego terminarza",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_event.gd",
+        "line": 91,
+        "assertion": "func restore(value: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 102,
+        "assertion": "check(not event.restore(bad).ok and event.snapshot()==before,\"Duplicate results restore is atomic\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 33,
+    "id": "TB-614",
+    "title": "Atomowy zapis bez utraty poprzedniej wersji",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_store.gd",
+        "line": 45,
+        "assertion": "static func save(path: String, event: RefCounted, match_payload: Dictionary = {}) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition_store19_tests.gd",
+        "line": 29,
+        "assertion": "check(FileAccess.get_file_as_bytes(path)==before,\"Failed save preserves previous file\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 34,
+    "id": "TB-615",
+    "title": "Ograniczenia rozmiaru i głęboka walidacja zapisu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_store.gd",
+        "line": 62,
+        "assertion": "static func load(path: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition_store19_tests.gd",
+        "line": 73,
+        "assertion": "check(not Store.load(path).ok,\"Oversized file rejected before parse\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 35,
+    "id": "TB-616",
+    "title": "Zapis i wznowienie aktywnego meczu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/core/competition/competition_store.gd",
+        "line": 15,
+        "assertion": "static func decode(payload: Variant) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/unit/competition_store19_tests.gd",
+        "line": 42,
+        "assertion": "check(loaded.match.velocities==velocities,\"Exact active velocities\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 36,
+    "id": "TB-617",
+    "title": "Bezpieczny punkt zapisu turnieju",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 168,
+        "assertion": "func save() -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 94,
+        "assertion": "check(controller.save().ok,\"Active fixture saves through actual adapter\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 37,
+    "id": "TB-618",
+    "title": "Zapis przed i po spotkaniu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 130,
+        "assertion": "func launch(id: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 113,
+        "assertion": "check(controller.save().ok,\"Save through actual adapter\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 38,
+    "id": "TB-619",
+    "title": "Przywrócenie wcześniejszego meczu lokalnego",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 255,
+        "assertion": "func return_to_live(persist_abandon := true) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 121,
+        "assertion": "check(scene.session.recorder==recorder and scene.workflows.series==series and series.scores[1]==1,\"Original recording and best-of preserved\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 39,
+    "id": "TB-620",
+    "title": "Przerwanie i ponowne rozpoczęcie meczu turnieju",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 241,
+        "assertion": "func abandon_active() -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 100,
+        "assertion": "check(controller.event.snapshot().results.is_empty(),\"Abandoned fixture never receives a result\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 40,
+    "id": "TB-621",
+    "title": "Izolacja od obcych workflow",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 93,
+        "assertion": "func blocks_external_action() -> bool: return not live.is_empty() and not _internal_launch"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 86,
+        "assertion": "check(scene.runner==fixture and Replay.state_hash(fixture)==fixture_hash,\"Root restart guard preserves active fixture\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": []
+  },
+  {
+    "index": 41,
+    "id": "TB-622",
+    "title": "Natywne wejście do centrum rozgrywek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 23,
+        "assertion": "func setup() -> void:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 44,
+        "assertion": "check(controller.panel.visible and scene.local_paused,\"Native menu opens competition and pauses gameplay\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 42,
+    "id": "TB-623",
+    "title": "Formularz tworzenia wydarzenia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_panel.gd",
+        "line": 104,
+        "assertion": "func _build_form(parent: VBoxContainer) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition_panel19_tests.gd",
+        "line": 23,
+        "assertion": "check(created.title==\"Native keyboard cup\" and created.entrants.size()==2,\"Native form emits entered configuration\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 43,
+    "id": "TB-624",
+    "title": "Podgląd terminarza i drabinki",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_panel.gd",
+        "line": 220,
+        "assertion": "func refresh(value: Dictionary) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 26,
+        "assertion": "check(event.fixtures().size()==expected,\"Hand-derived fixture count %d %s\" % [n,format])"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 44,
+    "id": "TB-625",
+    "title": "Uruchomienie spotkania z hubu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 130,
+        "assertion": "func launch(id: String) -> Dictionary:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 56,
+        "assertion": "check(controller.fixture_runner==scene.runner and scene.runner!=live,\"Play launches real fixture runner\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 45,
+    "id": "TB-626",
+    "title": "Powrót po wyniku do rozgrywek",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 227,
+        "assertion": "func update(_delta: float) -> void:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 65,
+        "assertion": "check(controller.panel.visible,\"Back button opens competition hub\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 46,
+    "id": "TB-627",
+    "title": "Tabela ligowa w centrum",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_panel.gd",
+        "line": 220,
+        "assertion": "func refresh(value: Dictionary) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition19_tests.gd",
+        "line": 151,
+        "assertion": "check(duel_rows[0].id==\"entrant_3\" and duel_rows[1].id==\"entrant_4\" and duel_rows[2].id==\"entrant_2\" and duel_rows[3].id==\"entrant_1\",\"Direct encounter outranks seeding in two tied pairs\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 47,
+    "id": "TB-628",
+    "title": "Widoczna obsługa zapisu i wznowienia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 23,
+        "assertion": "func setup() -> void:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 96,
+        "assertion": "check(controller.resume().ok and Replay.state_hash(scene.runner)==fixture_hash,\"Resume restores exact active fixture\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 48,
+    "id": "TB-629",
+    "title": "Potwierdzane korekty i porzucenie próby",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 287,
+        "assertion": "func _confirmed(action: String, payload: Dictionary) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition_panel19_tests.gd",
+        "line": 49,
+        "assertion": "check(panel.confirm_button.has_focus(),\"Confirmation receives keyboard focus\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 49,
+    "id": "TB-630",
+    "title": "Obsługa klawiatury i małego okna",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_panel.gd",
+        "line": 304,
+        "assertion": "func fit(viewport: Vector2, hud_scale := 1.0) -> void:"
+      },
+      {
+        "file": "game/tests/unit/competition_panel19_tests.gd",
+        "line": 40,
+        "assertion": "check(panel.get_rect().end.x<=800 and panel.get_rect().end.y<=600,\"Native panel fits 800x600\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  },
+  {
+    "index": 50,
+    "id": "TB-631",
+    "title": "Ekran mistrza i kopiowanie raportu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/scripts/client/competition/competition_controller.gd",
+        "line": 23,
+        "assertion": "func setup() -> void:"
+      },
+      {
+        "file": "game/tests/integration/competition19_next_tests.gd",
+        "line": 68,
+        "assertion": "check(controller.panel.report.text.contains(\"Champion:\"),\"Champion and report visible\")"
+      }
+    ],
+    "verification": "Godot 4.6.2: competition19, competition_store19, competition_panel19, competition19_next PASS; native Metal actual scene 800x600 HUD125% inspected. Full repository regression coordinated by root.",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-league-800x600-125.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/competition-knockout-800x600-125.png"
+    ]
+  }
+]

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-19T07:07:08.660859+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "0e274a29337c35fd1e574a72cbbdb9091d322b54",
+  "optional_checks": {
+    "nakama": false,
+    "render": false
+  },
+  "tests": [
+    {
+      "name": "archive_bundle19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.691,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/archive_bundle19_tests.out"
+    },
+    {
+      "name": "competition19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.603,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/competition19_tests.out"
+    },
+    {
+      "name": "competition_panel19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.294,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/competition_panel19_tests.out"
+    },
+    {
+      "name": "competition_store19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 4.653,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/competition_store19_tests.out"
+    },
+    {
+      "name": "replay_studio19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.61,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/replay_studio19_tests.out"
+    },
+    {
+      "name": "workshop_oct19_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.313,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/workshop_oct19_tests.out"
+    },
+    {
+      "name": "competition19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 10.164,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/competition19_next_tests.out"
+    },
+    {
+      "name": "replay_studio19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.427,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/replay_studio19_next_tests.out"
+    },
+    {
+      "name": "workshop_oct19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 1.946,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/workshop_oct19_next_tests.out"
+    },
+    {
+      "name": "test_scenarios",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 7.669,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/test_scenarios.out"
+    },
+    {
+      "name": "test_scenarios_engine",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 2.17,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/test_scenarios_engine.out"
+    },
+    {
+      "name": "test_studio_cli",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 3.824,
+      "log_path": "docs/superpowers/evidence/2026-10-19-next-250/review/test_studio_cli.out"
+    }
+  ],
+  "finished_at": "2026-10-19T07:07:44.042830+00:00"
+}

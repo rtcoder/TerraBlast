@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "maps": [
+    "ballistics_range",
+    "bunker_court",
+    "canyon_bridge",
+    "ring_island",
+    "split_pass",
+    "terraced_quarry",
+    "three_lane_foundry",
+    "twin_forts",
+    "two_islands"
+  ],
+  "players": [
+    2
+  ],
+  "presets": [
+    "classic"
+  ],
+  "seeds": [
+    1
+  ],
+  "shots": 2,
+  "bots": [
+    "seeded"
+  ],
+  "repeats": 1
+}

@@ -11,10 +11,14 @@ var shutdown_report := {}
 var exit_status := 0
 func _ready() -> void:
 	get_tree().auto_accept_quit=false
-	var flags:={"--reservation-seconds":"reservation_seconds","--hello-seconds":"hello_seconds","--packet-rate":"packets_per_second","--byte-rate":"bytes_per_second","--snapshot-chunks":"snapshot_chunks_per_frame","--snapshot-bytes":"snapshot_bytes_per_frame","--receive-bytes":"receive_bytes_per_frame"}
+	var flags:={"--spectators":"spectator_capacity","--reservation-seconds":"reservation_seconds","--hello-seconds":"hello_seconds","--packet-rate":"packets_per_second","--byte-rate":"bytes_per_second","--snapshot-chunks":"snapshot_chunks_per_frame","--snapshot-bytes":"snapshot_bytes_per_frame","--receive-bytes":"receive_bytes_per_frame"}
 	var args:=OS.get_cmdline_user_args()
 	for flag in flags:
-		if args.has(flag): runtime_options[flags[flag]]=float(GameConfig.argument(flag,"0"))
+		if args.has(flag):
+			var raw:String=GameConfig.argument(flag,"")
+			if not raw.is_valid_float() or not is_finite(raw.to_float()): get_tree().quit(2); return
+			runtime_options[flags[flag]]=raw.to_float()
+	if args.has("--lobby-chat"): runtime_options.chat_enabled=true
 	shutdown_after=float(GameConfig.argument("--shutdown-after","0"))
 	report_path=GameConfig.argument("--server-report","")
 	if not report_path.is_empty() and not _valid_report_path(report_path):
@@ -37,6 +41,8 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	print("TerraBlast server ready; core players=%d map=%s preset=%s capacity=%d mode=%s" % [transport.runner.state.players.size(), GameConfig.argument("--map", "twin_forts"), preset, capacity, "lobby" if require_ready else "auto"])
+	print("Spectator capacity=%d; lobby chat=%s" % [transport.spectator_capacity,str(transport.runtime_options.values.chat_enabled)])
+	if args.has("--print-roster"): print(diagnostic_roster_json())
 	if OS.get_cmdline_user_args().has("--smoke"):
 		for child in get_children():
 			if child is Node3D or child is Control:
@@ -81,3 +87,6 @@ static func _valid_report_path(value: String) -> bool:
 		current=parent
 	var directory:=DirAccess.open(target.get_base_dir())
 	return directory!=null and not DirAccess.dir_exists_absolute(target)
+
+func diagnostic_roster_json()->String:
+	return JSON.stringify(transport.participant_roster() if transport!=null else {"players":[],"spectators":[]})

@@ -14,6 +14,11 @@ const TurnController := preload("res://scripts/core/turns/turn_controller.gd")
 @onready var hud_label: Label = $Hud/StatusLabel
 @onready var power_bar: ProgressBar = $Hud/PowerBar
 
+var replay_studio: RefCounted
+var workshop: RefCounted
+var competition: RefCounted
+var chat_text_active := false
+var spectator_follow := ""
 var archive_ui: RefCounted
 var workflows: RefCounted
 var bindings: RefCounted
@@ -96,7 +101,7 @@ func _ready() -> void:
 	_setup_players()
 	session = preload("res://scripts/client/session/local_session.gd").new(self)
 	if remote_mode:
-		_connect_network(GameConfig.argument("--host", "127.0.0.1"))
+		_connect_network(GameConfig.argument("--host", "127.0.0.1"), -1, GameConfig.argument("--role", "player"))
 	_setup_client_panels()
 	_setup_trajectory_preview()
 	effects = load("res://scripts/client/vfx/match_effects.gd").new()
@@ -107,6 +112,7 @@ func _ready() -> void:
 	_update_hud()
 	backend_menu = load("res://scripts/client/backend/backend_menu.gd").new()
 	add_child(backend_menu)
+	backend_menu.set_selected_role(GameConfig.argument("--role","player"))
 	backend_menu.retry_requested.connect(func():
 		if remote_mode and network != null: network.retry_connection())
 	backend_menu.menu_visibility_changed.connect(func(_open: bool): _refresh_menu_state())
@@ -114,14 +120,23 @@ func _ready() -> void:
 	workflows.setup()
 	archive_ui = preload("res://scripts/client/session/archive_workflows.gd").new(self)
 	archive_ui.setup()
+	replay_studio = preload("res://scripts/client/session/replay_studio.gd").new(self)
+	replay_studio.setup()
+	workshop = preload("res://scripts/client/workshop/workshop_workflows.gd").new(self)
+	workshop.setup()
+	competition = preload("res://scripts/client/competition/competition_controller.gd").new(self)
+	competition.setup()
+	match_panels.workshop_requested.connect(workshop.open)
+	match_panels.competition_requested.connect(competition.open)
 	_apply_client_preferences()
 	backend_menu.connect_game.connect(func(host: String):
-		_begin_network_connection(host, backend_menu.selected_port())
+		_begin_network_connection(host, backend_menu.selected_port(), backend_menu.selected_role())
 	)
 
 func _physics_process(delta: float) -> void:
 	_advance_replay(delta)
 	if archive_ui != null: archive_ui.update(delta)
+	if replay_studio != null: replay_studio.update(delta)
 	if not remote_mode and not projectile_in_flight and not local_paused and session.playback == null and runner.state.status == "playing" and (workflows == null or not workflows.training.active):
 		var events: Array = session.recorder.tick(runner, delta)
 		if not events.is_empty():
@@ -147,10 +162,13 @@ func _physics_process(delta: float) -> void:
 		_update_camera_transition(delta)
 		_update_camera_transform()
 	_update_trajectory_preview()
+	if competition != null: competition.update(delta)
 	if workflows != null: workflows.update(delta)
 
 func _input(event: InputEvent) -> void:
-	if archive_ui != null and archive_ui.handle_input(event):
+	if chat_text_active: return
+	var focused := get_viewport().gui_get_focus_owner()
+	if not (focused is LineEdit or focused is TextEdit) and archive_ui != null and archive_ui.handle_input(event):
 		get_viewport().set_input_as_handled()
 		return
 	preload("res://scripts/client/input/desktop_input.gd").handle(self, event)
@@ -294,6 +312,10 @@ func _bind_players() -> void:
 	_update_player_nodes()
 
 func restart_match() -> void:
+	if workshop != null and workshop.is_active():
+		if workshop.is_playtesting(): workshop.restart_playtest()
+		return
+	if competition != null and competition.blocks_external_action(): return
 	if session.playback != null:
 		return
 	if _uses_ready_lobby():
@@ -530,7 +552,7 @@ func _face_camera_toward_enemy() -> void:
 	orbit_yaw = atan2(to_target.x, to_target.z)
 
 func _update_camera_transform() -> void:
-	var active_player: Variant = turn_controller.get_active_player()
+	var active_player: Variant = _camera_subject()
 	if active_player == null:
 		return
 
@@ -561,7 +583,7 @@ func _is_camera_above_ground(position: Vector3) -> bool:
 	return position.y >= ground_y + camera_ground_clearance
 
 func _update_camera_transition(delta: float) -> void:
-	var active_player: Variant = turn_controller.get_active_player()
+	var active_player: Variant = _camera_subject()
 	if active_player == null:
 		return
 
@@ -648,6 +670,8 @@ func _update_trajectory_preview() -> void:
 
 
 func _can_control() -> bool:
+	if chat_text_active: return false
+	if remote_mode and network != null and network.role == "spectator": return false
 	if workflows != null and workflows.blocked(): return false
 	if menu_open or local_paused or runner.state.status != "playing" or session.playback != null or session.is_bot_turn():
 		return false
@@ -656,7 +680,7 @@ func _can_control() -> bool:
 	var active = turn_controller.get_active_player()
 	return network != null and network.ready_for_match and network.match_phase == "playing" and active != null and active.player_id == network.player_id
 
-func _connect_network(host: String, port: int = -1) -> void:
+func _connect_network(host: String, port: int = -1, role := "player") -> void:
 	network = load("res://scripts/networking/transport/match_client.gd").new()
 	var source = network
 	add_child(source)
@@ -700,7 +724,11 @@ func _connect_network(host: String, port: int = -1) -> void:
 		turn_controller = runner.state
 		_play_result(result)
 	)
-	source.connect_to_server(host, int(GameConfig.argument("--port", "19170")) if port < 0 else port)
+	source.chat_changed.connect(func():
+		if network == source and lobby_panel != null: lobby_panel.present_chat(source.chat_snapshot()))
+	source.chat_rejected.connect(func(nonce, reason):
+		if network == source and lobby_panel != null: lobby_panel.chat_operation_rejected(nonce,reason))
+	source.connect_to_server(host, int(GameConfig.argument("--port", "19170")) if port < 0 else port, role)
 
 func _sync_network() -> void:
 	if not remote_mode or network == null:
@@ -773,6 +801,12 @@ func _setup_client_panels() -> void:
 	lobby_panel.rematch_requested.connect(func(value: bool):
 		if remote_mode and network != null: network.vote_rematch(value)
 	)
+	lobby_panel.follow_player_requested.connect(func(id: String): spectator_follow = id; camera_transition_initialized = false)
+	lobby_panel.chat_send_requested.connect(func(text: String):
+		if remote_mode and network != null: lobby_panel.chat_send_result(network.send_chat(text)))
+	lobby_panel.text_entry_changed.connect(func(active: bool):
+		chat_text_active = active
+		if active: _cancel_aim())
 	settings_panel = preload("res://scripts/client/ui/settings_panel.gd").new()
 	$Hud.add_child(settings_panel)
 	settings_panel.setup(preferences, bindings)
@@ -873,6 +907,7 @@ func _update_debug_panel() -> void:
 	debug_panel.text = "LOCAL DEBUG — F1 | [ / ] gravity\nGravity %.1f × %.2f | %s\nBlast %.1f / terrain %d / player %d\nTurn %d | dirty %d / rebuilt %d / meshes %d" % [rules.base_gravity, weapon.gravity_scale, weapon.code, weapon.explosion_radius, weapon.terrain_damage, weapon.player_damage, turn_controller.turn_id, voxel_world.last_dirty_chunk_count, voxel_world.last_rebuilt_chunk_count, voxel_world.total_mesh_count]
 
 func _adjust_debug_gravity(amount: float) -> void:
+	if _special_session_active(): return
 	if remote_mode or not debug_panel.visible or projectile_in_flight or session.playback != null:
 		return
 	rules.base_gravity = clampf(rules.base_gravity + amount, 1.0, 100.0)
@@ -889,7 +924,7 @@ func _sync_rule_controls() -> void:
 	max_charge_time = rules.max_charge_time
 
 func _refresh_menu_state() -> void:
-	menu_open = (workflows != null and workflows.overlays_open()) or library_panel.visible or lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
+	menu_open = (workshop != null and workshop.overlays_open()) or (competition != null and competition.overlays_open()) or (workflows != null and workflows.overlays_open()) or library_panel.visible or lobby_panel.visible or settings_panel.visible or match_panels.any_open() or (backend_menu != null and backend_menu.panel.visible)
 	local_paused = menu_open and not remote_mode
 	if workflows != null: workflows.refresh_visibility()
 	if menu_open:
@@ -901,6 +936,8 @@ func _refresh_menu_state() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if menu_open else Input.MOUSE_MODE_CAPTURED)
 
 func _close_overlays() -> void:
+	chat_text_active = false
+	if competition != null: competition.close_overlays()
 	if workflows != null: workflows.close_overlays()
 	if session.playback != null: session.playback.set_playing(false)
 	library_panel.hide()
@@ -938,6 +975,7 @@ func _toggle_help() -> void:
 	_refresh_menu_state()
 
 func start_local_match(map_name: String, count: int, preset: String, mode := "hotseat", difficulty := "normal", human_team: int = 1) -> bool:
+	if _special_session_active(): return false
 	if human_team not in [1,2]: return false
 	if workflows != null and workflows.training.active: return false
 	if mode not in ["hotseat", "solo"] or difficulty not in ["easy", "normal"] or session.playback != null:
@@ -1106,7 +1144,9 @@ func _open_replay(path := "user://last_replay.json") -> bool:
 	if not loaded.ok:
 		_session_message("Replay failed: " + loaded.reason)
 		return false
-	return _inspect_recording(loaded.recorder)
+	var opened := _inspect_recording(loaded.recorder)
+	if opened and replay_studio != null: replay_studio.source_path = path
+	return opened
 
 func _inspect_recording(recorder: RefCounted) -> bool:
 	var playback = preload("res://scripts/core/replay/replay_playback.gd").new()
@@ -1124,6 +1164,7 @@ func _inspect_recording(recorder: RefCounted) -> bool:
 	_refresh_menu_state()
 	_update_replay_status()
 	if archive_ui != null: archive_ui.on_opened()
+	if replay_studio != null: replay_studio.on_opened()
 	return true
 
 func _step_replay() -> void:
@@ -1159,6 +1200,7 @@ func _update_replay_status() -> void:
 func _return_from_replay() -> void:
 	if session.playback == null:
 		return
+	if replay_studio != null: replay_studio.closing_replay()
 	if archive_ui != null: archive_ui.closing_replay()
 	var live: RefCounted = session.live_runner
 	session.playback = null
@@ -1192,8 +1234,11 @@ func _replace_local_runner(replacement: RefCounted) -> void:
 	_update_hud()
 	_update_scoreboard()
 
-func _begin_network_connection(host: String, port: int) -> void:
-	if (workflows != null and workflows.training.active) or session.playback != null or port < 1 or port > 65535 or host.strip_edges().is_empty():
+func _begin_network_connection(host: String, port: int, role := "player") -> void:
+	if _special_session_active() or role not in ["player","spectator"]: return
+	spectator_follow = ""
+	chat_text_active = false
+	if (workflows != null and workflows.training.active) or session.playback != null or port < 1 or port > 65535 or not preload("res://scripts/client/backend/connection_profiles.gd").valid_host(host.strip_edges()):
 		return
 	var previous = network
 	network = null
@@ -1212,9 +1257,11 @@ func _begin_network_connection(host: String, port: int) -> void:
 	last_lobby_started = false
 	remote_mode = true
 	_close_overlays()
-	_connect_network(host.strip_edges(), port)
+	_connect_network(host.strip_edges(), port, role)
 
 func _disconnect_to_local() -> void:
+	spectator_follow = ""
+	chat_text_active = false
 	var previous = network
 	network = null
 	remote_mode = false
@@ -1256,7 +1303,8 @@ func _vote_rematch() -> void:
 
 func _present_lobby() -> void:
 	if lobby_panel != null and network != null:
-		lobby_panel.present(network.lobby_state,network.player_id,network.match_phase,network.ready_for_match)
+		lobby_panel.present(network.lobby_state,network.player_id,network.match_phase,network.ready_for_match,network.role,network.spectator_id)
+		lobby_panel.present_chat(network.chat_snapshot())
 
 func _on_lobby_changed() -> void:
 	if lobby_panel == null or network == null or not remote_mode:
@@ -1286,6 +1334,7 @@ func _toggle_lobby() -> void:
 	_refresh_menu_state()
 
 func _toggle_library() -> void:
+	if _special_session_active(): return
 	if remote_mode or session.playback != null or (workflows != null and workflows.training.active): return
 	var opening := not library_panel.visible
 	_close_overlays()
@@ -1412,3 +1461,17 @@ func _charge_click_intent(pressed: bool) -> void:
 			else: _start_charging_shot()
 	elif pressed: _start_charging_shot()
 	else: _release_charged_shot()
+
+func _camera_subject() -> Variant:
+	if remote_mode and network != null and network.role == "spectator" and spectator_follow.is_empty() and camera_transition_initialized:
+		return {"position":camera_focus_position-Vector3.UP*camera_height}
+	if remote_mode and network != null and network.role == "spectator" and not spectator_follow.is_empty():
+		for player in runner.state.players:
+			if player.player_id == spectator_follow: return player
+	return turn_controller.get_active_player()
+
+func _special_session_active() -> bool:
+	return (workshop != null and workshop.is_active()) or (competition != null and competition.blocks_external_action())
+
+func _exit_tree() -> void:
+	if workshop != null: workshop.shutdown()

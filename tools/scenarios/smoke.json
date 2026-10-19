@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "maps": [
+    "two_islands"
+  ],
+  "players": [
+    2
+  ],
+  "presets": [
+    "classic"
+  ],
+  "seeds": [
+    1
+  ],
+  "shots": 2,
+  "bots": [
+    "seeded"
+  ],
+  "repeats": 2
+}

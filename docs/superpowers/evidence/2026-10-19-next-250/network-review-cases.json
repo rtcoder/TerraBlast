@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "status": "finished",
+  "started_at": "2026-10-19T06:59:42.004679+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "0e274a29337c35fd1e574a72cbbdb9091d322b54",
+  "optional_checks": {
+    "nakama": false,
+    "render": false
+  },
+  "tests": [
+    {
+      "name": "network_chat19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 13.576,
+      "log_path": "/private/tmp/tb19-network-review-suite/attempt-x86vk5lm/network_chat19_next_tests.out"
+    },
+    {
+      "name": "network_spectator_ui19_next_tests",
+      "status": "passed",
+      "reason": "",
+      "exit_code": 0,
+      "duration_seconds": 0.393,
+      "log_path": "/private/tmp/tb19-network-review-suite/attempt-x86vk5lm/network_spectator_ui19_next_tests.out"
+    }
+  ],
+  "finished_at": "2026-10-19T06:59:55.984680+00:00"
+}

@@ -1,0 +1,1169 @@
+[
+  {
+    "index": 1,
+    "id": "TB-532",
+    "title": "Workshop: nowy dokument z grywalną platformą",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 15,
+        "assertion": "check(false,\"W01 Workshop document must exist\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 21,
+        "assertion": "check(doc.snapshot().size == Vector3i(32,12,32) and Factory.from_definition(doc.snapshot(),2) != null,\"W01 default arena playable\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 2,
+    "id": "TB-533",
+    "title": "Workshop: kopia mapy fabrycznej",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 26,
+        "assertion": "check(Serializer.to_toml(Loader.load_from_file(\"res://maps/twin_forts.toml\")).text == shipped_text,\"W02 shipped definition remains immutable\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 3,
+    "id": "TB-534",
+    "title": "Workshop: edycja identyfikatora areny",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 28,
+        "assertion": "check(doc.set_metadata({\"id\":\"local_arena_1\"}).ok,\"W03 ID accepted\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 29,
+        "assertion": "for invalid in [\"\", \"Bad\", \"bad id\"]: check(not doc.set_metadata({\"id\":invalid}).ok,\"W03 invalid ID rejected\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 88,
+        "assertion": "check(d.snapshot().id == \"ui_arena\" and d.snapshot().display_name == \"UI arena\" and d.snapshot().theme == \"ui_theme\",\"W03 W04 UI metadata\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 4,
+    "id": "TB-535",
+    "title": "Workshop: nazwa i motyw dokumentu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 30,
+        "assertion": "check(doc.set_metadata({\"name\":\"Łódź #1\", \"theme\":\"stone\"}).ok,\"W04 Unicode metadata\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 31,
+        "assertion": "check(not doc.set_metadata({\"name\":\"a\\nb\"}).ok and not doc.set_metadata({\"theme\":\"x\".repeat(65)}).ok,\"W04 invalid text atomic\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 88,
+        "assertion": "check(d.snapshot().id == \"ui_arena\" and d.snapshot().display_name == \"UI arena\" and d.snapshot().theme == \"ui_theme\",\"W03 W04 UI metadata\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 5,
+    "id": "TB-536",
+    "title": "Workshop: rozmiar świata bez przycinania danych",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 114,
+        "assertion": "check(doc.set_metadata({\"size\":Vector3i(8,6,8)}).ok and doc.snapshot().spawns.size() == 2 and not doc.validate().ok,\"W05 resize preserves entries and reports bounds\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 115,
+        "assertion": "check(not doc.set_metadata({\"size\":Vector3i(257,128,256)}).ok,\"W05 dimensions limited\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 6,
+    "id": "TB-537",
+    "title": "Workshop: dodawanie bryły z formularza",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 33,
+        "assertion": "check(doc.add_entry(\"boxes\",box).ok and doc.selection.index == 1,\"W06 add selects box\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 62,
+        "assertion": "check(d.snapshot().boxes.size() == 2 and d.snapshot().boxes[1].position == [5,1,5],\"W06 UI add box\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 7,
+    "id": "TB-538",
+    "title": "Workshop: pozycja i rozmiar wybranej bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 34,
+        "assertion": "check(doc.update_entry(\"boxes\",1,{\"position\":[6,1,5],\"size\":[2,2,2]}).ok,\"W07 box transform\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 36,
+        "assertion": "check(not doc.update_entry(\"boxes\",1,{\"position\":[-1,1,1],\"size\":[0,2,2]}).ok and JSON.stringify(Serializer.to_dictionary(doc.snapshot())) == before,\"W07 invalid transform atomic\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 70,
+        "assertion": "check(d.snapshot().boxes[1].position[0] == 6 and d.snapshot().boxes[1].size[0] == 2,\"W07 UI apply transform\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 8,
+    "id": "TB-539",
+    "title": "Workshop: wybór materiału bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 38,
+        "assertion": "check(doc.update_entry(\"boxes\",1,{\"material\":material}).ok,\"W08 material %s\" % material)"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 40,
+        "assertion": "check(built.ok and built.arena.world.get_material_id(Vector3i(6,1,5)) == [\"air\",\"dirt\",\"stone\",\"metal\"].find(material),\"W08 built material %s\" % material)"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 75,
+        "assertion": "check(d.snapshot().boxes[1].material == \"stone\" and d.validate().arena.world.get_health(Vector3i(6,1,5)) == 77,\"W08 W09 UI material health\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 9,
+    "id": "TB-540",
+    "title": "Workshop: opcjonalne zdrowie bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 41,
+        "assertion": "check(doc.update_entry(\"boxes\",1,{\"material\":\"stone\",\"health\":77}).ok,\"W09 health override\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 42,
+        "assertion": "check(doc.validate().arena.world.get_health(Vector3i(6,1,5)) == 77,\"W09 health built\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 43,
+        "assertion": "check(doc.update_entry(\"boxes\",1,{\"health\":null}).ok and not doc.snapshot().boxes[1].has(\"health\"),\"W09 disable override\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 44,
+        "assertion": "check(doc.validate().arena.world.get_health(Vector3i(6,1,5)) == 180,\"W09 default health\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 45,
+        "assertion": "check(not doc.update_entry(\"boxes\",1,{\"health\":0}).ok,\"W09 solid zero health rejected\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 75,
+        "assertion": "check(d.snapshot().boxes[1].material == \"stone\" and d.validate().arena.world.get_health(Vector3i(6,1,5)) == 77,\"W08 W09 UI material health\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 10,
+    "id": "TB-541",
+    "title": "Workshop: etykieta bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 46,
+        "assertion": "check(doc.update_entry(\"boxes\",1,{\"name\":\"Named cover\"}).ok and Serializer.to_toml(doc.snapshot()).text.contains(\"Named cover\"),\"W10 label exported\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 11,
+    "id": "TB-542",
+    "title": "Workshop: duplikacja bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 47,
+        "assertion": "check(doc.duplicate_entry(\"boxes\",1).ok,\"W11 duplicate box\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 49,
+        "assertion": "check(doc.snapshot().boxes[1].position == [6,1,5],\"W11 duplicate isolation\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 77,
+        "assertion": "check(d.snapshot().boxes.size() == 3,\"W11 UI duplicate box\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 12,
+    "id": "TB-543",
+    "title": "Workshop: usuwanie bryły",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 50,
+        "assertion": "check(doc.remove_entry(\"boxes\",2).ok and doc.undo() and doc.snapshot().boxes.size() == 3,\"W12 delete undo\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 80,
+        "assertion": "check(d.snapshot().boxes.size() == 3,\"W12 W21 UI delete undo\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 13,
+    "id": "TB-544",
+    "title": "Workshop: kolejność nakładania brył",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 53,
+        "assertion": "check(doc.validate().arena.world.get_material_id(Vector3i(6,1,5)) == 3,\"W13 overlap before reorder\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 54,
+        "assertion": "check(doc.move_entry(\"boxes\",2,-1).ok and doc.validate().arena.world.get_material_id(Vector3i(6,1,5)) == 2,\"W13 reorder changes built world\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 14,
+    "id": "TB-545",
+    "title": "Workshop: dodawanie sferycznego wycięcia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 55,
+        "assertion": "check(doc.add_entry(\"carves\",{\"position\":[6,1,5],\"shape\":\"sphere\",\"radius\":1}).ok and doc.validate().arena.world.get_material_id(Vector3i(6,1,5)) == 0,\"W14 carve built\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 96,
+        "assertion": "check(d.snapshot().carves.size() == 1,\"W14 UI carve\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 15,
+    "id": "TB-546",
+    "title": "Workshop: edycja centrum i promienia wycięcia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 56,
+        "assertion": "check(doc.update_entry(\"carves\",0,{\"position\":[7,2,5],\"radius\":2}).ok,\"W15 carve edit\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 57,
+        "assertion": "for patch in [{\"radius\":0},{\"radius\":257},{\"position\":[9999,9999,9999]}]: check(not doc.update_entry(\"carves\",0,patch).ok,\"W15 invalid carve rejected\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 99,
+        "assertion": "check(d.snapshot().carves[0].radius == 2,\"W15 UI radius\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 16,
+    "id": "TB-547",
+    "title": "Workshop: duplikacja i usuwanie wycięcia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 58,
+        "assertion": "check(doc.duplicate_entry(\"carves\",0).ok,\"W16 duplicate carve\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 60,
+        "assertion": "check(doc.snapshot().carves[0].position == [7,2,5] and doc.remove_entry(\"carves\",1).ok and doc.undo(),\"W16 independent carve delete undo\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 102,
+        "assertion": "check(d.snapshot().carves.size() == 1,\"W16 UI duplicate/delete carve\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 17,
+    "id": "TB-548",
+    "title": "Workshop: dodawanie spawnów obu zespołów",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 62,
+        "assertion": "check(doc.add_entry(\"spawns\",{\"position\":[10,1,10],\"team\":1,\"slot\":1,\"yaw\":0}).ok,\"W17 add blue spawn\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 63,
+        "assertion": "check(doc.add_entry(\"spawns\",{\"position\":[20,1,20],\"team\":2,\"slot\":1,\"yaw\":90}).ok,\"W17 add red spawn\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 111,
+        "assertion": "check(d.snapshot().spawns.size() == 3 and d.snapshot().spawns[2].yaw == 90,\"W17 W18 UI spawn yaw\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 18,
+    "id": "TB-549",
+    "title": "Workshop: pozycja i orientacja spawnu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 64,
+        "assertion": "check(doc.update_entry(\"spawns\",3,{\"position\":[22,1,22],\"yaw\":180}).ok,\"W18 position yaw\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 65,
+        "assertion": "check(not doc.update_entry(\"spawns\",3,{\"yaw\":INF}).ok and not doc.update_entry(\"spawns\",3,{\"position\":[1.5,1,1]}).ok,\"W18 invalid numeric input\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 111,
+        "assertion": "check(d.snapshot().spawns.size() == 3 and d.snapshot().spawns[2].yaw == 90,\"W17 W18 UI spawn yaw\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 19,
+    "id": "TB-550",
+    "title": "Workshop: zespół i jawny slot spawnu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 66,
+        "assertion": "check(doc.update_entry(\"spawns\",3,{\"team\":1,\"slot\":1}).ok and not doc.validate().ok,\"W19 duplicate slot visible in validation\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 67,
+        "assertion": "check(not doc.update_entry(\"spawns\",3,{\"team\":3}).ok and not doc.update_entry(\"spawns\",3,{\"slot\":-1}).ok,\"W19 invalid team/slot\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 115,
+        "assertion": "check(d.snapshot().spawns[2].team == 2,\"W19 UI spawn team\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 20,
+    "id": "TB-551",
+    "title": "Workshop: duplikacja i usuwanie spawnu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 69,
+        "assertion": "check(doc.duplicate_entry(\"spawns\",3).ok and not doc.validate().ok,\"W20 spawn duplicate collision\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 71,
+        "assertion": "check(doc.snapshot().spawns[3].position == [22,1,22],\"W20 spawn copy isolation\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 73,
+        "assertion": "check(doc.undo() and doc.snapshot().spawns[4].yaw == 180,\"W20 spawn delete undo\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 117,
+        "assertion": "check(not d.validate().ok,\"W20 duplicate spawn error visible\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 21,
+    "id": "TB-552",
+    "title": "Workshop: historia Undo dla operacji dokumentu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 81,
+        "assertion": "for step in 5: check(doc.undo(),\"W21 undo transaction %d\" % step)"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 82,
+        "assertion": "check(JSON.stringify(Serializer.to_dictionary(doc.snapshot())) == initial,\"W21 exact undo snapshot\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 80,
+        "assertion": "check(d.snapshot().boxes.size() == 3,\"W12 W21 UI delete undo\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 22,
+    "id": "TB-553",
+    "title": "Workshop: Redo i odcięcie porzuconej gałęzi",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 83,
+        "assertion": "check(doc.redo(),\"W22 redo transaction\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 86,
+        "assertion": "check(not doc.can_redo(),\"W22 branch discarded\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 82,
+        "assertion": "check(d.snapshot().boxes.size() == 2,\"W22 UI redo\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 23,
+    "id": "TB-554",
+    "title": "Workshop: ograniczona pamięć historii",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 89,
+        "assertion": "check(doc.history_summary().undo == 32,\"W23 bounded history\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 93,
+        "assertion": "check(doc.history_summary() == summary,\"W23 noop/error excluded\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 83,
+        "assertion": "check(w.buttons.undo.disabled == not d.can_undo() and w.buttons.redo.disabled == not d.can_redo(),\"W23 history button availability\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 24,
+    "id": "TB-555",
+    "title": "Workshop: brudny dokument i punkt zapisu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 96,
+        "assertion": "check(doc.is_dirty() and doc.undo() and not doc.is_dirty() and doc.redo() and doc.is_dirty(),\"W24 dirty matches saved content\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 89,
+        "assertion": "check(w.title.contains(\"*\"),\"W24 dirty title\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 25,
+    "id": "TB-556",
+    "title": "Workshop: import TOML przez okno pliku",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 104,
+        "assertion": "check(loaded.ok and Serializer.to_dictionary(loaded.definition) == Serializer.to_dictionary(doc.snapshot()),\"W25 import roundtrip\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 155,
+        "assertion": "check(w.import_path(path) and d.snapshot().display_name == \"Unsaved\" and not d.can_undo(),\"W25 import resets history\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 26,
+    "id": "TB-557",
+    "title": "Workshop: eksport do wybranej ścieżki TOML",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 102,
+        "assertion": "check(store.save_document(path,doc.snapshot()).ok,\"W26 TOML saved\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 145,
+        "assertion": "check(w.save_path(path) and not d.is_dirty(),\"W26 W27 UI save\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 27,
+    "id": "TB-558",
+    "title": "Workshop: szybki zapis bieżącego pliku",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 106,
+        "assertion": "check(store.save_document(path,doc.snapshot()).ok and store.load_document(path).definition.display_name == \"Second save\",\"W27 save same path\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 145,
+        "assertion": "check(w.save_path(path) and not d.is_dirty(),\"W26 W27 UI save\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 161,
+        "assertion": "check(not d.is_dirty(),\"W27 save uses current path\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 28,
+    "id": "TB-559",
+    "title": "Workshop: atomowy zapis pliku lokalnego",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 109,
+        "assertion": "check(not store.save_document(path,doc.snapshot()).ok and FileAccess.get_file_as_string(path) == stable,\"W28 failure preserves previous target\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 111,
+        "assertion": "check(store.save_document(path,doc.snapshot()).ok and not FileAccess.file_exists(path + \".tmp\"),\"W28 atomic temp removed\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 29,
+    "id": "TB-560",
+    "title": "Workshop: ochrona map dołączonych do gry",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 112,
+        "assertion": "check(not store.save_document(\"res://maps/twin_forts.toml\",doc.snapshot()).ok,\"W29 resources protected\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 113,
+        "assertion": "check(Serializer.to_toml(Loader.load_from_file(\"res://maps/twin_forts.toml\")).text == shipped_text,\"W29 shipped bytes preserved\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 159,
+        "assertion": "check(not w.save_path(\"res://maps/twin_forts.toml\") and d.is_dirty(),\"W29 UI protects resources\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 30,
+    "id": "TB-561",
+    "title": "Workshop: potwierdzanie utraty lokalnych zmian",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 149,
+        "assertion": "check(w.confirmation.visible,\"W30 dirty prompt shown\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 151,
+        "assertion": "check(d.snapshot().display_name == \"Unsaved\" and w.visible,\"W30 cancel retains edits\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 154,
+        "assertion": "check(d.snapshot().display_name == \"Local Arena\",\"W30 save then new\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 31,
+    "id": "TB-562",
+    "title": "Workshop: raport walidacji definicji",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 116,
+        "assertion": "check(not doc.validate().errors.is_empty(),\"W31 validation report\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 120,
+        "assertion": "check(w.report.text.contains(\"Valid\"),\"W31 UI validation report\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 32,
+    "id": "TB-563",
+    "title": "Workshop: walidacja fizycznego miejsca startu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 119,
+        "assertion": "check(not doc.validate().ok,\"W32 blocked spawn\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 122,
+        "assertion": "check(not doc.validate().ok,\"W32 unsupported spawn\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 33,
+    "id": "TB-564",
+    "title": "Workshop: lista wspieranych liczebności testu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 126,
+        "assertion": "check(doc.validate().supported_counts.has(2) and doc.validate().supported_counts.has(4),\"W33 supported player counts\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 34,
+    "id": "TB-565",
+    "title": "Workshop: blokada playtest przy błędnej arenie",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 129,
+        "assertion": "check(doc.validate().revision > revision and not doc.validate().supported_counts.has(4),\"W34 validation revision invalidated\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 140,
+        "assertion": "check(not workflow.start_playtest(2) and scene.runner == original,\"W34 invalid playtest retains original\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 35,
+    "id": "TB-566",
+    "title": "Workshop: limit rozmiaru importowanego dokumentu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 132,
+        "assertion": "check(not store.load_document(empty_path).ok,\"W35 empty import rejected\")"
+      },
+      {
+        "file": "game/tests/unit/workshop_oct19_tests.gd",
+        "line": 137,
+        "assertion": "check(not store.load_document(big_path).ok,\"W35 oversized import rejected\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 158,
+        "assertion": "check(not w.import_path(path+\".missing\") and d.revision == import_before and d.is_dirty(),\"W35 failed import retains draft\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 36,
+    "id": "TB-567",
+    "title": "Workshop: natywne okno edytora z listą operacji",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 17,
+        "assertion": "check(false,\"W36 Workshop native window/controller must exist\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 48,
+        "assertion": "check(w.visible and w.force_native and w.tabs.get_tab_count() == 3,\"W36 native window and three tabs\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 52,
+        "assertion": "check(w.buttons.has(\"add\") and w.buttons.has(\"apply\") and w.buttons.has(\"duplicate\") and w.buttons.has(\"delete\"),\"W36 all CRUD actions %s\" % kind)"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 37,
+    "id": "TB-568",
+    "title": "Workshop: wybór wpisu aktualizuje inspektor",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 64,
+        "assertion": "check(w.fields.extent[0].value == 32 and w.fields.position[0].value == 0,\"W37 selection fills actual values\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 66,
+        "assertion": "check(w.fields.label.text == \"UI cover\" and w.preview.selection.index == 1,\"W37 inspector and preview selection\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 38,
+    "id": "TB-569",
+    "title": "Workshop: przekrój voxelowy aktualnego dokumentu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 123,
+        "assertion": "check(w.preview.material_at(Vector3i(6,2,5)) == d.validate().arena.world.get_material_id(Vector3i(6,2,5)),\"W38 actual voxel preview\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 39,
+    "id": "TB-570",
+    "title": "Workshop: kontrola wysokości przekroju",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 122,
+        "assertion": "check(w.preview.layer == 1,\"W39 layer control\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 40,
+    "id": "TB-571",
+    "title": "Workshop: zoom i dopasowanie podglądu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 126,
+        "assertion": "check(w.preview.map_rect().size.x <= 500 and w.preview.map_rect().size.y <= 300,\"W40 fit bounds\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 128,
+        "assertion": "check(w.preview.zoom <= 4,\"W40 zoom bounded\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 41,
+    "id": "TB-572",
+    "title": "Workshop: kliknięcie przekroju ustawia pozycję edycji",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 131,
+        "assertion": "check(w.preview.cell_at_point(cell_point) == Vector3i(10,1,10) and w.preview.cell_at_point(Vector2(-10,-10)) == null,\"W41 pixel to voxel mapping\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 134,
+        "assertion": "check(w.fields.position[0].value == 12 and w.fields.position[2].value == 13 and d.revision == revision,\"W41 click fills form without mutating\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 42,
+    "id": "TB-573",
+    "title": "Workshop: znaczniki spawnów z kierunkiem i team",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 135,
+        "assertion": "check(w.preview.spawn_markers().size() == 3 and w.preview.spawn_markers()[0].color != w.preview.spawn_markers()[1].color,\"W42 team markers\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  },
+  {
+    "index": 43,
+    "id": "TB-574",
+    "title": "Workshop: zachowanie ostatniego dobrego podglądu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 139,
+        "assertion": "check(w.preview.stale and w.preview.world == previous_world and w.preview.status_text().contains(\"Stale\"),\"W43 retains last valid preview\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 44,
+    "id": "TB-575",
+    "title": "Workshop: bezpieczne wejście z lokalnego meczu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 39,
+        "assertion": "check(workflow.open(),\"W44 opens local workshop\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 49,
+        "assertion": "check(scene.local_paused and Replay.state_hash(original) == hash_before,\"W44 editor pauses unchanged original\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 223,
+        "assertion": "check(not workflow.open() and not workflow.blocked_reason().is_empty(),\"W44 blocked entry %s\" % blocked)"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 45,
+    "id": "TB-576",
+    "title": "Workshop: playtest na osobnym runnerze",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 183,
+        "assertion": "check(workflow.start_playtest(2),\"W45 playtest starts\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 185,
+        "assertion": "check(scene.runner != original and scene.runner.state.players.size() == 2 and not w.visible and workflow.return_panel.visible,\"W45 separate runner and return control\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 46,
+    "id": "TB-577",
+    "title": "Workshop: panel powrotu z playtestu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 203,
+        "assertion": "check(shot.ok,\"W46 actual playtest shot accepted\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 205,
+        "assertion": "check(scene.projectile_in_flight,\"W46 shot playback active before return\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 208,
+        "assertion": "check(w.visible and scene.runner == original and workflow.is_active() and not workflow.is_playtesting(),\"W46 return opens editor and restores original\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 209,
+        "assertion": "check(not scene.projectile_in_flight and scene.active_projectile == null,\"W46 return cancels test projectile\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 210,
+        "assertion": "check(d.snapshot().display_name == \"Dirty again\" and d.can_undo() and test_runner != scene.runner,\"W46 document and undo retained\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 47,
+    "id": "TB-578",
+    "title": "Workshop: odtwarzanie pełnego lokalnego kontekstu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 40,
+        "assertion": "check(not scene.workflows.handoff and not scene.match_panels.handoff_panel.visible,\"W47 pending handoff suspended throughout Workshop\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 184,
+        "assertion": "check(not scene.workflows.handoff and not scene.workflows.blocked() and scene._can_control(),\"W47 original handoff cannot block playtest controls\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 211,
+        "assertion": "check(scene.session.recorder == recorder and Replay.state_hash(scene.runner) == hash_before and scene.player_velocities.blue_1 == Vector3(0.125,2.5,-0.25),\"W47 exact live runner recorder velocity restored\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 212,
+        "assertion": "check(scene.selected_weapon_id == 2 and scene.weapon_by_player.blue_1 == 2,\"W47 weapon selection restored\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 214,
+        "assertion": "check(scene.workflows.handoff and scene.match_panels.handoff_panel.visible,\"W47 original pending handoff restored on final exit\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 48,
+    "id": "TB-579",
+    "title": "Workshop: powtarzalny restart testu z dokumentu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 192,
+        "assertion": "check(workflow.restart_playtest() and Replay.state_hash(scene.runner) == initial_test,\"W48 restart from document\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 49,
+    "id": "TB-580",
+    "title": "Workshop: izolacja testu od trwałych workflow meczu",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 44,
+        "assertion": "check(scene.rules.base_gravity==gravity_before,\"W49 root debug shortcut cannot mutate retained live rules\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 186,
+        "assertion": "check(workflow.blocks_persistence() and workflow.is_active() and workflow.is_playtesting(),\"W49 active test blocks persistence\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 188,
+        "assertion": "check(not scene.session.can_archive(),\"W49 session archive guard\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 189,
+        "assertion": "check(not scene.start_local_match(\"twin_forts\",2,\"classic\"),\"W49 map replacement guard\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": []
+  },
+  {
+    "index": 50,
+    "id": "TB-581",
+    "title": "Workshop: klawiatura i zamknięcie okna bez przecieku wejścia",
+    "status": "implemented",
+    "evidence": [
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 170,
+        "assertion": "check(d.history_summary().undo == history_before-1,\"W50 Ctrl Z document undo\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 173,
+        "assertion": "check(d.history_summary().undo == history_before,\"W50 Ctrl Shift Z document redo\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 177,
+        "assertion": "check(not d.is_dirty(),\"W50 Ctrl S saves current path\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 180,
+        "assertion": "check(w.confirmation.visible and w.visible,\"W50 OS close uses dirty prompt\")"
+      },
+      {
+        "file": "game/tests/integration/workshop_oct19_next_tests.gd",
+        "line": 213,
+        "assertion": "check(workflow.close() and not workflow.is_active() and Input.mouse_mode == mouse_before,\"W50 close restores mouse\")"
+      }
+    ],
+    "verification": "Godot4.6.2 unit73+integration67 passed; nativeWindow+OSclose inspected",
+    "screenshots": [
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native.png",
+      "docs/superpowers/evidence/2026-10-19-next-250/workshop-native-close.png"
+    ]
+  }
+]

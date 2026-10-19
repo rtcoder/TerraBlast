@@ -3,13 +3,17 @@ extends Node
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.has("--help"):
-		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps|library|analyze-replay|compare-replays\n--map REGISTERED_ID (e.g. canyon_bridge; see --list-maps) --preset classic|quick|training\n--players 2..10 --lobby (server only; server defaults to 2 players)\n--host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke\n--mode library --library-dir DIRECTORY [--verify-library] [--query TEXT --sort newest|oldest|title|kind]\n--entry ID --library-health\n--mode analyze-replay --replay PATH [--output PATH --analysis-format json|players|shots]\n--mode compare-replays --replay PATH --replay-other PATH\nServer: --reservation-seconds 1..300 --hello-seconds 1..30\n--packet-rate 60..1000 --byte-rate 8192..1048576\n--snapshot-chunks 1..64 --snapshot-bytes 65536..8388608 --receive-bytes 8192..4194304\n--shutdown-after 0.1..3600 --server-report /absolute/report.json")
+		print("TerraBlast CLI\n--help | --version | --list-maps\n--mode local-dev|client|server|simulate|replay|audit-maps|library|analyze-replay|compare-replays\n--map REGISTERED_ID (e.g. canyon_bridge; see --list-maps) --preset classic|quick|training\n--players 2..10 --lobby (server only; server defaults to 2 players)\n--host HOST --port 1..65535 --guest-id ID\n--shots 1..1000 --seed 0..2147483647 --output PATH\n--bots easy|normal --record PATH (simulate only)\n--replay PATH --maps-dir DIRECTORY --smoke\n--mode library --library-dir DIRECTORY [--verify-library] [--query TEXT --sort newest|oldest|title|kind]\n--entry ID --library-health\n--mode analyze-replay --replay PATH [--output PATH --analysis-format json|players|shots]\n--mode compare-replays --replay PATH --replay-other PATH\nServer: --reservation-seconds 1..300 --hello-seconds 1..30\n--packet-rate 60..1000 --byte-rate 8192..1048576\n--snapshot-chunks 1..64 --snapshot-bytes 65536..8388608 --receive-bytes 8192..4194304\n--shutdown-after 0.1..3600 --server-report /absolute/report.json\n--role player|spectator (client)\n--spectators 0..6 --lobby-chat --print-roster (server)\n--mode clip-replay --replay PATH --clip-start N --clip-end N --output PATH\n--mode diff-replays --replay PATH --replay-other PATH [--output PATH]\n--mode verify-bundle --bundle PATH")
 		get_tree().quit(0)
 	elif args.has("--version"):
 		print("%s %s / Godot %s" % [GameConfig.GAME_NAME, GameConfig.VERSION, Engine.get_version_info().string])
 		get_tree().quit(0)
 	elif args.has("--list-maps") or GameConfig.mode == "audit-maps":
 		_list_maps()
+	elif GameConfig.mode in ["clip-replay","diff-replays","verify-bundle"]:
+		var result: Dictionary = load("res://scripts/server/replay_studio_cli.gd").run(GameConfig.mode,{"source":GameConfig.argument("--replay",""),"start":int(GameConfig.argument("--clip-start","-1")),"end":int(GameConfig.argument("--clip-end","-1")),"output":GameConfig.argument("--output",""),"second":GameConfig.argument("--replay-other",""),"bundle":GameConfig.argument("--bundle","")})
+		print(JSON.stringify(result,"",true,true))
+		get_tree().quit(0 if result.ok else 2)
 	elif GameConfig.mode in ["analyze-replay","compare-replays"]:
 		_analyze_replay()
 	elif GameConfig.mode == "library":
